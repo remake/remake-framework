@@ -2,7 +2,7 @@ const parseUrl = require('parseurl');
 import { getAppsInfo } from "./get-apps-info";
 const path = require('path');
 const jsonfile = require("jsonfile");
-import { nunjucks } from "./nunjucks-lib";
+// import { nunjucks } from "./nunjucks-lib";
 import { preProcessData } from "./pre-process-data";
 import { getCollection } from "./db-connection";
 

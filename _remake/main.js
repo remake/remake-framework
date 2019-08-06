@@ -16,7 +16,7 @@ const util = require('util');
 const fs = require('fs');
 const path = require('path');
 const readFile = util.promisify(fs.readFile);
-const validUsernameRegex = /^[a-zA-Z0-9_\+\.-]+$/;
+const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;
 
 // The local strategy require a `verify` function which receives the credentials
 passport.use(new LocalStrategy(async function(username, password, cb) {
@@ -77,6 +77,7 @@ app.use(expressSession({
   resave: true, 
   saveUninitialized: true 
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
@@ -99,7 +100,7 @@ app.post('/signup', async function(req, res) {
     }
 
     if (!validUsernameRegex.test(username)) {
-      req.flash("error", `Your username can only contain letters, numbers, and certain symbols (i.e. "_", ".", "+")`);
+      req.flash("error", `Your username can only contain letters, numbers, and certain symbols ("_" or "-")`);
     }
 
     res.redirect('/signup');
