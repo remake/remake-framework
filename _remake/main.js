@@ -11,6 +11,8 @@ const util = require('util');
 const fs = require('fs');
 const path = require('path');
 const readFile = util.promisify(fs.readFile);
+const FileStore = require('session-file-store')(session);
+
 
 // set up
 const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;
@@ -18,59 +20,52 @@ dotenv.config({ path: "variables.env" });
 
 
 // The local strategy require a `verify` function which receives the credentials
-passport.use(new LocalStrategy(async function(username, password, cb) {
-  try {
-    let currentUser = await usersCollection.findOne({ username });
+// passport.use(new LocalStrategy(async function(username, password, cb) {
+//   try {
+//     let currentUser = await usersCollection.findOne({ username });
 
-    if (!currentUser) { 
-      cb(null, false);
-      return;
-    }
+//     if (!currentUser) { 
+//       cb(null, false);
+//       return;
+//     }
 
-    let passwordMatches = await bcrypt.compare(password, currentUser.hash);
+//     let passwordMatches = await bcrypt.compare(password, currentUser.hash);
 
-    if (!passwordMatches) {
-      cb(null, false);
-      return;
-    }
+//     if (!passwordMatches) {
+//       cb(null, false);
+//       return;
+//     }
 
-    cb(null, currentUser);
-    return;
-  } catch (err) {
-    console.error("Passport db error", err);
-  }
-}));
+//     cb(null, currentUser);
+//     return;
+//   } catch (err) {
+//     console.error("Passport db error", err);
+//   }
+// }));
 
-passport.serializeUser(function(currentUser, cb) {
-  cb(null, currentUser._id);
-});
+// passport.serializeUser(function(currentUser, cb) {
+//   cb(null, currentUser._id);
+// });
 
-passport.deserializeUser(async function(id, cb) {
-  let currentUser = await usersCollection.findOne({ _id: ObjectID(id) });
+// passport.deserializeUser(async function(id, cb) {
+//   let currentUser = await usersCollection.findOne({ _id: ObjectID(id) });
 
-  cb(null, currentUser);
-});
+//   cb(null, currentUser);
+// });
 
 
 const app = express();
 
 
-// store.on('error', function(error) {
-//   console.error(error);
-// });
-
-import { initRenderedRoutes } from "./lib/init-rendered-routes";
-import { initApiRoutes } from "./lib/init-api-routes";
-
-// configue app
+// express session
 app.use(expressSession({ 
+  store: new FileStore,
   secret: process.env.SESSION_SECRET, 
+  resave: true, 
+  saveUninitialized: true,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 30
-  },
-  store: store,
-  resave: true, 
-  saveUninitialized: true 
+  }
 }));
 
 app.use(passport.initialize());
