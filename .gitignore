@@ -6,3 +6,4 @@ project-files/assets/*.css*
 variables.env
 npm-debug.log
 _remake/.sessions
+_remake-data/*.json

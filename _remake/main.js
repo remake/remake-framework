@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const readFile = util.promisify(fs.readFile);
 const FileStore = require('session-file-store')(expressSession);
+import {createUserData, getUserData, setUserData} from "./lib/user-data";
 
 
 // set up
@@ -154,6 +155,22 @@ app.use(flash());
 // });
 
 app.get("/", (req, res) => res.send("Hello, world!"));
+
+
+(async function () {
+  let dataFromCreate = await createUserData({username: "john"});
+  console.log("createUser", dataFromCreate);
+
+  let dataFromGet1 = await getUserData({username: "john"});
+  console.log("getUser", dataFromGet1);
+
+  let dataFromSet = await setUserData({username: "john", data: {privateData: {hello: 123}, publicData: {world: 444}}});
+
+  let dataFromGet2 = await getUserData({username: "john"});
+  console.log("getUser", dataFromGet2);
+})();
+
+
 
 
 const PORT = process.env.PORT || 3000;
