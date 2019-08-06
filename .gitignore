@@ -1,0 +1,6 @@
+.DS_Store
+node_modules/
+.cache/
+project-files/assets/*.dist.*
+variables.env
+npm-debug.log

@@ -1,0 +1,39 @@
+{
+  "name": "remake-framework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently --kill-others \"nodemon server.js --watch ./ -e html,njk,sass,css,js,png,gif,jpg,json --ignore node_modules/ --ignore .cache/ --ignore tempData/\" \"parcel public/index.js --out-dir ./public/dist --no-hmr\"",
+    "build": "parcel build public/index.js --out-dir ./public/dist",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "camelcase": "^5.3.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.4",
+    "deep-extend": "^0.6.0",
+    "deepdash-es": "^4.2.5",
+    "directory-tree": "^2.2.3",
+    "dotenv": "^8.0.0",
+    "esm": "^3.2.25",
+    "express": "^4.17.0",
+    "express-session": "^1.16.2",
+    "jsonfile": "^5.0.0",
+    "lodash-es": "^4.17.11",
+    "nanoid": "^2.0.3",
+    "npm": "^6.10.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "remakejs": "^0.7.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.19.1",
+    "parcel": "^1.12.3"
+  }
+}
