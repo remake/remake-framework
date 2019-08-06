@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently --kill-others \"nodemon server.js --watch ./ -e html,hbs,sass,css,js,png,gif,jpg,json --ignore node_modules/ --ignore .cache/ --ignore _remake/.sessions --ignore 'project-files/assets/*.{css,css.map,dist.js,dist.js.map}'\" \"parcel ./project-files/assets/main.js --out-dir ./project-files/assets/ --out-file main.dist.js --no-hmr\" \"sass --watch project-files/assets/main.sass project-files/assets/main.css\"",
+    "dev": "concurrently --kill-others 'npm:nodemon' 'npm:parcel' 'npm:sass'",
+    "nodemon": "nodemon server.js --watch ./ -e html,hbs,sass,css,js,png,gif,jpg,json --ignore node_modules/ --ignore .cache/ --ignore _remake/.sessions --ignore 'project-files/assets/*.{css,css.map,dist.js,dist.js.map}'",
+    "parcel": "parcel ./project-files/assets/main.js --out-dir ./project-files/assets/ --out-file main.dist.js --no-hmr",
+    "sass": "sass --watch project-files/assets/main.sass project-files/assets/main.css",
     "build": "parcel build public/index.js --out-dir ./public/dist",
     "start": "node server.js"
   },
