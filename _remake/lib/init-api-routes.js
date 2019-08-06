@@ -6,7 +6,6 @@ import { get, set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
 import { getItemWithId } from "./get-item-with-id";
 const passport = require('passport');
-import { getCollection } from "./db-connection";
 import { getAppsInfo } from "./get-apps-info";
 import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
@@ -60,7 +59,6 @@ export function initApiRoutes ({app}) {
       existingData = incomingData;
     }
 
-    let usersCollection = await getCollection("users");
     let updateCommand = {$set: {}};
     updateCommand["$set"]["appData." + appName] = JSON.stringify(existingData);
 

@@ -1,7 +1,6 @@
 import { set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "./get-unique-id";
-import { getCollection } from "./db-connection";
 
 export async function preProcessData ({data, user, params, appName}) {
   let someUniqueIdsAdded = false;
@@ -38,7 +37,6 @@ export async function preProcessData ({data, user, params, appName}) {
 
   // save the data if some new ids have been added to it
   if (someUniqueIdsAdded) {
-    let usersCollection = await getCollection("users");
     let updateCommand = {$set: {}};
     updateCommand["$set"][`appData.${appName}`] = JSON.stringify(data);
 

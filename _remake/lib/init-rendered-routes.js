@@ -4,7 +4,6 @@ const path = require('path');
 const jsonfile = require("jsonfile");
 // import { nunjucks } from "./nunjucks-lib";
 import { preProcessData } from "./pre-process-data";
-import { getCollection } from "./db-connection";
 
 export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
 
@@ -23,7 +22,6 @@ export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
 
       let user;
       if (!loggedInUser) {
-        let usersCollection = await getCollection("users");
         user = await usersCollection.findOne({username: usernameFromParams});
       } else {
         user = loggedInUser;

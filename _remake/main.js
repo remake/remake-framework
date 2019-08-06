@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-import { getCollection } from "./lib/db-connection";
 import expressSession from "express-session";
 const bcrypt = require('bcrypt');
 const flash = require('connect-flash');
@@ -21,7 +20,6 @@ dotenv.config({ path: "variables.env" });
 // The local strategy require a `verify` function which receives the credentials
 passport.use(new LocalStrategy(async function(username, password, cb) {
   try {
-    let usersCollection = await getCollection("users");
     let currentUser = await usersCollection.findOne({ username });
 
     if (!currentUser) { 
@@ -48,7 +46,6 @@ passport.serializeUser(function(currentUser, cb) {
 });
 
 passport.deserializeUser(async function(id, cb) {
-  let usersCollection = await getCollection("users");
   let currentUser = await usersCollection.findOne({ _id: ObjectID(id) });
 
   cb(null, currentUser);
@@ -104,8 +101,6 @@ app.post('/signup', async function(req, res) {
     res.redirect('/signup');
     return;
   }
-
-  let usersCollection = await getCollection("users");
 
   let usernameTaken = await usersCollection.findOne({username});
   if (usernameTaken) {
