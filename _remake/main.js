@@ -71,7 +71,7 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../project-files/assets')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(flash());
