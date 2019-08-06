@@ -1,22 +1,22 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-dotenv.config({ path: "variables.env" });
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 import { getCollection } from "./lib/db-connection";
 import expressSession from "express-session";
-const ObjectID = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
 const flash = require('connect-flash');
-const MongoStore = require('connect-mongo')(expressSession);
 const jsonfile = require("jsonfile");
-// todo: move these 
 const util = require('util');
 const fs = require('fs');
 const path = require('path');
 const readFile = util.promisify(fs.readFile);
+
+// set up
 const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;
+dotenv.config({ path: "variables.env" });
+
 
 // The local strategy require a `verify` function which receives the credentials
 passport.use(new LocalStrategy(async function(username, password, cb) {
@@ -56,9 +56,7 @@ passport.deserializeUser(async function(id, cb) {
 
 
 const app = express();
-const store = new MongoStore({
-  url: process.env.DATABASE_URI
-});
+
 
 // store.on('error', function(error) {
 //   console.error(error);
