@@ -9,7 +9,6 @@ const jsonfile = require("jsonfile");
 const camelCase = require('camelcase');
 import { nunjucks } from "./nunjucks-lib";
 import forEachDeep from "deepdash-es/forEachDeep";
-import { remakeOptions } from "./remake-options";
 import { isPlainObject } from 'lodash-es';
 
 

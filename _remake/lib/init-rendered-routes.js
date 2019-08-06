@@ -4,7 +4,6 @@ const path = require('path');
 const jsonfile = require("jsonfile");
 import { nunjucks } from "./nunjucks-lib";
 import { preProcessData } from "./pre-process-data";
-import { remakeOptions } from "./remake-options";
 import { getCollection } from "./db-connection";
 
 export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
@@ -36,11 +35,9 @@ export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
       if (user && !appName.startsWith("_")) {
         data = JSON.parse(user.appData[appName] || user.appData["default"]);
 
-        if (remakeOptions.autoGenerateUniqueIds) {
-          let processResponse = await preProcessData({data, user, params, appName});
-          currentItem = processResponse.currentItem;
-          parentItem = processResponse.parentItem;
-        }
+        let processResponse = await preProcessData({data, user, params, appName});
+        currentItem = processResponse.currentItem;
+        parentItem = processResponse.parentItem;
       }
 
       if (params.id && !currentItem) {

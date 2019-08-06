@@ -8,7 +8,6 @@ import { getItemWithId } from "./get-item-with-id";
 const passport = require('passport');
 import { getCollection } from "./db-connection";
 import { getAppsInfo } from "./get-apps-info";
-import { remakeOptions } from "./remake-options";
 import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
 
@@ -37,15 +36,10 @@ export function initApiRoutes ({app}) {
       let dataAtPath = get(existingData, savePath); 
 
       if (isPlainObject(dataAtPath)) {
-        if (remakeOptions.autoGenerateUniqueIds) {
-          // deep extend, using ids to match objects in arrays
-          specialDeepExtend(dataAtPath, incomingData);
-          set(existingData, savePath, incomingData);
-        } else {
-          // default to extending the data if possible, so no data is lost
-          deepExtend(dataAtPath, incomingData);
-        }
-      } else if (Array.isArray(dataAtPath) && remakeOptions.autoGenerateUniqueIds) {
+        // deep extend, using ids to match objects in arrays
+        specialDeepExtend(dataAtPath, incomingData);
+        set(existingData, savePath, incomingData);
+      } else if (Array.isArray(dataAtPath)) {
         specialDeepExtend(dataAtPath, incomingData);
         set(existingData, savePath, incomingData);
       } else {
@@ -58,26 +52,12 @@ export function initApiRoutes ({app}) {
     } else if (saveToId) {
       let itemData = getItemWithId(existingData, saveToId);
 
-      if (remakeOptions.autoGenerateUniqueIds) {
-        specialDeepExtend(itemData, incomingData);
-        Object.assign(itemData, incomingData);
-      } else {
-        deepExtend(itemData, incomingData);
-      }
+      specialDeepExtend(itemData, incomingData);
+      Object.assign(itemData, incomingData);
     // option 3: extend existing data at root level
     } else {
-      if (remakeOptions.autoGenerateUniqueIds) {
-        specialDeepExtend(existingData, incomingData);
-        existingData = incomingData;
-      } else {
-        if (Array.isArray(existingData)) {
-          // overwrite data if it's an array (extending arrays doesn't work)
-          existingData = incomingData;
-        } else {
-          // extend the data if possible, so no data is lost
-          deepExtend(existingData, incomingData);
-        }
-      }
+      specialDeepExtend(existingData, incomingData);
+      existingData = incomingData;
     }
 
     let usersCollection = await getCollection("users");
@@ -89,7 +69,7 @@ export function initApiRoutes ({app}) {
       updateCommand
     );
 
-    if (user && remakeOptions.writeAppDataToTempFiles) {
+    if (user) {
       let formattedUsername = user.username.replace(/\W/g, "");
       jsonfile.writeFile(path.join(__dirname, `../tempData/${formattedUsername}-${appName}.json`), existingData, { spaces: 2 }, function () {});
     }
@@ -105,13 +85,11 @@ export function initApiRoutes ({app}) {
 
     let matchingPartial = getAppsInfo().partials.find(partial => partial.name === templateName && partial.appName === appName);
 
-    if (remakeOptions.autoGenerateUniqueIds) {
-      forEachDeep(matchingPartial.startingData, function (value, key, parentValue, context) {
-        if (isPlainObject(value) && !value.id) {
-          value.id = getUniqueId();
-        }
-      });
-    }
+    forEachDeep(matchingPartial.startingData, function (value, key, parentValue, context) {
+      if (isPlainObject(value) && !value.id) {
+        value.id = getUniqueId();
+      }
+    });
 
     let htmlString = nunjucks.renderString(matchingPartial.templateString, {
       ...matchingPartial.startingData,
