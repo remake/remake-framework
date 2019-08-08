@@ -25,24 +25,21 @@ async function getUserData ({username}) {
   }
 }
 
-async function setUserData ({username, data}) {
-  let privateDataToSet = data.privateData;
-  let publicDataToSet = data.publicData;
-
+async function setUserData ({username, data, type}) {
   let privateDataPromise;
   let publicDataPromise;
 
   try {
-    if (privateDataToSet) {
-      privateDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), privateDataToSet);
+    if (type === "private") {
+      privateDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), data);
     }
   } catch (e) {
     console.log("Error: Setting user data");
   }
 
   try {
-    if (publicDataToSet) {
-      publicDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), publicDataToSet);
+    if (type === "public") {
+      publicDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), data);
     }
   } catch (e) {
     console.log("Error: Setting user data");
@@ -50,7 +47,7 @@ async function setUserData ({username, data}) {
 
   await Promise.all([privateDataPromise, publicDataPromise]);
 
-  return data;
+  return {type, data};
 }
 
 export {
