@@ -2,6 +2,7 @@ const jsonfile = require("jsonfile");
 const path = require('path');
 import { showConsoleError } from "../utils/console-utils";
 
+// create new user data files
 async function createUserData ({username}) {
   let startingPrivateData = {};
   let startingPublicData = {};
@@ -11,21 +12,42 @@ async function createUserData ({username}) {
 
   await Promise.all([privateDataPromise, publicDataPromise]);
 
-  return {privateData: startingPrivateData, publicData: startingPublicData};
+  return {user: startingPrivateData, data: startingPublicData};
 }
 
-async function getUserData ({username}) {
-  try {
-    let privateDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`));
-    let publicDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`));
+// get private data, public data, or both by username 
+async function getUserData ({username, type}) {
 
-    let [ privateData, publicData ] = await Promise.all([privateDataPromise, publicDataPromise]);
-    return { privateData, publicData };
+  try {
+    
+    let privateDataPromise; 
+    if (!type || type === "private") {
+      privateDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`));
+    }
+
+    let publicDataPromise 
+    if (!type || type === "public") {
+      publicDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`));
+    }
+
+    if (type) {
+      if (type === "private") {
+        return await privateDataPromise;
+      } else if (type === "public") {
+        return await publicDataPromise;
+      }
+    } else {
+      let [ user, data ] = await Promise.all([privateDataPromise, publicDataPromise]);
+      return { user, data };
+    }
+    
   } catch (e) {
     return null;
   }
+
 }
 
+// set EITHER private OR public data by username
 async function setUserData ({username, data, type}) {
   let privateDataPromise;
   let publicDataPromise;
@@ -48,7 +70,7 @@ async function setUserData ({username, data, type}) {
 
   await Promise.all([privateDataPromise, publicDataPromise]);
 
-  return {type, data};
+  return {username, type, data};
 }
 
 export {

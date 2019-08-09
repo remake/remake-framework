@@ -1,15 +1,16 @@
+const Handlebars = require('handlebars');
 const parseUrl = require('parseurl');
-import { getAppsInfo } from "./get-apps-info";
+import {getRoutes} from "./get-project-info";
 const path = require('path');
 const jsonfile = require("jsonfile");
-// import { nunjucks } from "./nunjucks-lib";
 import { preProcessData } from "./pre-process-data";
+import { createUserData, getUserData, setUserData } from "./user-data";
 
 export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
 
-  let pages = getAppsInfo().pages;
+  let routes = getRoutes();
 
-  pages.forEach(({name, route, templateString, appName}) => {
+  routes.forEach(({route, templateString}) => {
 
     app.get(route, async (req, res) => { // route === "/:username/page-name-route/:id"
 
@@ -17,23 +18,16 @@ export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
       let usernameFromParams = params.username;
       let query = req.query;
       let pathname = parseUrl(req).pathname;
-      let loggedInUser = req.user;
+      let currentUser = req.user;
+      let pageOwner = await getUserData({username: usernameFromParams});
+      let data = pageOwner && JSON.parse(pageOwner.data || "{}");
+      let isPageOwner = currentUser && pageOwner && currentUser.user.username === pageOwner.user.username;
       let flashErrors = req.flash("error");
 
-      let user;
-      if (!loggedInUser) {
-        user = await usersCollection.findOne({username: usernameFromParams});
-      } else {
-        user = loggedInUser;
-      }
-
-      let data;
       let currentItem;
       let parentItem; 
-      if (user && !appName.startsWith("_")) {
-        data = JSON.parse(user.appData[appName] || user.appData["default"]);
-
-        let processResponse = await preProcessData({data, user, params, appName});
+      if (pageOwner) {
+        let processResponse = await preProcessData({data, user: pageOwner, params});
         currentItem = processResponse.currentItem;
         parentItem = processResponse.parentItem;
       }
@@ -42,7 +36,8 @@ export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
         res.status(404).send("404 Not Found");
       }
 
-      let html = nunjucks.renderString(templateString, {
+      let template = Handlebars.compile(templateString);
+      let html = template({
         data,
         params,
         query,
@@ -50,13 +45,10 @@ export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
         currentItem,
         parentItem,
         flashErrors,
-        user,
-        isLoggedIn: !!loggedInUser
+        currentUser,
+        pageOwner,
+        isPageOwner
       });
-
-      if (!appName.startsWith("_")) {
-        html = html.replace("<body", `<body data-app="${appName}"`);
-      }
 
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.send(html);

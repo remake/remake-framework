@@ -12,12 +12,12 @@ const fs = require('fs');
 const path = require('path');
 const readFile = util.promisify(fs.readFile);
 const FileStore = require('session-file-store')(expressSession);
-import {createUserData, getUserData, setUserData} from "./lib/user-data";
-import {getRoutes, getPartials} from "./lib/get-project-info";
+import { createUserData, getUserData, setUserData } from "./lib/user-data";
+import { getRoutes, getPartials } from "./lib/get-project-info";
 
 
-console.log("routes:", getRoutes());
-console.log("partials", getPartials());
+// console.log("routes:", getRoutes());
+// console.log("partials", getPartials());
 
 // set up
 const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;

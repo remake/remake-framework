@@ -26,6 +26,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.0",
     "express-session": "^1.16.2",
+    "handlebars": "^4.1.2",
     "jsonfile": "^5.0.0",
     "lodash-es": "^4.17.11",
     "nanoid": "^2.0.3",

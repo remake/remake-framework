@@ -1,11 +1,12 @@
 import { set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "./get-unique-id";
+import { createUserData, getUserData, setUserData } from "./user-data";
 
-export async function preProcessData ({data, user, params, appName}) {
-  let someUniqueIdsAdded = false;
+export async function preProcessData ({data, user, params}) {
   let currentItem;
   let parentItem;
+  let someUniqueIdsAdded = false;
 
   forEachDeep(data, function (value, key, parentValue, context) {
 
@@ -21,9 +22,11 @@ export async function preProcessData ({data, user, params, appName}) {
       if (params.id && value.id === params.id) {
         currentItem = value;
 
+        // loop through all parent items (objects & arrays)
         for (let i = context.parents.length - 1; i > -1; i--) {
           let currentParent = context.parents[i].value;
 
+          // the first plain object found in parent items is parentItem
           if (isPlainObject(currentParent)) {
             parentItem = currentParent;
             break;
@@ -37,13 +40,7 @@ export async function preProcessData ({data, user, params, appName}) {
 
   // save the data if some new ids have been added to it
   if (someUniqueIdsAdded) {
-    let updateCommand = {$set: {}};
-    updateCommand["$set"][`appData.${appName}`] = JSON.stringify(data);
-
-    let updateResult = await usersCollection.updateOne(
-      { "_id" : user._id },
-      updateCommand
-    );
+    let updateResult = await setUserData({username: user.username, data, type: "public"});
   }
 
   return { currentItem, parentItem };
