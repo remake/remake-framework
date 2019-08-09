@@ -16,7 +16,8 @@ import {createUserData, getUserData, setUserData} from "./lib/user-data";
 import {getRoutes, getPartials} from "./lib/get-project-info";
 
 
-console.log(123, getRoutes());
+console.log("routes:", getRoutes());
+console.log("partials", getPartials());
 
 // set up
 const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;
@@ -161,17 +162,17 @@ app.get("/", (req, res) => res.send("Hello, world!"));
 
 
 // (async function () {
-//   let dataFromCreate = await createUserData({username: "john"});
-//   console.log("createUser", dataFromCreate);
+  // let dataFromCreate = await createUserData({username: "john"});
+  // console.log("createUser", dataFromCreate);
 
-//   let dataFromGet1 = await getUserData({username: "john"});
-//   console.log("getUser", dataFromGet1);
+  // let dataFromGet1 = await getUserData({username: "john"});
+  // console.log("getUser", dataFromGet1);
 
-//   let dataFromSet1 = await setUserData({username: "john", data: {hello: 555}, type: "private"});
-//   let dataFromSet2 = await setUserData({username: "john", data: {world: 666}, type: "public"});
+  // let dataFromSet1 = await setUserData({username: "xd", data: {hello: 555}, type: "private"});
+  // let dataFromSet2 = await setUserData({username: "john", data: {world: 666}, type: "public"});
 
-//   let dataFromGet2 = await getUserData({username: "john"});
-//   console.log("getUser", dataFromGet2);
+  // let dataFromGet2 = await getUserData({username: "john"});
+  // console.log("getUser", dataFromGet2);
 // })();
 
 

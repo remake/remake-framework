@@ -1,5 +1,6 @@
 const jsonfile = require("jsonfile");
 const path = require('path');
+import { showConsoleError } from "../utils/console-utils";
 
 async function createUserData ({username}) {
   let startingPrivateData = {};
@@ -34,7 +35,7 @@ async function setUserData ({username, data, type}) {
       privateDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), data);
     }
   } catch (e) {
-    console.log("Error: Setting user data");
+    showConsoleError("Error: Setting user data");
   }
 
   try {
@@ -42,7 +43,7 @@ async function setUserData ({username, data, type}) {
       publicDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), data);
     }
   } catch (e) {
-    console.log("Error: Setting user data");
+    showConsoleError("Error: Setting user data");
   }
 
   await Promise.all([privateDataPromise, publicDataPromise]);
