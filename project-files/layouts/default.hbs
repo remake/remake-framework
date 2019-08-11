@@ -11,6 +11,11 @@
     <a class="site-nav__signup button button--elevated button--pink" href="/signup">Sign up</a>
     <a class="site-nav__login button button--elevated button--white-with-violet-text" href="/login">Log in</a>
   </nav>
+  {{#if flashErrors }}
+    {{#each flashErrors }}
+      <div class="flash flash--error">{{ this }}</div>
+    {{/each}}
+  {{/if}}
   {{> yield }}
   <script src="/main.dist.js"></script>
 </body>

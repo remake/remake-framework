@@ -45,28 +45,33 @@ function initUserAccounts ({ app }) {
   });
 
   app.post('/signup', async function(req, res) {
-    let username = req.body.username;
-    let password = req.body.password;
+    let username = req.body.username || "";
+    let password = req.body.password || "";
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
         req.flash("error", "Your password must be at least 8 characters");
+        res.redirect('/signup');
+        return;
       }
 
       if (username.length < 1) {
         req.flash("error", "Please enter a username");
+        res.redirect('/signup');
+        return;
       }
 
       if (username.startsWith("_") || username.startsWith("-")) {
         req.flash("error", `Your username needs to start with a letter or number`);
+        res.redirect('/signup');
+        return;
       }
 
       if (!validUsernameRegex.test(username)) {
         req.flash("error", `Your username can only contain letters, numbers, and certain symbols ("_" or "-")`);
+        res.redirect('/signup');
+        return;
       }
-
-      res.redirect('/signup');
-      return;
     }
 
     let usernameTaken = await getUserData({ username });
