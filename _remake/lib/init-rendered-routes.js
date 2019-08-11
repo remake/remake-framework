@@ -1,10 +1,13 @@
 const Handlebars = require('handlebars');
 const parseUrl = require('parseurl');
-import {getRoutes} from "./get-project-info";
+import { getRoutes, getPartials } from "./get-project-info";
 const path = require('path');
 const jsonfile = require("jsonfile");
 import { preProcessData } from "./pre-process-data";
 import { createUserData, getUserData, setUserData } from "./user-data";
+
+let partials = getPartials();
+partials.forEach(partial => Handlebars.registerPartial(partial.name, partial.templateString));
 
 export async function initRenderedRoutes ({ app }) {
 
