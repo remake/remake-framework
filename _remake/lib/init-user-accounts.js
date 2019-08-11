@@ -86,7 +86,7 @@ function initUserAccounts ({ app }) {
 
     req.login(newUser, function (err) {
       if (!err){
-        res.redirect('/' + newUser.username);
+        res.redirect('/' + newUser.user.username);
       } else {
         res.redirect('/login');
       }
