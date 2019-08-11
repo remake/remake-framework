@@ -44,7 +44,7 @@ function _getProjectInfo () {
         // create the base route (these need to render BEFORE dynamic :username routes)
         let baseRoute = fileName === "index" ? "/" : `/${fileName}`; // e.g. /todos
         // create the dynamic username route
-        let usernameRoute = fileName === "index" ? "/:username" : `"/:username"/${fileName}/:id?`; // e.g. /john/todos/123
+        let usernameRoute = fileName === "index" ? "/:username" : `/:username/${fileName}/:id?`; // e.g. /john/todos/123
 
 
         baseRoutes.push({

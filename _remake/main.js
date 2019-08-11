@@ -14,6 +14,7 @@ const readFile = util.promisify(fs.readFile);
 const FileStore = require('session-file-store')(expressSession);
 import { createUserData, getUserData, setUserData } from "./lib/user-data";
 import { getRoutes, getPartials } from "./lib/get-project-info";
+import { initRenderedRoutes } from "./lib/init-rendered-routes";
 
 
 // console.log("routes:", getRoutes());
@@ -158,7 +159,7 @@ app.use(flash());
 //   res.redirect('/login');
 // });
 
-app.get("/", (req, res) => res.send("Hello, world!"));
+initRenderedRoutes({ app });
 
 
 // (async function () {

@@ -6,7 +6,7 @@ const jsonfile = require("jsonfile");
 import { preProcessData } from "./pre-process-data";
 import { createUserData, getUserData, setUserData } from "./user-data";
 
-export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
+export async function initRenderedRoutes ({ app }) {
 
   let routes = getRoutes();
 
@@ -20,7 +20,7 @@ export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
       let pathname = parseUrl(req).pathname;
       let currentUser = req.user;
       let pageOwner = await getUserData({username: usernameFromParams});
-      let data = pageOwner && JSON.parse(pageOwner.data || "{}");
+      let data = pageOwner && pageOwner.data || {};
       let isPageOwner = currentUser && pageOwner && currentUser.user.username === pageOwner.user.username;
       let flashErrors = req.flash("error");
 
@@ -32,8 +32,14 @@ export async function initRenderedRoutes ({app, writeAppDataToTempFiles}) {
         parentItem = processResponse.parentItem;
       }
 
+      if (usernameFromParams && !pageOwner) {
+        res.status(404).send("404 Not Found");
+        return;
+      }
+
       if (params.id && !currentItem) {
         res.status(404).send("404 Not Found");
+        return;
       }
 
       let template = Handlebars.compile(templateString);

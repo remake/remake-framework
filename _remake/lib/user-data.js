@@ -40,7 +40,7 @@ async function getUserData ({username, type}) {
       let [ user, data ] = await Promise.all([privateDataPromise, publicDataPromise]);
       return { user, data };
     }
-    
+
   } catch (e) {
     return null;
   }
