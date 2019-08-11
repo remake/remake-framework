@@ -2,20 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Hello</title>
+  <title>Todos App</title>
   <link rel="stylesheet" href="/main.dist.css">
 </head>
 <body>
   <nav class="site-nav" role="navigation" aria-label="main navigation">
-    <a class="site-nav__home button is-info" href="/">
-      <strong>Home</strong>
-    </a>
-    <a class="site-nav__signup button is-primary" href="/signup">
-      <strong>Sign up</strong>
-    </a>
-    <a class="site-nav__login button is-light" href="/login">
-      Log in
-    </a>
+    <a class="site-nav__home" href="/">Todos</a>
+    <a class="site-nav__signup button button--elevated button--pink" href="/signup">Sign up</a>
+    <a class="site-nav__login button button--elevated button--white-with-violet-text" href="/login">Log in</a>
   </nav>
   {{> yield }}
   <script src="/main.dist.js"></script>
