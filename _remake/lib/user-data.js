@@ -3,52 +3,41 @@ const path = require('path');
 import { showConsoleError } from "../utils/console-utils";
 
 // create new user data files
-async function createUserData ({username}) {
-  let startingPrivateData = {};
-  let startingPublicData = {};
+// returns: {user, data}
+async function createUserData ({ username, hash }) {
+  let startingPrivateData = { username, hash };
 
-  let privateDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), startingPrivateData);
-  let publicDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), startingPublicData);
+  let startingPublicData;
+  try {
+    startingPublicData = await jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user.json"));
+  } catch (e) {
+    startingPublicData = {};
+  }
+
+  let privateDataPromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `_${username}.json`), startingPrivateData);
+  let publicDataPromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `${username}.json`), startingPublicData);
 
   await Promise.all([privateDataPromise, publicDataPromise]);
 
   return {user: startingPrivateData, data: startingPublicData};
 }
 
-// get private data, public data, or both by username 
-async function getUserData ({username, type}) {
-
+// get all user data
+// returns: {user, data}
+async function getUserData ({ username }) {
   try {
-    
-    let privateDataPromise; 
-    if (!type || type === "private") {
-      privateDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`));
-    }
-
-    let publicDataPromise 
-    if (!type || type === "public") {
-      publicDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`));
-    }
-
-    if (type) {
-      if (type === "private") {
-        return await privateDataPromise;
-      } else if (type === "public") {
-        return await publicDataPromise;
-      }
-    } else {
-      let [ user, data ] = await Promise.all([privateDataPromise, publicDataPromise]);
-      return { user, data };
-    }
-
+    let privateDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`)); 
+    let publicDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`));
+    let [ user, data ] = await Promise.all([privateDataPromise, publicDataPromise]);
+    return { user, data }; 
   } catch (e) {
     return null;
   }
-
 }
 
 // set EITHER private OR public data by username
-async function setUserData ({username, data, type}) {
+// returns: {username, type, data}
+async function setUserData ({ username, data, type }) {
   let privateDataPromise;
   let publicDataPromise;
 
