@@ -59,20 +59,20 @@ function _getProjectInfo () {
 
       } else if (templatePath.includes("/partials")) {
 
-        let pathToStartingData = templatePath.replace(".hbs", ".json");
+        let pathToBootstrapData = path.join(__dirname, `../../project-files/_bootstrap-data/partials/${fileName}.json`);
 
-        let startingData;
+        let bootstrapData;
         try {
-          startingData = jsonfile.readFileSync(pathToStartingData);
+          bootstrapData = jsonfile.readFileSync(pathToBootstrapData);
         } catch (e) {
-          startingData = {};
-          showConsoleError("Error: Couldn't load partial data file: " + pathToStartingData);
+          bootstrapData = {};
+          showConsoleError("Error: Couldn't load partial data file: " + pathToBootstrapData);
         }
 
         partials.push({
           name: fileName,
           templateString: _templateString,
-          startingData: startingData
+          bootstrapData: bootstrapData
         });
 
       } 
