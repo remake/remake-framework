@@ -4,7 +4,7 @@ import { getRoutes, getPartials } from "./get-project-info";
 const path = require('path');
 const jsonfile = require("jsonfile");
 import { preProcessData } from "./pre-process-data";
-import { createUserData, getUserData, setUserData } from "./user-data";
+import { getUserData } from "./user-data";
 
 let partials = getPartials();
 partials.forEach(partial => Handlebars.registerPartial(partial.name, partial.templateString));
@@ -23,8 +23,8 @@ export async function initRenderedRoutes ({ app }) {
       let pathname = parseUrl(req).pathname;
       let currentUser = req.user;
       let pageOwner = await getUserData({username: usernameFromParams});
-      let data = pageOwner && pageOwner.data || {};
-      let isPageOwner = currentUser && pageOwner && currentUser.user.username === pageOwner.user.username;
+      let data = pageOwner && pageOwner.appData || {};
+      let isPageOwner = currentUser && pageOwner && currentUser.details.username === pageOwner.details.username;
       let flashErrors = req.flash("error");
 
       let currentItem;

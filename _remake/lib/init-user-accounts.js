@@ -3,7 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;
 const bcrypt = require('bcrypt');
 const jsonfile = require("jsonfile");
-import { createUserData, getUserData, setUserData } from "./user-data";
+import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
 
 function initUserAccounts ({ app }) {
@@ -20,7 +20,7 @@ function initUserAccounts ({ app }) {
         return;
       }
 
-      let passwordMatches = await bcrypt.compare(password, currentUser.user.hash);
+      let passwordMatches = await bcrypt.compare(password, currentUser.details.hash);
 
       if (!passwordMatches) {
         cb(null, false);
@@ -35,7 +35,7 @@ function initUserAccounts ({ app }) {
   }));
 
   passport.serializeUser(function(currentUser, cb) {
-    cb(null, currentUser.user.username);
+    cb(null, currentUser.details.username);
   });
 
   passport.deserializeUser(async function(username, cb) {
@@ -86,7 +86,7 @@ function initUserAccounts ({ app }) {
 
     req.login(newUser, function (err) {
       if (!err){
-        res.redirect('/' + newUser.user.username);
+        res.redirect('/' + newUser.details.username);
       } else {
         res.redirect('/login');
       }
@@ -97,7 +97,7 @@ function initUserAccounts ({ app }) {
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
-    res.redirect('/' + req.user.user.username);
+    res.redirect('/' + req.user.details.username);
   });
 
   app.get('/logout', function(req, res) {

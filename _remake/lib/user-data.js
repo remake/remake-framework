@@ -3,61 +3,70 @@ const path = require('path');
 import { showConsoleError } from "../utils/console-utils";
 
 // create new user data files
-// returns: {user, data}
-async function createUserData ({ username, hash }) {
-  let startingPrivateData = { username, hash };
+// returns: {details, appData}
+async function createUserData (passedInDetails) {
 
-  let startingPublicData;
+  let details;
   try {
-    startingPublicData = await jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user.json"));
+    details = await jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/details.json"));
   } catch (e) {
-    startingPublicData = {};
+    details = {};
   }
 
-  let privateDataPromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `_${username}.json`), startingPrivateData);
-  let publicDataPromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `${username}.json`), startingPublicData);
+  // extend user details with args
+  Object.assign(details, passedInDetails);
 
-  await Promise.all([privateDataPromise, publicDataPromise]);
+  let appData;
+  try {
+    appData = await jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/appData.json"));
+  } catch (e) {
+    appData = {};
+  }
 
-  return {user: startingPrivateData, data: startingPublicData};
+  let detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `_${username}.json`), details);
+  let appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `${username}.json`), appData);
+
+  await Promise.all([detailsWritePromise, appDataWritePromise]);
+
+  return {details, appData};
 }
 
 // get all user data
-// returns: {user, data}
+// returns: {details, appData}
 async function getUserData ({ username }) {
   try {
-    let privateDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`)); 
-    let publicDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`));
-    let [ user, data ] = await Promise.all([privateDataPromise, publicDataPromise]);
-    return { user, data }; 
+    let detailsPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`)); 
+    let appDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`));
+    let [ details, appData ] = await Promise.all([detailsPromise, appDataPromise]);
+    return { details, appData }; 
   } catch (e) {
     return null;
   }
 }
 
-// set EITHER private OR public data by username
+// set EITHER details data OR appData data by username
 // returns: {username, type, data}
 async function setUserData ({ username, data, type }) {
-  let privateDataPromise;
-  let publicDataPromise;
+  let detailsWritePromise;
+  let appDataWritePromise;
 
   try {
-    if (type === "private") {
-      privateDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), data);
+    if (type === "details") {
+      detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), data);
     }
   } catch (e) {
-    showConsoleError("Error: Setting user data");
+    showConsoleError("Error: Setting user details");
   }
 
   try {
-    if (type === "public") {
-      publicDataPromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), data);
+    if (type === "appData") {
+      appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), data);
     }
   } catch (e) {
-    showConsoleError("Error: Setting user data");
+    showConsoleError("Error: Setting user appData");
   }
 
-  await Promise.all([privateDataPromise, publicDataPromise]);
+  await Promise.all([detailsWritePromise, appDataWritePromise]);
 
   return {username, type, data};
 }

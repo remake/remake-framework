@@ -1,7 +1,7 @@
 import { set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "./get-unique-id";
-import { createUserData, getUserData, setUserData } from "./user-data";
+import { setUserData } from "./user-data";
 
 export async function preProcessData ({data, user, params}) {
   let currentItem;
@@ -40,7 +40,7 @@ export async function preProcessData ({data, user, params}) {
 
   // save the data if some new ids have been added to it
   if (someUniqueIdsAdded) {
-    let updateResult = await setUserData({username: user.username, data, type: "public"});
+    let updateResult = await setUserData({username: user.details.username, data, type: "appData"});
   }
 
   return { currentItem, parentItem };
