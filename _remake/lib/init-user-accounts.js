@@ -97,7 +97,7 @@ function initUserAccounts ({ app }) {
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
-    res.redirect('/' + req.user.username);
+    res.redirect('/' + req.user.user.username);
   });
 
   app.get('/logout', function(req, res) {

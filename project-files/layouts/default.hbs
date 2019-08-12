@@ -8,8 +8,15 @@
 <body>
   <nav class="site-nav" role="navigation" aria-label="main navigation">
     <a class="site-nav__home" href="/">Todos</a>
-    <a class="site-nav__signup button button--elevated button--pink" href="/signup">Sign up</a>
-    <a class="site-nav__login button button--elevated button--white-with-violet-text" href="/login">Log in</a>
+    <div class="site-nav__right">
+      {{#if currentUser}}
+        <span class="text--white m-r-16">Hi {{currentUser.user.username}}!</span>
+        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/logout">Logout</a>
+      {{else}}
+        <a class="site-nav__signup-button button button--elevated button--pink" href="/signup">Sign up</a>
+        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/login">Log in</a>
+      {{/if}}
+    </div>
   </nav>
   {{#if flashErrors }}
     {{#each flashErrors }}
