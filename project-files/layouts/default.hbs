@@ -10,7 +10,7 @@
     <a class="site-nav__home" href="/">Todos</a>
     <div class="site-nav__right">
       {{#if currentUser}}
-        <span class="text--white m-r-16">Hi {{currentUser.user.username}}!</span>
+        <span class="text--white m-r-16">Hi {{currentUser.details.username}}!</span>
         <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/logout">Logout</a>
       {{else}}
         <a class="site-nav__signup-button button button--elevated button--pink" href="/signup">Sign up</a>

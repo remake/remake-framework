@@ -4,7 +4,7 @@ import { showConsoleError } from "../utils/console-utils";
 
 // create new user data files
 // returns: {details, appData}
-async function createUserData (passedInDetails) {
+async function createUserData ({ username, hash }) {
 
   let details;
   try {
@@ -14,7 +14,7 @@ async function createUserData (passedInDetails) {
   }
 
   // extend user details with args
-  Object.assign(details, passedInDetails);
+  Object.assign(details, { username, hash });
 
   let appData;
   try {
