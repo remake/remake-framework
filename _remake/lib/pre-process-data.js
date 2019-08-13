@@ -3,7 +3,7 @@ import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "./get-unique-id";
 import { setUserData } from "./user-data";
 
-export async function preProcessData ({data, user, params}) {
+export async function preProcessData ({data, user, params, addUniqueIdsToData}) {
   let currentItem;
   let parentItem;
   let someUniqueIdsAdded = false;
@@ -13,12 +13,14 @@ export async function preProcessData ({data, user, params}) {
     if (isPlainObject(value)) {
 
       // generate unique ids for every object item
-      if (!value.id) {
-        value.id = getUniqueId();
-        someUniqueIdsAdded = true;
+      if (addUniqueIdsToData) {
+        if (!value.id) {
+          value.id = getUniqueId();
+          someUniqueIdsAdded = true;
+        }
       }
 
-      // get the data for the id in the route param if there is one
+      // if an :id is specified in the route, get the data for it (currentItem and its parentItem)
       if (params.id && value.id === params.id) {
         currentItem = value;
 
@@ -39,8 +41,10 @@ export async function preProcessData ({data, user, params}) {
   });
 
   // save the data if some new ids have been added to it
-  if (someUniqueIdsAdded) {
-    let updateResult = await setUserData({username: user.details.username, data, type: "appData"});
+  if (addUniqueIdsToData) {
+    if (someUniqueIdsAdded) {
+      await setUserData({username: user.details.username, data, type: "appData"});
+    }
   }
 
   return { currentItem, parentItem };

@@ -1,17 +1,15 @@
-const path = require('path');
-const jsonfile = require("jsonfile")
-// import { nunjucks } from "./nunjucks-lib";
-const deepExtend = require("deep-extend");
+const Handlebars = require('handlebars');
+const parseUrl = require('parseurl');
 import { get, set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
 import { getItemWithId } from "./get-item-with-id";
-const passport = require('passport');
-import { getAppsInfo } from "./get-apps-info";
 import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
-
+import { getUserData, setUserData } from "./user-data";
+import { getPartials } from "./get-project-info";
 
 export function initApiRoutes ({app}) {
+  let partials = getPartials();
 
   app.post('/save', async (req, res) => {
 
@@ -24,11 +22,10 @@ export function initApiRoutes ({app}) {
     let incomingData = req.body.data;
     let savePath = req.body.path;
     let saveToId = req.body.saveToId;
-    let appName = req.body.appName || "default";
 
     // get existing data
     let user = req.user;
-    let existingData = JSON.parse(user.appData[appName] || {});
+    let existingData = user.appData;
 
     // option 1: save path
     if (savePath) {
@@ -50,7 +47,6 @@ export function initApiRoutes ({app}) {
     // option 2: save to id
     } else if (saveToId) {
       let itemData = getItemWithId(existingData, saveToId);
-
       specialDeepExtend(itemData, incomingData);
       Object.assign(itemData, incomingData);
     // option 3: extend existing data at root level
@@ -59,39 +55,63 @@ export function initApiRoutes ({app}) {
       existingData = incomingData;
     }
 
-    let updateCommand = {$set: {}};
-    updateCommand["$set"]["appData." + appName] = JSON.stringify(existingData);
-
-    let updateResult = await usersCollection.updateOne(
-      { "_id" : user._id },
-      updateCommand
-    );
-
-    if (user) {
-      let formattedUsername = user.username.replace(/\W/g, "");
-      jsonfile.writeFile(path.join(__dirname, `../tempData/${formattedUsername}-${appName}.json`), existingData, { spaces: 2 }, function () {});
-    }
+    await setUserData({username: user.details.username, data: existingData, type: "appData"});
 
     res.json({success: true});
 
   })
 
   app.post('/new', async (req, res) => {
-    let user = req.user;
+
+    if (!req.isAuthenticated()) {
+      res.json({htmlString: ""});
+      return;
+    }
+
     let templateName = req.body.templateName;
-    let appName = req.body.appName;
+    let matchingPartial = partials.find(partial => partial.name === templateName);
 
-    let matchingPartial = getAppsInfo().partials.find(partial => partial.name === templateName && partial.appName === appName);
-
-    forEachDeep(matchingPartial.startingData, function (value, key, parentValue, context) {
+    // add a unique key to every plain object in the bootstrap data
+    forEachDeep(matchingPartial.bootstrapData, function (value, key, parentValue, context) {
       if (isPlainObject(value) && !value.id) {
         value.id = getUniqueId();
       }
     });
 
-    let htmlString = nunjucks.renderString(matchingPartial.templateString, {
-      ...matchingPartial.startingData,
-      user: user
+    let params = req.params;
+    let usernameFromParams = params.username;
+    let query = req.query;
+    let pathname = parseUrl(req).pathname;
+    let currentUser = req.user;
+    let pageOwner = await getUserData({username: usernameFromParams});
+    let data = pageOwner && pageOwner.appData || {};
+    let isPageOwner = currentUser && pageOwner && currentUser.details.username === pageOwner.details.username;
+
+    let currentItem;
+    let parentItem; 
+    if (pageOwner) {
+      let processResponse = await preProcessData({data, user: pageOwner, params, addUniqueIdsToData: true});
+      currentItem = processResponse.currentItem;
+      parentItem = processResponse.parentItem;
+    }
+
+    if (usernameFromParams && !pageOwner) {
+      res.json({htmlString: ""});
+      return;
+    }
+
+    let template = Handlebars.compile(matchingPartial.templateString);
+    let htmlString = template({
+      data,
+      params,
+      query,
+      pathname,
+      currentItem,
+      parentItem,
+      currentUser,
+      pageOwner,
+      isPageOwner,
+      ...matchingPartial.bootstrapData
     });
 
     res.json({ htmlString: htmlString });

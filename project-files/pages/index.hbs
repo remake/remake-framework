@@ -1,1 +1,13 @@
-<div>Home page</div>
+
+<div 
+  class="todo-lists"
+  data-o-type="list"
+>
+  {{#each todoLists as |todoList|}}
+    {{> todoList}}
+  {{/each}}
+</div>
+<button 
+  class="button"
+  data-i-new="todoList .todo-lists"
+>Add Todo List</button>

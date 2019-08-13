@@ -66,7 +66,6 @@ function _getProjectInfo () {
           bootstrapData = jsonfile.readFileSync(pathToBootstrapData);
         } catch (e) {
           bootstrapData = {};
-          showConsoleError("Error: Couldn't load partial data file: " + pathToBootstrapData);
         }
 
         partials.push({

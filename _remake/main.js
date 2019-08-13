@@ -5,6 +5,7 @@ import expressSession from "express-session";
 const flash = require('connect-flash');
 const path = require('path');
 const FileStore = require('session-file-store')(expressSession);
+import { initApiRoutes } from "./lib/init-api-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 
@@ -35,6 +36,7 @@ app.use(flash());
 
 
 initUserAccounts({ app });
+initApiRoutes({ app });
 initRenderedRoutes({ app });
 
 

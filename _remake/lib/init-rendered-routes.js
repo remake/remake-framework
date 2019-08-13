@@ -30,7 +30,7 @@ export async function initRenderedRoutes ({ app }) {
       let currentItem;
       let parentItem; 
       if (pageOwner) {
-        let processResponse = await preProcessData({data, user: pageOwner, params});
+        let processResponse = await preProcessData({data, user: pageOwner, params, addUniqueIdsToData: true});
         currentItem = processResponse.currentItem;
         parentItem = processResponse.parentItem;
       }
