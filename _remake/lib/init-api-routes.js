@@ -8,6 +8,8 @@ import getUniqueId from "./get-unique-id";
 import { getUserData, setUserData } from "./user-data";
 import { getPartials } from "./get-project-info";
 import { getParamsFromPathname } from "../utils/get-params-from-pathname";
+import { preProcessData } from "./pre-process-data";
+
 
 export function initApiRoutes ({app}) {
   let partials = getPartials();
@@ -84,11 +86,9 @@ export function initApiRoutes ({app}) {
     let referrerUrlParsed = new URL(referrerUrl);
     let referrerUrlPath = referrerUrlParsed.pathname; // e.g. "/jane/todo-list/123"
     let params = getParamsFromPathname(referrerUrlPath); // e.g. { username: 'jane', id: '123' }
-
-    console.log("params in api routes:", params);
+    let query = Object.fromEntries(referrerUrlParsed.searchParams);
 
     let usernameFromParams = params.username;
-    let query = req.query;
     let pathname = referrerUrlPath;
     let currentUser = req.user;
     let pageAuthor = await getUserData({username: usernameFromParams});
@@ -107,19 +107,6 @@ export function initApiRoutes ({app}) {
       res.json({htmlString: ""});
       return;
     }
-
-    // console.log({
-    //   data,
-    //   params,
-    //   query,
-    //   pathname,
-    //   currentItem,
-    //   parentItem,
-    //   currentUser,
-    //   pageAuthor,
-    //   isPageAuthor,
-    //   ...matchingPartial.bootstrapData
-    // });
 
     let template = Handlebars.compile(matchingPartial.templateString);
     let htmlString = template({

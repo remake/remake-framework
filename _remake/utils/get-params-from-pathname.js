@@ -11,8 +11,6 @@ export function getParamsFromPathname (pathname) {
     let match = pathMatch(route);
     let params = match(pathname);
 
-    console.log(444, route, match, params);
-
     if (params) {
       return params;
     }
