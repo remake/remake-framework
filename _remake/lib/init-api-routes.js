@@ -17,9 +17,16 @@ export function initApiRoutes ({app}) {
   app.post('/save', async (req, res) => {
 
     if (!req.isAuthenticated()) {
-      res.json({success: false});
+      res.json({success: false, reason: "notAuthorized"});
       return;
     }
+
+    // referrer url
+    let referrerUrl = req.get('Referrer'); // e.g. "http://exampleapp.org/jane/todo-list/123"
+    let referrerUrlParsed = new URL(referrerUrl);
+    let referrerUrlPath = referrerUrlParsed.pathname; // e.g. "/jane/todo-list/123"
+    let params = getParamsFromPathname(referrerUrlPath); // e.g. { username: 'jane', id: '123' }
+    let usernameFromParams = params.username;
 
     // get incoming data
     let incomingData = req.body.data;
@@ -27,40 +34,48 @@ export function initApiRoutes ({app}) {
     let saveToId = req.body.saveToId;
 
     // get existing data
-    let user = req.user;
-    let existingData = user.appData;
+    let currentUser = req.user;
+    let isPageAuthor = currentUser && usernameFromParams && currentUser.details.username === usernameFromParams;
+    let existingData = currentUser.appData;
 
-    // option 1: save path
-    if (savePath) {
-      let dataAtPath = get(existingData, savePath); 
+    if (isPageAuthor) {
 
-      if (isPlainObject(dataAtPath)) {
-        // deep extend, using ids to match objects in arrays
-        specialDeepExtend(dataAtPath, incomingData);
-        set(existingData, savePath, incomingData);
-      } else if (Array.isArray(dataAtPath)) {
-        specialDeepExtend(dataAtPath, incomingData);
-        set(existingData, savePath, incomingData);
+      // option 1: save path
+      if (savePath) {
+        let dataAtPath = get(existingData, savePath); 
+
+        if (isPlainObject(dataAtPath)) {
+          // deep extend, using ids to match objects in arrays
+          specialDeepExtend(dataAtPath, incomingData);
+          set(existingData, savePath, incomingData);
+        } else if (Array.isArray(dataAtPath)) {
+          specialDeepExtend(dataAtPath, incomingData);
+          set(existingData, savePath, incomingData);
+        } else {
+          // if we're not auto generating ids OR
+          // if dataAtPath is NOT an object or array
+          // replace the data the the path
+          set(existingData, savePath, incomingData);
+        }
+      // option 2: save to id
+      } else if (saveToId) {
+        let itemData = getItemWithId(existingData, saveToId);
+        specialDeepExtend(itemData, incomingData);
+        Object.assign(itemData, incomingData);
+      // option 3: extend existing data at root level
       } else {
-        // if we're not auto generating ids OR
-        // if dataAtPath is NOT an object or array
-        // replace the data the the path
-        set(existingData, savePath, incomingData);
+        specialDeepExtend(existingData, incomingData);
+        existingData = incomingData;
       }
-    // option 2: save to id
-    } else if (saveToId) {
-      let itemData = getItemWithId(existingData, saveToId);
-      specialDeepExtend(itemData, incomingData);
-      Object.assign(itemData, incomingData);
-    // option 3: extend existing data at root level
+
+      await setUserData({username: currentUser.details.username, data: existingData, type: "appData"});
+
+      res.json({success: true});
+
     } else {
-      specialDeepExtend(existingData, incomingData);
-      existingData = incomingData;
+      res.json({success: false, reason: "notAuthorized"});
+      return;
     }
-
-    await setUserData({username: user.details.username, data: existingData, type: "appData"});
-
-    res.json({success: true});
 
   })
 

@@ -1,11 +1,15 @@
 
 <div 
+  data-o-save-deep="defaultSave"
   class="todo-lists"
   data-o-type="list"
 >
-  {{#each todoLists as |todoList|}}
-    {{> todoList}}
-  {{/each}}
+  <div 
+    class="todo"
+    data-o-type="object"
+    data-o-key-text="Go to the moon"
+    data-i-editable="text(text-single-line)"
+  >Go to the moon</div>
 </div>
 <button 
   class="button"

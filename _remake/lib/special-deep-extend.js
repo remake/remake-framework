@@ -21,6 +21,11 @@ export function specialDeepExtend (source, target) {
 
   if (isArray(target)) {
 
+    // overwrite the source if the data types don't match (would prefer not to do this)
+    if (!isArray(source)) {
+      source = [];
+    }
+
     // loop through children of target data
     target.forEach(function (targetChild) {
 
