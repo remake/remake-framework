@@ -7,6 +7,7 @@ import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
 import { getUserData, setUserData } from "./user-data";
 import { getPartials } from "./get-project-info";
+import { getParamsFromPathname } from "../utils/get-params-from-pathname";
 
 export function initApiRoutes ({app}) {
   let partials = getPartials();
@@ -68,8 +69,6 @@ export function initApiRoutes ({app}) {
       return;
     }
 
-    console.log(req.get('Referrer'));
-
     let templateName = req.body.templateName;
     let matchingPartial = partials.find(partial => partial.name === templateName);
 
@@ -80,10 +79,17 @@ export function initApiRoutes ({app}) {
       }
     });
 
-    let params = req.params;
+    // referrer url
+    let referrerUrl = req.get('Referrer'); // e.g. "http://exampleapp.org/jane/todo-list/123"
+    let referrerUrlParsed = new URL(referrerUrl);
+    let referrerUrlPath = referrerUrlParsed.pathname; // e.g. "/jane/todo-list/123"
+    let params = getParamsFromPathname(referrerUrlPath); // e.g. { username: 'jane', id: '123' }
+
+    console.log("params in api routes:", params);
+
     let usernameFromParams = params.username;
     let query = req.query;
-    let pathname = parseUrl(req).pathname;
+    let pathname = referrerUrlPath;
     let currentUser = req.user;
     let pageAuthor = await getUserData({username: usernameFromParams});
     let data = pageAuthor && pageAuthor.appData || {};
@@ -102,18 +108,18 @@ export function initApiRoutes ({app}) {
       return;
     }
 
-    console.log({
-      data,
-      params,
-      query,
-      pathname,
-      currentItem,
-      parentItem,
-      currentUser,
-      pageAuthor,
-      isPageAuthor,
-      ...matchingPartial.bootstrapData
-    });
+    // console.log({
+    //   data,
+    //   params,
+    //   query,
+    //   pathname,
+    //   currentItem,
+    //   parentItem,
+    //   currentUser,
+    //   pageAuthor,
+    //   isPageAuthor,
+    //   ...matchingPartial.bootstrapData
+    // });
 
     let template = Handlebars.compile(matchingPartial.templateString);
     let htmlString = template({

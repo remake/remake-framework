@@ -15,7 +15,7 @@ export async function initRenderedRoutes ({ app }) {
 
   routes.forEach(({route, templateString}) => {
 
-    app.get(route, async (req, res) => { // route === "/:username/page-name-route/:id"
+    app.get(route, async (req, res) => { // route === "/:username/page-name-route/:id?"
 
       let params = req.params;
       let usernameFromParams = params.username;
