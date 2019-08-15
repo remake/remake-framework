@@ -119,6 +119,7 @@ export function initApiRoutes ({app}) {
       currentUser,
       pageAuthor,
       isPageAuthor,
+      pageHasAppData: !!pageAuthor,
       ...matchingPartial.bootstrapData
     });
 

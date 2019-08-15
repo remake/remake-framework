@@ -57,7 +57,8 @@ export async function initRenderedRoutes ({ app }) {
         flashErrors,
         currentUser,
         pageAuthor,
-        isPageAuthor
+        isPageAuthor,
+        pageHasAppData: !!pageAuthor
       });
 
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
