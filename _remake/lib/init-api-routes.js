@@ -68,6 +68,8 @@ export function initApiRoutes ({app}) {
       return;
     }
 
+    console.log(req.get('Referrer'));
+
     let templateName = req.body.templateName;
     let matchingPartial = partials.find(partial => partial.name === templateName);
 
@@ -83,22 +85,35 @@ export function initApiRoutes ({app}) {
     let query = req.query;
     let pathname = parseUrl(req).pathname;
     let currentUser = req.user;
-    let pageOwner = await getUserData({username: usernameFromParams});
-    let data = pageOwner && pageOwner.appData || {};
-    let isPageOwner = currentUser && pageOwner && currentUser.details.username === pageOwner.details.username;
+    let pageAuthor = await getUserData({username: usernameFromParams});
+    let data = pageAuthor && pageAuthor.appData || {};
+    let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
 
     let currentItem;
     let parentItem; 
-    if (pageOwner) {
-      let processResponse = await preProcessData({data, user: pageOwner, params, addUniqueIdsToData: true});
+    if (pageAuthor) {
+      let processResponse = await preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true});
       currentItem = processResponse.currentItem;
       parentItem = processResponse.parentItem;
     }
 
-    if (usernameFromParams && !pageOwner) {
+    if (usernameFromParams && !pageAuthor) {
       res.json({htmlString: ""});
       return;
     }
+
+    console.log({
+      data,
+      params,
+      query,
+      pathname,
+      currentItem,
+      parentItem,
+      currentUser,
+      pageAuthor,
+      isPageAuthor,
+      ...matchingPartial.bootstrapData
+    });
 
     let template = Handlebars.compile(matchingPartial.templateString);
     let htmlString = template({
@@ -109,8 +124,8 @@ export function initApiRoutes ({app}) {
       currentItem,
       parentItem,
       currentUser,
-      pageOwner,
-      isPageOwner,
+      pageAuthor,
+      isPageAuthor,
       ...matchingPartial.bootstrapData
     });
 

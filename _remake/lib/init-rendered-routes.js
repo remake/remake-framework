@@ -22,20 +22,21 @@ export async function initRenderedRoutes ({ app }) {
       let query = req.query;
       let pathname = parseUrl(req).pathname;
       let currentUser = req.user;
-      let pageOwner = await getUserData({username: usernameFromParams});
-      let data = pageOwner && pageOwner.appData || {};
-      let isPageOwner = currentUser && pageOwner && currentUser.details.username === pageOwner.details.username;
+      let pageAuthor = await getUserData({username: usernameFromParams});
+      let data = pageAuthor && pageAuthor.appData;
+      let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
       let flashErrors = req.flash("error");
 
       let currentItem;
       let parentItem; 
-      if (pageOwner) {
-        let processResponse = await preProcessData({data, user: pageOwner, params, addUniqueIdsToData: true});
+      if (pageAuthor) {
+        let processResponse = await preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true});
         currentItem = processResponse.currentItem;
         parentItem = processResponse.parentItem;
       }
 
-      if (usernameFromParams && !pageOwner) {
+      if (usernameFromParams && !pageAuthor) {
+        // could redirect from the current page, i.e. /:username/pageName to the static route, i.e. /pageName
         res.status(404).send("404 Not Found");
         return;
       }
@@ -55,8 +56,8 @@ export async function initRenderedRoutes ({ app }) {
         parentItem,
         flashErrors,
         currentUser,
-        pageOwner,
-        isPageOwner
+        pageAuthor,
+        isPageAuthor
       });
 
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
