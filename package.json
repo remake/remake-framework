@@ -20,6 +20,7 @@
     "camelcase": "^5.3.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.4",
+    "crostini": "^1.0.1",
     "deep-extend": "^0.6.0",
     "deepdash-es": "^4.2.5",
     "directory-tree": "^2.2.3",
