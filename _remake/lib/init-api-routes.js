@@ -33,13 +33,17 @@ export function initApiRoutes ({app}) {
     let savePath = req.body.path;
     let saveToId = req.body.saveToId;
 
+    if (!incomingData) {
+      res.json({success: false, reason: "noIncomingData"});
+      return;
+    }
+
     // get existing data
     let currentUser = req.user;
     let isPageAuthor = currentUser && usernameFromParams && currentUser.details.username === usernameFromParams;
     let existingData = currentUser.appData;
 
     if (isPageAuthor) {
-
       // option 1: save path
       if (savePath) {
         let dataAtPath = get(existingData, savePath); 
