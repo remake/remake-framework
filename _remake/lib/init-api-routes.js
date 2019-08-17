@@ -82,7 +82,7 @@ export function initApiRoutes ({app}) {
   app.post('/new', async (req, res) => {
 
     if (!req.isAuthenticated()) {
-      res.json({htmlString: ""});
+      res.json({success: false, reason: "notAuthorized"});
       return;
     }
 
@@ -110,6 +110,11 @@ export function initApiRoutes ({app}) {
     let data = pageAuthor && pageAuthor.appData || {};
     let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
 
+    if (!isPageAuthor) {
+      res.json({success: false, reason: "notAuthorized"});
+      return;
+    }
+
     let currentItem;
     let parentItem; 
     if (pageAuthor) {
@@ -119,7 +124,7 @@ export function initApiRoutes ({app}) {
     }
 
     if (usernameFromParams && !pageAuthor) {
-      res.json({htmlString: ""});
+      res.json({success: false, reason: "notAuthorized"});
       return;
     }
 
@@ -138,7 +143,7 @@ export function initApiRoutes ({app}) {
       ...matchingPartial.bootstrapData
     });
 
-    res.json({ htmlString: htmlString });
+    res.json({success: true, htmlString: htmlString});
   })
 
 }

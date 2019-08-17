@@ -5,7 +5,12 @@ init({
   debugSave: true, // to implement. should console.log data on page whenever it changes.
   defaultSaveCallback: function (res) {
     if (!res.success) {
-      crostini("Can't save data on this page", {type: "error"});
+      crostini("Error saving data", {type: "error"});
+    }
+  },
+  addItemCallback: function ({templateName, ajaxResponse}) {
+    if (!ajaxResponse.success) {
+      crostini("Error adding new item", {type: "error"});
     }
   }
 });
