@@ -23,8 +23,8 @@ async function createUserData ({ username, hash }) {
     appData = {};
   }
 
-  let detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `_${username}.json`), details);
-  let appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `${username}.json`), appData);
+  let detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `_${username}.json`), details, { spaces: 2 });
+  let appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/", `${username}.json`), appData, { spaces: 2 });
 
   await Promise.all([detailsWritePromise, appDataWritePromise]);
 
@@ -52,7 +52,7 @@ async function setUserData ({ username, data, type }) {
 
   try {
     if (type === "details") {
-      detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), data);
+      detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `_${username}.json`), data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user details");
@@ -60,7 +60,7 @@ async function setUserData ({ username, data, type }) {
 
   try {
     if (type === "appData") {
-      appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), data);
+      appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/", `${username}.json`), data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user appData");
