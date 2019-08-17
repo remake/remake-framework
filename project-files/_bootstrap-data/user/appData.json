@@ -1,7 +1,7 @@
 {
-  "todos": [
+  "todoLists": [
     {
-      "text": "Get milk and cereal"
+      "name": "Get milk and cereal"
     }
   ]
 }
