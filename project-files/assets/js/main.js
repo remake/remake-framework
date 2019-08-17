@@ -2,7 +2,7 @@ import { init, getDataFromRootNode } from 'remakejs/dist/bundle.es6';
 import crostini from 'crostini';
 
 init({
-  debugSave: true, // to implement. should console.log data on page whenever it changes.
+  logDataOnSave: true, // to implement. should console.log data on page whenever it changes.
   defaultSaveCallback: function (res) {
     if (!res.success) {
       crostini("Error saving data", {type: "error"});
