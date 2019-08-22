@@ -1,18 +1,19 @@
 <div
+  class="page-container"
   data-o-save-deep="defaultSave"
   data-o-type="object"
 >
   <div 
-    class="todo-lists"
+    class="todo-list"
     data-o-key="todoLists"
     data-o-type="list"
   >
     {{#each data.todoLists}}
-      {{> todoList todoList=this}}
+      {{> todoList todoList=this pageAuthor=@root.pageAuthor}}
     {{/each}}
   </div>
+  <button 
+    class="button"
+    data-i-new="todoList .todo-lists"
+  >Add Todo List</button>
 </div>
-<button 
-  class="button"
-  data-i-new="todoList .todo-lists"
->Add Todo List</button>
