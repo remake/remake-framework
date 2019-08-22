@@ -3,10 +3,11 @@
   data-o-type="object"
   data-o-key-id="{{todoList.id}}"
   data-o-key-name="{{todoList.name}}"
-  data-w-key-name="innerText"
   href="{{pageAuthor.details.username}}/todo-list/{{todoList.id}}"
 >
-  <span>{{todoList.name}}</span>
+  <span
+    data-w-key-name="innerText"
+  >{{todoList.name}}</span>
   <span 
     class="todo-lists__edit js-pd" 
     href="#"
