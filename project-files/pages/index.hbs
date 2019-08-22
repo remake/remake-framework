@@ -14,10 +14,12 @@
         {{> todoList todoList=this pageAuthor=@root.pageAuthor}}
       {{/each}}
     </div>
-    <button 
-      class="button"
-      data-i-new="todoList .todo-lists"
-    >Add Todo List</button>
+    <div class="flex justify-content--flex-end">
+      <button 
+        class="button"
+        data-i-new="todoList .todo-lists"
+      >Add Todo List</button>
+    </div>
   </div>
 {{else}}
   <div class="page">

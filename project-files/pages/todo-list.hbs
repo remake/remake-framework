@@ -4,7 +4,8 @@
   data-o-type="object"
   data-o-key-id="{{currentItem.id}}"
 >
-  <a class="button" href="/{{pageAuthor.details.username}}">Go back</a>
+  <a class="text-link block m-b-32" href="/{{pageAuthor.details.username}}">Go back</a>
+  <h2 class="page__heading">Todos</h2>
   <div 
     class="todos"
     data-o-key="todos"
@@ -14,8 +15,10 @@
       {{> todo todo=this pageAuthor=@root.pageAuthor}}
     {{/each}}
   </div>
-  <button 
-    class="button"
-    data-i-new="todo .todos"
-  >Add Todo</button>
+  <div class="flex justify-content--flex-end">
+    <button 
+      class="button"
+      data-i-new="todo .todos"
+    >Add Todo</button>
+  </div>
 </div>
