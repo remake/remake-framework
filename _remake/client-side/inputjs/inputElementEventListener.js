@@ -1,6 +1,7 @@
 import { $ } from '../queryjs';
 import { camelCaseToDash } from '../hummingbird/lib/string';
 import { callWatchFunctions } from "./syncData";
+import { callSaveFunction } from './onSave';
 
 export default function () {
 
@@ -27,6 +28,10 @@ export default function () {
       value: newValue, 
       dataSourceElem: outputElem
     });
+
+    if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
+      callSaveFunction({targetElement: event.currentTarget});
+    }
   });
 
 }

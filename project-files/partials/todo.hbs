@@ -6,7 +6,7 @@
   data-o-key-text="{{todo.text}}"
 >
   <div class="todos__todo-checkbox-area">
-    <input data-i="" type="checkbox" name="isComplete" value="true">
+    <input data-i="triggerSaveOnChange" type="checkbox" name="isComplete" value="true" {{#if todo.isComplete}}checked{{/if}}>
   </div>
   <div 
     class="todos__todo-text"
