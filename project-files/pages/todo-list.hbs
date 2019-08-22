@@ -1,6 +1,21 @@
-<div class="todo-lists">Todo list page</div>
-{{> todo}}
-<button 
-  class="button"
-  data-i-new="todoList .todo-lists"
->Add Todo List</button>
+<div
+  class="page"
+  data-o-save-deep="defaultSave id:{{currentItem.id}}"
+  data-o-type="object"
+  data-o-key-id="{{currentItem.id}}"
+>
+  <a class="button" href="/{{pageAuthor.details.username}}">Go back</a>
+  <div 
+    class="todos"
+    data-o-key="todos"
+    data-o-type="list"
+  >
+    {{#each currentItem.todos}}
+      {{> todo todo=this pageAuthor=@root.pageAuthor}}
+    {{/each}}
+  </div>
+  <button 
+    class="button"
+    data-i-new="todo .todos"
+  >Add Todo</button>
+</div>
