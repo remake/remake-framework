@@ -44,6 +44,17 @@ export function callSaveFunction ({elementDataWasSyncedInto, targetElement}) {
     if (saveFunc) {
       let dataFromSaveElement = isDataInsideElem ? getDataFromRootNode(saveElement) : getDataFromNode(saveElement);
       saveFunc({data: dataFromSaveElement, elem: elementDataWasSyncedInto, path: savePath, saveToId});
+
+      if (optionsData.logDataOnSave) {
+        console.log("# logDataOnSave");
+        console.log("Data:", dataFromSaveElement);
+        if (savePath) {
+          console.log("Save to path:", savePath);
+        }
+        if (saveToId) {
+          console.log("Save to id:", saveToId);
+        }
+      }
     }
   }
 }
