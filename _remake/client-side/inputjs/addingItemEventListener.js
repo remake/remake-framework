@@ -31,6 +31,7 @@ export default function () {
       let whereToInsert = position === "top" ? "afterbegin" : "beforeend";
       listElem.insertAdjacentHTML(whereToInsert, htmlString);
 
+      // save needs to be called on the list element, not the item, so it doesn't try to save to a non-existent id
       callSaveFunction({targetElement: listElem});
 
       if (optionsData.addItemCallback) {

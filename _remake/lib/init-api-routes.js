@@ -13,7 +13,6 @@ import { preProcessData } from "./pre-process-data";
 
 
 export function initApiRoutes ({app}) {
-  let partials = getPartials();
 
   app.post('/save', async (req, res) => {
 
@@ -90,6 +89,9 @@ export function initApiRoutes ({app}) {
 
   app.post('/new', async (req, res) => {
 
+    // get the partials data every time so it returns a new (copied!) object and you don't mistakenly use a modified object from the previous call
+    let partials = getPartials();
+
     if (!req.isAuthenticated()) {
       res.json({success: false, reason: "notAuthorized"});
       return;
@@ -100,7 +102,7 @@ export function initApiRoutes ({app}) {
 
     // add a unique key to every plain object in the bootstrap data
     forEachDeep(matchingPartial.bootstrapData, function (value, key, parentValue, context) {
-      if (isPlainObject(value) && !value.id) {
+      if (isPlainObject(value)) {
         value.id = getUniqueId();
       }
     });
