@@ -8,6 +8,7 @@ import getUniqueId from "./get-unique-id";
 import { getUserData, setUserData } from "./user-data";
 import { getPartials } from "./get-project-info";
 import { getParamsFromPathname } from "../utils/get-params-from-pathname";
+import { capture } from "../utils/async-utils";
 import { preProcessData } from "./pre-process-data";
 
 
@@ -72,7 +73,11 @@ export function initApiRoutes ({app}) {
         existingData = incomingData;
       }
 
-      await setUserData({username: currentUser.details.username, data: existingData, type: "appData"});
+      let [setUserDataResponse, setUserDataError] = await capture(setUserData({username: currentUser.details.username, data: existingData, type: "appData"}));
+      if (setUserDataError) {
+        res.json({success: false, reason: "userData"});
+        return;
+      }
 
       res.json({success: true});
 
@@ -110,7 +115,12 @@ export function initApiRoutes ({app}) {
     let usernameFromParams = params.username;
     let pathname = referrerUrlPath;
     let currentUser = req.user;
-    let pageAuthor = await getUserData({username: usernameFromParams});
+    let [pageAuthor, pageAuthorError] = await capture(getUserData({username: usernameFromParams}));
+    if (pageAuthorError) {
+      res.json({success: false, reason: "userData"});
+      return;
+    }
+
     let data = pageAuthor && pageAuthor.appData || {};
     let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
 
@@ -122,7 +132,12 @@ export function initApiRoutes ({app}) {
     let currentItem;
     let parentItem; 
     if (pageAuthor) {
-      let processResponse = await preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true});
+      let [processResponse, processResponseError] = await capture(preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true}));
+      if (processResponseError) {
+        res.json({success: false, reason: "preProcessData"});
+        return;
+      }
+
       currentItem = processResponse.currentItem;
       parentItem = processResponse.parentItem;
     }

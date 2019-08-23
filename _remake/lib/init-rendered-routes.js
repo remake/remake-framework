@@ -5,6 +5,7 @@ const path = require('path');
 const jsonfile = require("jsonfile");
 import { preProcessData } from "./pre-process-data";
 import { getUserData } from "./user-data";
+import { capture } from "../utils/async-utils";
 
 let partials = getPartials();
 partials.forEach(partial => Handlebars.registerPartial(partial.name, partial.templateString));
@@ -22,7 +23,12 @@ export async function initRenderedRoutes ({ app }) {
       let query = req.query;
       let pathname = parseUrl(req).pathname;
       let currentUser = req.user;
-      let pageAuthor = await getUserData({username: usernameFromParams});
+      let [pageAuthor, pageAuthorError] = await capture(getUserData({username: usernameFromParams}));
+      if (pageAuthorError) {
+        res.status(500).send("500 Server Error");
+        return;
+      }
+
       let data = pageAuthor && pageAuthor.appData;
       let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
       let flashErrors = req.flash("error");
@@ -30,7 +36,12 @@ export async function initRenderedRoutes ({ app }) {
       let currentItem;
       let parentItem; 
       if (pageAuthor) {
-        let processResponse = await preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true});
+        let [processResponse, processResponseError] = await capture(preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true}));
+        if (processResponseError) {
+          res.status(500).send("500 Server Error");
+          return;
+        }
+
         currentItem = processResponse.currentItem;
         parentItem = processResponse.parentItem;
       }

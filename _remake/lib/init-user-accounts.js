@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jsonfile = require("jsonfile");
 import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
+import { capture } from "../utils/async-utils";
 
 function initUserAccounts ({ app }) {
   app.use(passport.initialize());
@@ -13,14 +14,14 @@ function initUserAccounts ({ app }) {
   // The local strategy require a `verify` function which receives the credentials
   passport.use(new LocalStrategy(async function(username, password, cb) {
     try {
-      let currentUser = await getUserData({ username });
+      let [currentUser] = await capture(getUserData({ username }));
 
       if (!currentUser) { 
         cb(null, false);
         return;
       }
 
-      let passwordMatches = await bcrypt.compare(password, currentUser.details.hash);
+      let [passwordMatches] = await capture(bcrypt.compare(password, currentUser.details.hash));
 
       if (!passwordMatches) {
         cb(null, false);
@@ -39,9 +40,11 @@ function initUserAccounts ({ app }) {
   });
 
   passport.deserializeUser(async function(username, cb) {
-    let currentUser = await getUserData({ username });
+    let [currentUser] = await capture(getUserData({ username }));
 
-    cb(null, currentUser);
+    if (currentUser) {
+      cb(null, currentUser);
+    }
   });
 
   app.post('/signup', async function(req, res) {
@@ -74,15 +77,15 @@ function initUserAccounts ({ app }) {
       }
     }
 
-    let usernameTaken = await getUserData({ username });
+    let [usernameTaken] = await capture(getUserData({ username }));
     if (usernameTaken) {
       req.flash("error", "That username is taken, please try another one!");
       res.redirect('/signup');
       return;
     }
 
-    let hash = await bcrypt.hash(password, 14);
-    let newUser = await createUserData({ username, hash });
+    let [hash] = await capture(bcrypt.hash(password, 14));
+    let [newUser] = await capture(createUserData({ username, hash }));
 
     req.login(newUser, function (err) {
       if (!err){

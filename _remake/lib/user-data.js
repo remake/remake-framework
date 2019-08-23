@@ -1,31 +1,29 @@
 const jsonfile = require("jsonfile");
 const path = require('path');
 import { showConsoleError } from "../utils/console-utils";
+import { capture } from "../utils/async-utils";
 
 // create new user data files
 // returns: {details, appData}
 async function createUserData ({ username, hash }) {
 
-  let details;
-  try {
-    details = await jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/details.json"));
-  } catch (e) {
+  let [details] = await capture(jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/details.json")));
+  if (!details) {
     details = {};
   }
 
   // extend user details with args
   Object.assign(details, { username, hash });
 
-  let appData;
-  try {
-    appData = await jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/appData.json"));
-  } catch (e) {
+  let [appData] = await capture(jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/appData.json")));
+  if (!appData) {
     appData = {};
   }
 
   let detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/user-details/", `${username}.json`), details, { spaces: 2 });
   let appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/user-app-data/", `${username}.json`), appData, { spaces: 2 });
 
+  // let higher-level functions capture this if it errors
   await Promise.all([detailsWritePromise, appDataWritePromise]);
 
   return {details, appData};
@@ -66,6 +64,7 @@ async function setUserData ({ username, data, type }) {
     showConsoleError("Error: Setting user appData");
   }
 
+  // let higher-level functions capture this if it errors
   await Promise.all([detailsWritePromise, appDataWritePromise]);
 
   return {username, type, data};
