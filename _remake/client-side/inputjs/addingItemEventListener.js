@@ -11,7 +11,20 @@ export default function () {
     let triggerElem = event.currentTarget;
     
     // parse the data attribute to get the selector and the template name
-    let [templateName, selector, position] = getAttributeValueAsArray(triggerElem, "data-i-new");
+    let [templateName, ...otherArgs] = getAttributeValueAsArray(triggerElem, "data-i-new");
+
+    let selector, position;
+    if (otherArgs.length === 0) {
+      selector = "[data-o-type='list']";
+    } else {
+      otherArgs.forEach(arg => {
+        if (arg === "top" || arg === "bottom") {
+          position = arg;
+        } else {
+          selector = arg;
+        }
+      });
+    }
 
     // pass the template name into an endpoint and get the resulting html back
     ajaxPost("/new", {templateName}, function (ajaxResponse) {
