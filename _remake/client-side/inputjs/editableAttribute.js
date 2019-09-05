@@ -7,7 +7,11 @@ import Switches from '../switchjs';
 import { getDataFromNode } from '../outputjs';
 import autosize from '../vendor/autosize';
 
-
+// data-i-editable: trigger popover with three buttons (remove, cancel, and save)
+// data-i-editable-without-remove: trigger popover with two buttons (cancel and save)
+// data-i-editable-with-hide: trigger popover with three buttons (remove, cancel, and save), 
+//                            but the remove button is special: it doesn't remove an element, 
+//                            it just sets all its data keys to empty strings
 export default function () {
   insertRemakeEditPopoverHtml();
 
@@ -74,6 +78,20 @@ export default function () {
 
   $.on("click", ".remake-edit__button:not([type='submit'])", function (event) {
     event.preventDefault();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.keyCode === 27) {
+      let turnedOnEditablePopovers = Array.from(document.querySelectorAll("[data-switched-on='remakeEdit'], [data-switched-on='remakeEditWithoutRemove'], [data-switched-on='remakeEditWithHide']"));
+      
+      if (turnedOnEditablePopovers.length > 0) {
+        turnedOnEditablePopovers.forEach(el => {
+          Switches.turnOff({name: "remakeEdit", elem: el});
+          Switches.turnOff({name: "remakeEditWithoutRemove", elem: el});
+          Switches.turnOff({name: "remakeEditWithHide", elem: el});
+        });
+      }
+    }
   });
 }
 
@@ -247,7 +265,7 @@ function insertRemakeEditPopoverHtml () {
       color: #fff;
     }
 
-    [data-switched-on~="remakeEditWithoutRemove"] .remake-edit__button--remove {
+    [data-switched-on~="remakeEditWithoutRemove"] .remake-edit__button--remove, [data-switched-on~="remakeEditWithHide"] .remake-edit__button--remove {
       display: none;
     }
 
