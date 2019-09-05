@@ -4,6 +4,7 @@ import { forEachAttr } from '../hummingbird/lib/dom';
 import { processAttributeString } from '../parse-data-attributes';
 import { copyLayout } from '../copy-layout';
 import Switches from '../switchjs';
+import { getDataFromNode } from '../outputjs';
 import autosize from '../vendor/autosize';
 
 
@@ -14,7 +15,13 @@ export default function () {
     let editableTriggerElem = event.currentTarget;
     let [ switchName, editableConfigString ] = getEditableInfo(editableTriggerElem);
     let editablePopoverElem = document.querySelector(".remake-edit");
-    let editableConfig = processAttributeString(editableConfigString); // [{name, modifier, args: []}]
+    let editableConfig;
+
+    if (editableConfigString) {
+      editableConfig = processAttributeString(editableConfigString); // [{name, modifier, args: []}]
+    } else {
+      editableConfig = generateEditableConfigFromClosestElemWithData(editableTriggerElem);
+    }
 
     // remove old output key attributes
     removeOutputDataAttributes({
@@ -125,6 +132,21 @@ function generateRemakeEditAreas ({config}) { // e.g. {name: "blogTitle", modifi
   return outputHtml;
 }
 
+// example output: [{name: "text", modifier: "text-single-line", args: []}]
+function generateEditableConfigFromClosestElemWithData (elem) {
+  let elemWithData = elem.closest("[data-o-type]");
+
+  if (!elemWithData) {
+    return;
+  }
+
+  let dataFromElem = getDataFromNode(elemWithData);
+
+  return Object.keys(dataFromElem).map(keyName => {
+    return {name: keyName, modifier: "text-single-line"}
+  });
+}
+
 function insertRemakeEditPopoverHtml () {
   let htmlString = `
   <style>
@@ -160,7 +182,7 @@ function insertRemakeEditPopoverHtml () {
       width: 100%;
     }
 
-    .remake-edit__edit-areas {
+    .remake-edit__edit-area {
       margin-bottom: 8px;
     }
 

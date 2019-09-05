@@ -2,6 +2,8 @@ import { forEachAttr, forEachAncestorMatch } from '../hummingbird/lib/dom';
 import { dashToCamelCase, camelCaseToDash } from '../hummingbird/lib/string';
 import { formatSpaces } from "../parse-data-attributes";
 
+// example return value:
+// {elemType: "object", key: "profileInfo", value: {name: "Kate"}}
 function parseNode (elem, isParentDataAnObject) { 
   let elemType = elem.getAttribute("data-o-type"); // elemType can be `object` or `list`
 
