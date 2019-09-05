@@ -10,6 +10,7 @@ import { getPartials } from "./get-project-info";
 import { getParamsFromPathname } from "../utils/get-params-from-pathname";
 import { capture } from "../utils/async-utils";
 import { preProcessData } from "./pre-process-data";
+import RemakeStore from "./remake-store";
 
 
 export function initApiRoutes ({app}) {
@@ -89,25 +90,34 @@ export function initApiRoutes ({app}) {
 
   app.post('/new', async (req, res) => {
 
-    // get the partials data every time so it returns a new (copied!) object and you don't mistakenly use a modified object from the previous call
-    let partials = getPartials();
-
     if (!req.isAuthenticated()) {
       res.json({success: false, reason: "notAuthorized"});
       return;
     }
 
     let templateName = req.body.templateName;
+    
+    // get the partials data every time so it returns a new (copied!) object and you don't mistakenly use a modified object from the previous call
+    let partials = getPartials();
     let matchingPartial = partials.find(partial => partial.name === templateName);
 
+    // default to using inline named partials as opposed to partial files
+    let templateRenderFunc = RemakeStore.getNewItemRenderFunction({name: templateName});
+    let bootstrapData = matchingPartial.bootstrapData;
+
+    // use the user-defined partial files only if no render functions are found
+    if (!templateRenderFunc) {
+      templateRenderFunc = Handlebars.compile(matchingPartial.templateString);
+    }
+
     // add a unique key to every plain object in the bootstrap data
-    forEachDeep(matchingPartial.bootstrapData, function (value, key, parentValue, context) {
+    forEachDeep(bootstrapData, function (value, key, parentValue, context) {
       if (isPlainObject(value)) {
         value.id = getUniqueId();
       }
     });
 
-    // referrer url
+    // construct referrer url, pathname, params, and query object from referrer url
     let referrerUrl = req.get('Referrer'); // e.g. "http://exampleapp.org/jane/todo-list/123"
     let referrerUrlParsed = new URL(referrerUrl);
     let referrerUrlPath = referrerUrlParsed.pathname; // e.g. "/jane/todo-list/123"
@@ -118,6 +128,7 @@ export function initApiRoutes ({app}) {
     let pathname = referrerUrlPath;
     let currentUser = req.user;
     let [pageAuthor, pageAuthorError] = await capture(getUserData({username: usernameFromParams}));
+
     if (pageAuthorError) {
       res.json({success: false, reason: "userData"});
       return;
@@ -149,8 +160,7 @@ export function initApiRoutes ({app}) {
       return;
     }
 
-    let template = Handlebars.compile(matchingPartial.templateString);
-    let htmlString = template({
+    let htmlString = templateRenderFunc({
       data,
       params,
       query,
@@ -161,7 +171,7 @@ export function initApiRoutes ({app}) {
       pageAuthor,
       isPageAuthor,
       pageHasAppData: !!pageAuthor,
-      ...matchingPartial.bootstrapData
+      ...bootstrapData
     });
 
     res.json({success: true, htmlString: htmlString});

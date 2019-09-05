@@ -12,9 +12,7 @@ import { initUserAccounts } from "./lib/init-user-accounts";
 // set up vars
 dotenv.config({ path: "variables.env" });
 
-
 const app = express();
-
 
 // express session
 app.use(expressSession({ 
@@ -27,7 +25,6 @@ app.use(expressSession({
   }
 }));
 
-
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './dist')));
 app.use(express.urlencoded({ extended: false }));
@@ -35,6 +32,7 @@ app.use(express.json());
 app.use(flash());
 
 
+// REMAKE FRAMEWORK CORE
 initUserAccounts({ app });
 initApiRoutes({ app });
 initRenderedRoutes({ app });
@@ -48,8 +46,6 @@ app.listen(PORT, () => {
     process.send('online');
   }
 })
-
-
 
 
 

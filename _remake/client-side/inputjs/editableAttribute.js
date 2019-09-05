@@ -60,7 +60,9 @@ export default function () {
 
     // focus input
     let firstFormInput = editablePopoverElem.querySelector("textarea, input")
-    firstFormInput.focus();
+    if (firstFormInput) {
+      firstFormInput.focus();
+    }
   });
 
   $.on("click", ".remake-edit__button:not([type='submit'])", function (event) {

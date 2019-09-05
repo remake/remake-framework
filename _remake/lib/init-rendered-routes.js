@@ -5,10 +5,17 @@ const path = require('path');
 const jsonfile = require("jsonfile");
 import { preProcessData } from "./pre-process-data";
 import { getUserData } from "./user-data";
+import { initCustomHandlebarsHelpers } from "./init-custom-handlebars-helpers";
 import { capture } from "../utils/async-utils";
 
+
+// USER-DEFINED PARTIALS
 let partials = getPartials();
 partials.forEach(partial => Handlebars.registerPartial(partial.name, partial.templateString));
+
+// CUSTOM HELPERS
+initCustomHandlebarsHelpers({Handlebars, });
+
 
 export async function initRenderedRoutes ({ app }) {
 
