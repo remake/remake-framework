@@ -10,7 +10,7 @@ import autosize from '../vendor/autosize';
 export default function () {
   insertRemakeEditPopoverHtml();
 
-  $.on("click", "[data-i-editable], [data-i-editable-with-remove], [data-i-editable-with-hide]", function (event) {
+  $.on("click", "[data-i-editable], [data-i-editable-without-remove], [data-i-editable-with-hide]", function (event) {
     let editableTriggerElem = event.currentTarget;
     let [ switchName, editableConfigString ] = getEditableInfo(editableTriggerElem);
     let editablePopoverElem = document.querySelector(".remake-edit");
@@ -73,8 +73,8 @@ export default function () {
 function getEditableInfo (elem) {
   if (elem.hasAttribute("data-i-editable")) {
     return [ "remakeEdit", elem.getAttribute("data-i-editable") ];
-  } else if (elem.hasAttribute("data-i-editable-with-remove")) {
-    return [ "remakeEditWithRemove", elem.getAttribute("data-i-editable-with-remove") ];
+  } else if (elem.hasAttribute("data-i-editable-without-remove")) {
+    return [ "remakeEditWithoutRemove", elem.getAttribute("data-i-editable-without-remove") ];
   } else if (elem.hasAttribute("data-i-editable-with-hide")) {
     return [ "remakeEditWithHide", elem.getAttribute("data-i-editable-with-hide") ];
   }
@@ -139,7 +139,7 @@ function insertRemakeEditPopoverHtml () {
       box-sizing: border-box;
     }
 
-    [data-switched-on~="remakeEdit"], [data-switched-on~="remakeEditWithRemove"], [data-switched-on~="remakeEditWithHide"] {
+    [data-switched-on~="remakeEdit"], [data-switched-on~="remakeEditWithoutRemove"], [data-switched-on~="remakeEditWithHide"] {
       display: block;
     }
 
@@ -213,8 +213,11 @@ function insertRemakeEditPopoverHtml () {
     }
 
     .remake-edit__button--remove, .remake-edit__button--hide {
-      display: none;
       background-color: #e03131;
+    }
+
+    .remake-edit__button--hide {
+      display: none;
     }
 
     .remake-edit__button--remove:hover, .remake-edit__button--hide:hover {
@@ -222,7 +225,11 @@ function insertRemakeEditPopoverHtml () {
       color: #fff;
     }
 
-    [data-switched-on~="remakeEditWithRemove"] .remake-edit__button--remove, [data-switched-on~="remakeEditWithHide"] .remake-edit__button--hide {
+    [data-switched-on~="remakeEditWithoutRemove"] .remake-edit__button--remove {
+      display: none;
+    }
+
+    [data-switched-on~="remakeEditWithHide"] .remake-edit__button--hide {
       display: inline-block;
     }
 
@@ -241,13 +248,13 @@ function insertRemakeEditPopoverHtml () {
       class="remake-edit" 
 
       data-i-sync
-      data-switches="remakeEdit(no-auto) remakeEditWithRemove(no-auto) remakeEditWithHide(no-auto)"
+      data-switches="remakeEdit(no-auto) remakeEditWithoutRemove(no-auto) remakeEditWithHide(no-auto)"
 
       data-o-type="object"
     >
       <div 
         class="remake-edit__backdrop"
-        data-switch-actions="remakeEdit(off) remakeEditWithRemove(off) remakeEditWithHide(off)"
+        data-switch-actions="remakeEdit(off) remakeEditWithoutRemove(off) remakeEditWithHide(off)"
       ></div>
       <div class="remake-edit__edit-container">
         <div class="remake-edit__edit-areas">
@@ -257,23 +264,23 @@ function insertRemakeEditPopoverHtml () {
             class="remake-edit__button remake-edit__button--remove" 
             href="#"
             data-i-remove
-            data-switch-actions="remakeEdit(off) remakeEditWithRemove(off) remakeEditWithHide(off)"
+            data-switch-actions="remakeEdit(off) remakeEditWithoutRemove(off) remakeEditWithHide(off)"
           >remove</a>
           <a 
             class="remake-edit__button remake-edit__button--hide" 
             href="#"
             data-i-hide
-            data-switch-actions="remakeEdit(off) remakeEditWithRemove(off) remakeEditWithHide(off)"
+            data-switch-actions="remakeEdit(off) remakeEditWithoutRemove(off) remakeEditWithHide(off)"
           >remove</a>
           <a 
             class="remake-edit__button remake-edit__button--cancel" 
             href="#"
-            data-switch-actions="remakeEdit(off) remakeEditWithRemove(off) remakeEditWithHide(off)"
+            data-switch-actions="remakeEdit(off) remakeEditWithoutRemove(off) remakeEditWithHide(off)"
           >cancel</a>
           <button 
             class="remake-edit__button remake-edit__button--save" 
             type="submit"
-            data-switch-actions="remakeEdit(off) remakeEditWithRemove(off) remakeEditWithHide(off)"
+            data-switch-actions="remakeEdit(off) remakeEditWithoutRemove(off) remakeEditWithHide(off)"
           >save</button>
         </div>
       </div>
