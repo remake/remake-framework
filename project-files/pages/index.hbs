@@ -3,17 +3,22 @@
     class="page"
     data-o-type="object"
   >
-    <h2 class="page__heading">Todos</h2>
-    <div class="todos" data-o-key="todos" data-o-type="list">
-      {{#forEachItem data.todos itemName="todo"}}
-        <div 
-          data-o-type="object" 
-          data-l-key-text=""
-          data-i-editable=""
-        >{{todo.text}}</div>
-      {{/forEachItem}}
+    <h2 class="page__heading">Todo Lists</h2>
+    <div 
+      class="todo-lists"
+      data-o-key="todoLists"
+      data-o-type="list"
+    >
+      {{#each data.todoLists}}
+        {{> todoList todoList=this pageAuthor=@root.pageAuthor}}
+      {{/each}}
     </div>
-    <button data-i-new="todo">Add Todo</button>
+    <div class="flex justify-content--flex-end">
+      <button 
+        class="button"
+        data-i-new="todoList .todo-lists"
+      >Add Todo List</button>
+    </div>
   </div>
 {{else}}
   <div class="page">
