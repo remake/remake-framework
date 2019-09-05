@@ -17,13 +17,17 @@ export default function () {
     if (otherArgs.length === 0) {
       selector = "[data-o-type='list']";
     } else {
-      otherArgs.forEach(arg => {
-        if (arg === "top" || arg === "bottom") {
-          position = arg;
-        } else {
-          selector = arg;
-        }
-      });
+      let indexOfPosition = otherArgs.indexOf("top") === -1 ? otherArgs.indexOf("bottom") : otherArgs.indexOf("top");
+
+      if (indexOfPosition !== -1) {
+        position = otherArgs.splice(indexOfPosition, 1)[0];
+      }
+
+      if (otherArgs.length > 0) {
+        selector = otherArgs[0];
+      } else {
+        selector = "[data-o-type='list']";
+      }
     }
 
     // pass the template name into an endpoint and get the resulting html back
