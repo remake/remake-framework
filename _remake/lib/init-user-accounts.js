@@ -6,6 +6,7 @@ const jsonfile = require("jsonfile");
 import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
+import { getReservedWordInfo } from "./get-reserved-word-info";
 
 function initUserAccounts ({ app }) {
   app.use(passport.initialize());
@@ -75,6 +76,13 @@ function initUserAccounts ({ app }) {
         res.redirect('/signup');
         return;
       }
+    }
+
+    let reservedWordInfo = getReservedWordInfo(username);
+    if (reservedWordInfo.isReserved) {
+      req.flash("error", `Your username can't contain the reserved word: "${reservedWordInfo.reservedWord}"`);
+      res.redirect('/signup');
+      return;
     }
 
     let [usernameTaken] = await capture(getUserData({ username }));
