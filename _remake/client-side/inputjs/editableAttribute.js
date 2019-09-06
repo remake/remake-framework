@@ -31,6 +31,8 @@ export default function () {
         }
       });
     } else {
+      // auto-generate the editable config if none is present
+      //   note: we strip out the id key because it's not editable
       editableConfigArr = generateEditableConfigFromClosestElemWithData(editableTriggerElem);
     }
 
@@ -167,6 +169,7 @@ function generateEditableConfigFromClosestElemWithData (elem) {
 
   let dataFromElem = getDataFromNode(elemWithData);
   let objectKeys = Object.keys(dataFromElem);
+  // strip out the id key because it's not editable
   let objectKeysWithoutIdKey = objectKeys.filter(keyName => keyName !== "id");
 
   return objectKeysWithoutIdKey.map(keyName => {

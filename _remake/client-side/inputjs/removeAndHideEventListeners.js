@@ -2,6 +2,7 @@ import { $ } from '../queryjs';
 import { callSaveFunction } from './onSave';
 import { forEachAttr } from '../hummingbird/lib/dom';
 import { triggerSyncAndSave } from "./syncData";
+import { setAllDataToEmptyStrings } from "../outputjs";
 
 export function initRemoveAndHideEventListeners () {
 
@@ -12,7 +13,15 @@ export function initRemoveAndHideEventListeners () {
     let syncElement = event.currentTarget.closest("[data-i-sync]");
 
     // 2. get the closest element with data on it
-    let sourceElement = $.data(syncElement, "source");
+    let sourceElement;
+    if (syncElement) {
+      // handle the case where we're in an editable popover
+      sourceElement = $.data(syncElement, "source");
+    } else {
+      // handle the case where we're clicking a "remove" button on the page
+      sourceElement = event.currentTarget;
+    }
+
     let elemWithData = sourceElement.closest('[data-o-type="object"]');
 
     // 3. get parent element (because we can't call the save function on an elem that doesn't exist)
@@ -33,11 +42,7 @@ export function initRemoveAndHideEventListeners () {
     let syncElement = event.currentTarget.closest("[data-i-sync]");
 
     // 2. look through the data keys and set ALL their values to empty strings
-    forEachAttr(syncElement, function (attrName, attrValue) {
-      if (attrName.startsWith("data-o-key-")) {
-        syncElement.setAttribute(attrName, "");
-      }
-    });
+    setAllDataToEmptyStrings(syncElement);
 
     // 3. save all the data as empty strings
     triggerSyncAndSave(event);

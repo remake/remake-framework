@@ -149,13 +149,25 @@ function setValueForKeyName (elem, keyName, value) {
   }
 }
 
+function setAllDataToEmptyStringsExceptIds (elem) {
+  forEachAttr(elem, function (attrName, attrValue) {
+    if (attrName !== "data-o-key-id" && (attrName.startsWith("data-o-key-") || attrName.startsWith("data-l-key-"))) {
+      let dashCaseKeyName = attrName.substring("data-?-key-".length);
+      let camelCaseKeyName = dashToCamelCase(dashCaseKeyName);
+
+      setValueForKeyName(elem, camelCaseKeyName, "");
+    }
+  });
+}
+
 export {
   parseNode,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors,
   getLocationKeyValue,
   setLocationKeyValue,
-  setValueForKeyName
+  setValueForKeyName,
+  setAllDataToEmptyStrings
 };
 
 
