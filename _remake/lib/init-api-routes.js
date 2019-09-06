@@ -65,6 +65,12 @@ export function initApiRoutes ({app}) {
       // option 2: save to id
       } else if (saveToId) {
         let itemData = getItemWithId(existingData, saveToId);
+
+        if (!itemData) {
+          res.json({success: false, reason: "noItemFound"});
+          return;
+        }
+
         specialDeepExtend(itemData, incomingData);
         Object.assign(itemData, incomingData);
       // option 3: extend existing data at root level
