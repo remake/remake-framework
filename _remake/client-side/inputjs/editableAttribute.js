@@ -166,8 +166,10 @@ function generateEditableConfigFromClosestElemWithData (elem) {
   }
 
   let dataFromElem = getDataFromNode(elemWithData);
+  let objectKeys = Object.keys(dataFromElem);
+  let objectKeysWithoutIdKey = objectKeys.filter(keyName => keyName !== "id");
 
-  return Object.keys(dataFromElem).map(keyName => {
+  return objectKeysWithoutIdKey.map(keyName => {
     return {name: keyName, modifier: "text-single-line"}
   });
 }
