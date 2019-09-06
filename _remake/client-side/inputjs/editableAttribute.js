@@ -19,12 +19,19 @@ export default function () {
     let editableTriggerElem = event.currentTarget;
     let [ switchName, editableConfigString ] = getEditableInfo(editableTriggerElem);
     let editablePopoverElem = document.querySelector(".remake-edit");
-    let editableConfig;
+    let editableConfigArr;
 
     if (editableConfigString) {
-      editableConfig = processAttributeString(editableConfigString); // [{name, modifier, args: []}]
+      // "profileName(text-single-line: someOption)" => [{name: "profileName", modifier: "text-single-line", args: ["someOption"]}]
+      editableConfigArr = processAttributeString(editableConfigString); 
+      
+      editableConfigArr.forEach(editableConfig => {
+        if (!editableConfig.modifier) {
+          editableConfig.modifier = "text-single-line"
+        }
+      });
     } else {
-      editableConfig = generateEditableConfigFromClosestElemWithData(editableTriggerElem);
+      editableConfigArr = generateEditableConfigFromClosestElemWithData(editableTriggerElem);
     }
 
     // remove old output key attributes
@@ -36,18 +43,18 @@ export default function () {
     // add output key attributes defined in the editable config
     addDataOutputKeys({
       elem: editablePopoverElem, 
-      config: editableConfig
+      config: editableConfigArr
     });
 
     // add form field types to single attribute from editable config
     addFormFieldsBeingEdited({
       elem: editablePopoverElem, 
-      config: editableConfig
+      config: editableConfigArr
     });
     
     // render html inside the edit popover
     let remakeEditAreasElem = editablePopoverElem.querySelector(".remake-edit__edit-areas");
-    remakeEditAreasElem.innerHTML = generateRemakeEditAreas({config: editableConfig});
+    remakeEditAreasElem.innerHTML = generateRemakeEditAreas({config: editableConfigArr});
 
     // copy the layout
     copyLayout({
