@@ -1,8 +1,8 @@
 import { $ } from '../queryjs';
 import { callSaveFunction } from './onSave';
 import { forEachAttr } from '../hummingbird/lib/dom';
-import { triggerSyncAndSave } from "./syncData";
-import { setAllDataToEmptyStrings } from "../outputjs";
+import { triggerSyncAndSave, syncDataBetweenElements } from "./syncData";
+import { setAllDataToEmptyStringsExceptIds } from "../outputjs";
 
 export function initRemoveAndHideEventListeners () {
 
@@ -41,12 +41,26 @@ export function initRemoveAndHideEventListeners () {
     // 1. find the nearest ancestor element that has the attribute `data-i-sync`
     let syncElement = event.currentTarget.closest("[data-i-sync]");
 
-    // 2. look through the data keys and set ALL their values to empty strings
-    setAllDataToEmptyStrings(syncElement);
+    if (syncElement) {
+      // 2.a. look through the data keys and set ALL their values to empty strings
+      setAllDataToEmptyStringsExceptIds(syncElement);
+      // 3.a. save all the data as empty strings
+      triggerSyncAndSave(event);
+    } else {
+      // 2.b. look through the data keys and set ALL their values to empty strings
+      let elemWithData = event.currentTarget.closest('[data-o-type="object"]');
+      setAllDataToEmptyStringsExceptIds(elemWithData);
 
-    // 3. save all the data as empty strings
-    triggerSyncAndSave(event);
+      // This is a little hacky: syncing data from an element back into itself. However,
+      // it takes care of a lot of things for us, like getting the data, making sure we respect
+      // default data, calling watch functions, and triggering a save, so it's worth it.
+      syncDataBetweenElements({sourceElement: elemWithData, targetElement: elemWithData, shouldTriggerSave: true});
+    }
 
   });
 
 }
+
+
+
+

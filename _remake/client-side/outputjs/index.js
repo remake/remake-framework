@@ -8,7 +8,7 @@ import {
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors,
-  setAllDataToEmptyStrings
+  setAllDataToEmptyStringsExceptIds
 } from "./parseNode";
 
 // special properties:
@@ -85,7 +85,7 @@ export {
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors,
-  setAllDataToEmptyStrings
+  setAllDataToEmptyStringsExceptIds
 }
 
 

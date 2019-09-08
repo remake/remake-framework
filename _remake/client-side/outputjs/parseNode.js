@@ -15,9 +15,9 @@ function parseNode (elem, isParentDataAnObject) {
 }
 
 // Converts:
-// <div data-o-key-example1="1" data-o-key-example2="2"></div>
+// <div data-o-key-example-one="1" data-o-key-example-two="2"></div>
 // Into:
-// {example1: "1", example2: "2"}
+// {exampleOne: "1", exampleTwo: "2"}
 function getDataFromNode (elem) {
   let keyPrefix = "data-o-key-";
   let locationKeyPrefix = "data-l-key-";
@@ -47,6 +47,8 @@ function getDataFromNode (elem) {
   return returnObj;
 }
 
+// Used by syncData.js to get all data on or above an element, so it can be synced into 
+// another element.
 // 1. Find the CLOSEST `[data-o-type="object"]`
 // 2. Get this element's data keys and their values
 // 3. Add these key/values into an object (lower/earlier keys always overwrite higher ones)
@@ -167,7 +169,7 @@ export {
   getLocationKeyValue,
   setLocationKeyValue,
   setValueForKeyName,
-  setAllDataToEmptyStrings
+  setAllDataToEmptyStringsExceptIds
 };
 
 
