@@ -6,7 +6,7 @@ import { getItemWithId } from "./get-item-with-id";
 import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
 import { getUserData, setUserData } from "./user-data";
-import { getPartials } from "./get-project-info";
+import { getPartials, getBootstrapData } from "./get-project-info";
 import { getParamsFromPathname } from "../utils/get-params-from-pathname";
 import { capture } from "../utils/async-utils";
 import { preProcessData } from "./pre-process-data";
@@ -109,7 +109,7 @@ export function initApiRoutes ({app}) {
 
     // default to using inline named partials as opposed to partial files
     let templateRenderFunc = RemakeStore.getNewItemRenderFunction({name: templateName});
-    let bootstrapData = matchingPartial.bootstrapData;
+    let bootstrapData = getBootstrapData().partials[templateName] || {};
 
     // use the user-defined partial files only if no render functions are found
     if (!templateRenderFunc) {

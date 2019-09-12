@@ -2,23 +2,16 @@ const jsonfile = require("jsonfile");
 const path = require('path');
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
+import { getBootstrapData } from "./get-project-info";
 
 // create new user data files
 // returns: {details, appData}
 async function createUserData ({ username, hash }) {
 
-  let [details] = await capture(jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/details.json")));
-  if (!details) {
-    details = {};
-  }
+  let {details, appData} = getBootstrapData().user;
 
   // extend user details with args
   Object.assign(details, { username, hash });
-
-  let [appData] = await capture(jsonfile.readFile(path.join(__dirname, "../../project-files/_bootstrap-data/user/appData.json")));
-  if (!appData) {
-    appData = {};
-  }
 
   let detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/user-details/", `${username}.json`), details, { spaces: 2 });
   let appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/user-app-data/", `${username}.json`), appData, { spaces: 2 });
