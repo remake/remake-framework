@@ -1,11 +1,31 @@
 # Get started
 
-You should only need to edit the files in the ./project-files folder in order to create a fully functional web app.
+1. Clone this repo
 
-However, feel free to edit the ./_remake files or look at user data in the ./_remake-data folder.
+```
+git clone git@github.com:panphora/remake-framework.git
+```
 
-For a full tutorial on Remake, view this 30 minute video on making a full web app with drag to re-order lists and todos: 
-https://www.youtube.com/watch?v=H_FvfswKufo
+2. Install dependencies
+
+```
+cd remake-framework
+npm install
+```
+
+3. Create a `variables.env` file
+
+inside `variables.env`:
+```
+SESSION_SECRET=asflal23sbalsbslgbs
+PORT=3000
+```
+
+4. Start the project
+
+```
+npm run dev
+```
 
 
 # Full Remake Docs
