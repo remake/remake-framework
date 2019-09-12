@@ -30,6 +30,7 @@ export async function initRenderedRoutes ({ app }) {
       let query = req.query;
       let pathname = parseUrl(req).pathname;
       let currentUser = req.user;
+
       let [pageAuthor, pageAuthorError] = await capture(getUserData({username: usernameFromParams}));
       if (pageAuthorError) {
         res.status(500).send("500 Server Error");
@@ -43,6 +44,7 @@ export async function initRenderedRoutes ({ app }) {
       let currentItem;
       let parentItem; 
       if (pageAuthor) {
+        // add unique ids to data
         let [processResponse, processResponseError] = await capture(preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true}));
         if (processResponseError) {
           res.status(500).send("500 Server Error");

@@ -13,6 +13,7 @@ export default function () {
     // parse the data attribute to get the selector and the template name
     let [templateName, ...otherArgs] = getAttributeValueAsArray(triggerElem, "data-i-new");
 
+    // allow data-i-new attribute value to have its arguments in any order
     let selector, position;
     if (otherArgs.length === 0) {
       selector = "[data-o-type='list']";

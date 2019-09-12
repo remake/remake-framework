@@ -78,6 +78,7 @@ function getDataAndDataSourceElemFromNodeAndAncestors (elem) {
   return collectedData; // e.g. {exampleTitle: {value: "Hello There!", dataSourceElem}}
 }
 
+// Used for attributes like: <div data-l-key-widget-code=".widget-code innerHTML"></div>
 // helper function, has repeated code from getLocationKeyValue() and setLocationKeyValue()
 function getDataFromLocationString (elem, dashCaseKeyName, locationString) {
   locationString = formatSpaces(locationString);
