@@ -3,7 +3,7 @@
 1. Clone this repo
 
 ```
-git clone git@github.com:panphora/remake-framework.git
+git clone https://github.com/panphora/remake-framework.git
 ```
 
 2. Install dependencies
