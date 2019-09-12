@@ -37,6 +37,30 @@ export function initCustomHandlebarsHelpers ({Handlebars}) {
     return overallRender;
   });
 
+  Handlebars.registerHelper('BaseRoute', function(options) {
+    if (!this.params.id && !this.params.username) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  Handlebars.registerHelper('UsernameRoute', function(options) {
+    if (this.params.username) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  Handlebars.registerHelper('ItemRoute', function(options) {
+    if (this.params.id) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
 }
 
 
