@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jsonfile = require("jsonfile");
 import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
