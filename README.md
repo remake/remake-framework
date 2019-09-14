@@ -17,7 +17,7 @@ npm install
 
 inside `variables.env`:
 ```
-SESSION_SECRET=asflal23sbalsbslgbs
+SESSION_SECRET=__replace_with_something_secret__
 PORT=3000
 ```
 
