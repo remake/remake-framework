@@ -1,7 +1,7 @@
 const Handlebars = require('handlebars');
 const parseUrl = require('parseurl');
 import { getRoutes, getPartials } from "./get-project-info";
-const path = require('path');
+const path = require('upath');
 const jsonfile = require("jsonfile");
 import { preProcessData } from "./pre-process-data";
 import { getUserData } from "./user-data";

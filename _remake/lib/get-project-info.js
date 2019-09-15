@@ -4,7 +4,7 @@ const tree = dirTree("./project-files", {
 });
 const util = require("util");
 const fs = require("fs");
-const path = require("path");
+const path = require("upath");
 const jsonfile = require("jsonfile");
 const camelCase = require("camelcase");
 import forEachDeep from "deepdash-es/forEachDeep";

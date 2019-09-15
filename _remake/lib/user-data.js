@@ -1,5 +1,5 @@
 const jsonfile = require("jsonfile");
-const path = require('path');
+const path = require('upath');
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
 import { getBootstrapData } from "./get-project-info";

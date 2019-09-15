@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import expressSession from "express-session";
 const flash = require('connect-flash');
-const path = require('path');
+const path = require('upath');
 const FileStore = require('session-file-store')(expressSession);
 import { initApiRoutes } from "./lib/init-api-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";

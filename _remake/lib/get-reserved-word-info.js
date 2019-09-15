@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("upath");
 const jsonfile = require("jsonfile");
 
 let usernameCantBeTheseWords = jsonfile.readFileSync(path.join(__dirname, "../config/username-cant-be-these-words.json"));
