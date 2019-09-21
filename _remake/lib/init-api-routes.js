@@ -128,7 +128,7 @@ export function initApiRoutes ({app}) {
     let referrerUrlParsed = new URL(referrerUrl);
     let referrerUrlPath = referrerUrlParsed.pathname; // e.g. "/jane/todo-list/123"
     let params = getParamsFromPathname(referrerUrlPath); // e.g. { username: 'jane', id: '123' }
-    let query = Object.fromEntries(referrerUrlParsed.searchParams);
+    let query = referrerUrlParsed.searchParams;
 
     let usernameFromParams = params.username;
     let pathname = referrerUrlPath;
