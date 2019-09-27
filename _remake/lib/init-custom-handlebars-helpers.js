@@ -1,8 +1,12 @@
 import RemakeStore from "./remake-store";
 
 export function initCustomHandlebarsHelpers ({Handlebars}) {
+  
+  const handlebarsHelpers = require('handlebars-helpers')();
 
-  // forEachItem 
+  Handlebars.registerHelper(handlebarsHelpers);
+
+  // #for 
   // a custom helper that loops over some items
   //
   // IMPORTANT: 
