@@ -1,4 +1,5 @@
 import RemakeStore from "./remake-store";
+import routeUtils from "../utils/route-utils";
 
 export function initCustomHandlebarsHelpers ({Handlebars}) {
   
@@ -42,7 +43,7 @@ export function initCustomHandlebarsHelpers ({Handlebars}) {
   });
 
   Handlebars.registerHelper('BaseRoute', function(options) {
-    if (!this.params.id && !this.params.username) {
+    if (routeUtils.isBaseRoute(this.params)) {
       return options.fn(this);
     } else {
       return options.inverse(this);
@@ -50,7 +51,7 @@ export function initCustomHandlebarsHelpers ({Handlebars}) {
   });
 
   Handlebars.registerHelper('UsernameRoute', function(options) {
-    if (this.params.username) {
+    if (routeUtils.isUsernameRoute(this.params)) {
       return options.fn(this);
     } else {
       return options.inverse(this);
@@ -58,7 +59,7 @@ export function initCustomHandlebarsHelpers ({Handlebars}) {
   });
 
   Handlebars.registerHelper('ItemRoute', function(options) {
-    if (this.params.id) {
+    if (routeUtils.isItemRoute(this.params)) {
       return options.fn(this);
     } else {
       return options.inverse(this);
