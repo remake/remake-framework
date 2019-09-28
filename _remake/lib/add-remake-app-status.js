@@ -23,7 +23,7 @@ function createBodyAttributeString ({currentUser, params}) {
   }
 
   if (routeUtils.isItemRoute(params)) {
-    str += "data-item-route ";
+    str += `data-item-route="${params.id}" `;
   }
 
   return str;
