@@ -10,6 +10,8 @@ function createBodyAttributeString ({currentUser, params}) {
 
   if (currentUser) {
     str += "data-user-logged-in ";
+  } else {
+    str += "data-user-not-logged-in ";
   }
 
   if (routeUtils.isBaseRoute(params)) {
