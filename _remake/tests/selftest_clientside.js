@@ -1,7 +1,6 @@
 /**
  * @param {!String} htmlString A String with HTML inside of it
  * @returns {!Element} Returns converted string to HTML
- * @fires HTMLDocument#createElement()
  * @desc Creates a HTML element by string with HTML
  */
 HTMLDocument.prototype.createElementByHTMLString = function(htmlString) {
