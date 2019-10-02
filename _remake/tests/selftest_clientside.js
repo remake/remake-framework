@@ -1,7 +1,8 @@
 /**
- * Creates a HTML element by string with HTML
- * @param {String} htmlString A String with HTML inside of it
- * @returns {Element} Returns converted string to HTML
+ * @param {!String} htmlString A String with HTML inside of it
+ * @returns {!Element} Returns converted string to HTML
+ * @fires HTMLDocument#createElement()
+ * @desc Creates a HTML element by string with HTML
  */
 HTMLDocument.prototype.createElementByHTMLString = function(htmlString) {
 	let orphanParent = this.createElement("div")
@@ -10,6 +11,12 @@ HTMLDocument.prototype.createElementByHTMLString = function(htmlString) {
 }
 
 // Keep for maybe future use
+/**
+ * @param {!HTMLElement} parent The element with children where the `childsID` has to be found in
+ * @param {!String} childsID The id name of the child element you're looking for
+ * @returns {?HTMLElement} Returns child HTMLElement when found and null when it hasn't been found
+ * @desc Finds a child of parent HTMLElement by ID
+ */
 function findTheChildByID(parent, childsID) {
 	for (let i = 0; i < parent.children.length; i++) {
 		const child = parent.children[i];
@@ -18,6 +25,18 @@ function findTheChildByID(parent, childsID) {
 	return null
 }
 
+/**
+ * @param {!String} msg Message to display in the console
+ * @param {?String} [logLevel="log"] The log level the message should be displayed at.
+ * Valid log levels are:
+ * - info
+ * - log
+ * - warn
+ * - debug
+ * - error
+ * @param {*} dirVar (Optional) An object that has to be printed with console.dir()
+ * @desc One function to log stuff to console on different levels and able to print variables via console.dir all in one line!
+ */
 function log(msg, logLevel = "log", dirVar) {
 	if (logLevel == null) logLevel = "log"
 	console[logLevel](msg)
@@ -29,10 +48,10 @@ function log(msg, logLevel = "log", dirVar) {
  */
 class parse2TestFramework {
 	/**
-	 * Replaces all special arguments with their corresponding value.
-	 * @param {String} selfTestArgumentsValue The string value of the HTML attribute 'selfTest-arguments'
-	 * @param {Object} options Values that need special filling. (IE: 'testcode')
-	 * @returns {Array} Returns array with replaced arguments
+	 * @param {!String} selfTestArgumentsValue The string value of the HTML attribute 'selfTest-arguments'
+	 * @param {?Object} [options={}] Values that need special filling. (IE: 'testcode')
+	 * @returns {!Array} Returns array with replaced arguments
+	 * @desc Replaces all special arguments with their corresponding value.
 	 */
 	static createTestFunctionArguments(selfTestArgumentsValue, options = {}) {
 		let correctArgs = []
@@ -52,13 +71,15 @@ class parse2TestFramework {
 		return correctArgs
 	}
 	/**
-	 * Converts all xmp innerText's to tests, executes these tests and renders a response on the page
+	 * @generator
+	 * @param {!String} parentID ID of the parent element that contains all the tests
+	 * @summary Converts all xmp innerText's to tests, executes these tests and renders a response on the page
+	 * @desc Converts all xmp innerText's to tests, executes these tests and renders a response on the page
 	 * MAKE SURE THAT THE PARENT ELEMENT HAVE THE FOLLOWING ATTRIBUTES AND ARE FILLED:
 	 * - 'selfTest-test="functionYouWantToExecute()"'
 	 * - 'selfTest-arguments="firstArgument,secondArgument,thirdArgument,etc"'
 	 * *Argument can also be:*
 	 * - '(testcode)' - *Without quotes* This will pass the test code to the set function
-	 * @param {String} parentID ID of the parent element that contains all the tests
 	 */
 	static convertElementsToTest(parentID) {
 		// Get the element that contains all tests
@@ -179,6 +200,9 @@ class parse2TestFramework {
 	}
 }
 
+/**
+ * @desc Short little test to see if this file got imported correctly
+ */
 function selfTest_selfTest() {
 	console.log("What are you trying to do? Of course I work, duh!")
 }
