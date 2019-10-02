@@ -8,6 +8,7 @@ import { getUserData } from "./user-data";
 import { initCustomHandlebarsHelpers } from "./init-custom-handlebars-helpers";
 import { capture } from "../utils/async-utils";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
+import RemakeStore from "./remake-store";
 
 // USER-DEFINED PARTIALS
 let partials = getPartials();
@@ -22,6 +23,11 @@ export async function initRenderedRoutes ({ app }) {
   let routes = getRoutes();
 
   routes.forEach(({route, templateString}) => {
+
+    app.get("*", function (req, res, next) {
+      console.log("req:", parseUrl(req));
+      next();
+    });
 
     app.get(route, async (req, res) => { // route === "/:username/page-name-route/:id?"
 

@@ -24,10 +24,10 @@ async function createUserData ({ username, hash }) {
 
 // get all user data
 // returns: {details, appData}
-async function getUserData ({ username }) {
+async function getUserData ({ username, type }) {
   try {
-    let detailsPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/user-details/", `${username}.json`)); 
-    let appDataPromise = jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/user-app-data/", `${username}.json`));
+    let detailsPromise = type === "appData" ? null : jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/user-details/", `${username}.json`)); 
+    let appDataPromise = type === "details" ? null : jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/user-app-data/", `${username}.json`));
     let [ details, appData ] = await Promise.all([detailsPromise, appDataPromise]);
     return { details, appData }; 
   } catch (e) {

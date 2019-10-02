@@ -8,9 +8,13 @@ const FileStore = require('session-file-store')(expressSession);
 import { initApiRoutes } from "./lib/init-api-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
+import RemakeStore from "./lib/remake-store";
 
 // set up vars
 dotenv.config({ path: "variables.env" });
+if (process.env.REMAKE_MULTI_TENANT) {
+  RemakeStore.enableMultiTenantArchitecture();
+}
 
 const app = express();
 

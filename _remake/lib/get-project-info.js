@@ -1,7 +1,4 @@
 const dirTree = require("directory-tree");
-const tree = dirTree("./project-files", {
-  extensions: /\.(hbs|json)$/
-});
 const util = require("util");
 const fs = require("fs");
 const path = require("upath");
@@ -10,10 +7,14 @@ const camelCase = require("camelcase");
 import forEachDeep from "deepdash-es/forEachDeep";
 import { isPlainObject } from "lodash-es";
 import { showConsoleError } from "../utils/console-utils";
+import RemakeStore from "./remake-store";
 let layoutNameRegex = /\{\{\s+layout\s+["'](\w+)["']\s+\}\}/;
 let yieldCommandRegex = /\{\{>\s+yield\s+\}\}/;
 let forInLoopRegex = /\{\{#for\s+(\S+)\s+in\s+([^\}\s]+)/g;
 
+let tree = dirTree("./project-files", {
+  extensions: /\.(hbs|json)$/
+});
 
 // app folders that start with an underscore don't have app data associated with them
 function _getProjectInfo () {
@@ -105,6 +106,7 @@ function _getProjectInfo () {
 
   });
 
+  // base routes have to come first
   let routes = [...baseRoutes, ...usernameRoutes];
 
   return { routes, partials, bootstrapData };

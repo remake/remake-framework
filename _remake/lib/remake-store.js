@@ -1,6 +1,13 @@
 var store = {
   state: {
+    multiTenant: false,
     newItemRenderFunctions: {}
+  },
+  isMultiTenant () {
+    return this.state.multiTenant;
+  },
+  enableMultiTenantArchitecture () {
+    this.state.multiTenant = true;
   },
   addNewItemRenderFunction({name, func} = {}) {
     if (name && func) {
