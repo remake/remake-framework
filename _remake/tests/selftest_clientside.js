@@ -48,6 +48,7 @@ function log(msg, logLevel = "log", dirVar) {
  */
 class parse2TestFramework {
 	/**
+	 * @throws {Error} When the argument `(testcode)` has been found but no test code has been passed via options
 	 * @param {!String} selfTestArgumentsValue The string value of the HTML attribute 'selfTest-arguments'
 	 * @param {?Object} [options={}] Values that need special filling. (IE: 'testcode')
 	 * @returns {!Array} Returns array with replaced arguments
@@ -73,6 +74,7 @@ class parse2TestFramework {
 	/**
 	 * @generator
 	 * @param {!String} parentID ID of the parent element that contains all the tests
+	 * @throws {Error} `parentID` must be a valid HTML id
 	 * @summary Converts all xmp innerText's to tests, executes these tests and renders a response on the page
 	 * @desc Converts all xmp innerText's to tests, executes these tests and renders a response on the page
 	 * MAKE SURE THAT THE PARENT ELEMENT HAVE THE FOLLOWING ATTRIBUTES AND ARE FILLED:
