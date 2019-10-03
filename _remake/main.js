@@ -13,7 +13,7 @@ import RemakeStore from "./lib/remake-store";
 
 // set up environment variables
 dotenv.config({ path: "variables.env" });
-if (process.env.REMAKE_MULTI_TENANT) {
+if (process.env.REMAKE_MULTI_TENANT === "true") {
   RemakeStore.enableMultiTenantArchitecture();
 }
 

@@ -1,6 +1,14 @@
-import { getPageTemplate, getDataForPage, getPageHtml } from "../utils/page-utils";
+const path = require('upath');
+import { capture, readdirAsync } from "../utils/async-utils";
+import { 
+  getPageTemplate, 
+  getDataForPage, 
+  getPageHtml, 
+  getRootAppsPageHtml 
+} from "../utils/page-utils";
 import { getUserData } from "./user-data";
 import { addIdsAndGetItemData } from "./add-ids-and-get-item-data";
+import RemakeStore from "./remake-store";
 
 /*
   Remake has 3 types of routes
@@ -47,23 +55,21 @@ export async function initRenderedRoutes ({ app }) {
 
   // assumptions:
   // - if there's no firstParam, there can't be any other param either
-  app.get("/:firstParam/:secondParam/:thirdParam/:fourthParam", function (req, res) {
+  app.get("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?", async function (req, res) {
 
     let {firstParam, secondParam, thirdParam, fourthParam} = req.params;
 
     let appName;
-    if (multiTenant) {
-      if (!firstParam) {
-        let directories = await capture(readdirAsync(getDirForRootApp()));
+    if (RemakeStore.isMultiTenant()) {
 
-        if (directories) {
-          res.send(`<h1>Apps</h1><ul>${directories.map(dir => `<li><a href="/${dir}">dir</a></li>`)}</ul>`);
-        }
-        
+      if (!firstParam) {
+        let html = await getRootAppsPageHtml();
+        res.send(html);
         return;
       }
 
       [appName, firstParam, secondParam, thirdParam] = [firstParam, secondParam, thirdParam, fourthParam];
+      
     }
 
     if (!firstParam) { // route: /

@@ -1,6 +1,19 @@
-import { getDirForPageTemplate } from "../directory-helpers";
-import { readFileAsync } from "./async-utils";
+import { capture } from "./async-utils";
+import { getDirForPageTemplate, getDirForRootApp } from "./directory-helpers";
+import { readFileAsync, readdirAsync } from "./async-utils";
 import { getHandlebarsContext } from "./handlebars-context";
+
+export async function getRootAppsPageHtml () {
+  let [dirsWithFileTypes] = await capture(readdirAsync(getDirForRootApp(), { withFileTypes: true }));
+
+  if (dirsWithFileTypes) {
+    let dirs = dirsWithFileTypes.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
+    let html = `<h1>Apps</h1><ul>${dirs.map(dir => `<li><a href="/${dir}">${dir}</a></li>`).join("")}</ul>`;
+    return html;
+  } else {
+    return `<h1>No apps found</h1>`;
+  }
+}
 
 // returns a template that can accept data
 //   must be inside a layout, for...in helpers replaced, and compiled by handlebars

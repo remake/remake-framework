@@ -3,7 +3,7 @@ const path = require('upath');
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
 import { getBootstrapData } from "./get-project-info";
-import { getDirForUserFile } from "../directory-helpers";
+import { getDirForUserFile } from "../utils/directory-helpers";
 
 // create new user data files
 // returns: {details, appData}

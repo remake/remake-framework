@@ -1,10 +1,9 @@
 const Handlebars = require('handlebars');
 import RemakeStore from "../lib/remake-store";
-const isMultiTenant = RemakeStore.isMultiTenant();
 
 let contextLookup = {};
 export function getHandlebarsContext ({appName, regenerate}) {
-  if (!isMultiTenant) {
+  if (!RemakeStore.isMultiTenant()) {
     appName = "singleApp";
   }
 
