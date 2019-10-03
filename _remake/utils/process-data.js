@@ -4,7 +4,8 @@ import getUniqueId from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
 
 export async function processData ({res, pageAuthor, data, itemId, requestType}) {
-  let itemData, itemDataError;
+  let itemData = {currentItem: undefined, parentItem: undefined};
+  let itemDataError;
 
   if (pageAuthor) {
     // add unique ids to data & get currentItem and parentItem

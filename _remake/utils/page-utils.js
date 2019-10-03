@@ -40,10 +40,10 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let data = pageAuthor && pageAuthor.appData;
   let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
   let flashErrors = req.flash("error");
-  let [itemData] = await capture(processData({res, pageAuthor, data, itemId}));
-  let [currentItem, parentItem] = itemData;
+  let [itemData, itemDataError] = await capture(processData({res, pageAuthor, data, itemId}));
+  let {currentItem, parentItem} = itemData;
 
-  return {
+  let allData = {
     data,
     params,
     query,
@@ -55,12 +55,15 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
     pageAuthor,
     isPageAuthor,
     pageHasAppData: !!pageAuthor
-  }
+  };
+
+  return allData;
 
 }
 
 export function getPageHtml ({pageTemplate, data, appName, username, itemId}) {
-  let html = template(data);
+  let html = pageTemplate(data);
+  let currentUser = data.currentUser;
   let htmlWithAppStatus = addRemakeAppStatusToPage({html, currentUser, username, itemId});
   return htmlWithAppStatus;
 }

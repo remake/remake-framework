@@ -43,7 +43,12 @@ async function renderPage ({req, res, appName, pageName, username, itemId}) {
   }
 
   // GET DATA
-  let [data] = await capture(getDataForPage({req, res, appName, pageAuthor, itemId}));
+  let [data, dataError] = await capture(getDataForPage({req, res, appName, pageAuthor, itemId}));
+
+  if (dataError) {
+    res.status(500).send("500 Server Error");
+    return;
+  }
 
   if (itemId && !data.currentItem) {
     res.status(404).send("404 Not Found");

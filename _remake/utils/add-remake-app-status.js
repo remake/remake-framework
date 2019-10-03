@@ -1,7 +1,7 @@
 import routeUtils from "../utils/route-utils";
 
 export function addRemakeAppStatusToPage ({html, currentUser, username, itemId}) {
-  let attributeString = createBodyAttributeString({currentUser, params});
+  let attributeString = createBodyAttributeString({currentUser, username, itemId});
   return html.replace("<body", attributeString);
 }
 
