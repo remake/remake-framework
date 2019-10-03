@@ -8,6 +8,7 @@ const FileStore = require('session-file-store')(expressSession);
 import { initApiRoutes } from "./lib/init-api-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
+import { initPartialsWatcher } from "./lib/init-partials-watcher";
 import RemakeStore from "./lib/remake-store";
 
 // set up vars
@@ -40,6 +41,7 @@ app.use(flash());
 initUserAccounts({ app });
 initApiRoutes({ app });
 initRenderedRoutes({ app });
+initPartialsWatcher();
 
 
 const PORT = process.env.PORT || 3000;
