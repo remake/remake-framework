@@ -2,6 +2,9 @@ import { capture } from "./async-utils";
 import { getDirForPageTemplate, getDirForRootApp, getDirForLayoutTemplate } from "./directory-helpers";
 import { readFileAsync, readdirAsync } from "./async-utils";
 import { getHandlebarsContext } from "./handlebars-context";
+import { processData } from "./process-data";
+import { addRemakeAppStatusToPage } from "./add-remake-app-status";
+const parseUrl = require('parseurl');
 
 export async function getRootAppsPageHtml () {
   let [dirsWithFileTypes] = await capture(readdirAsync(getDirForRootApp(), { withFileTypes: true }));
@@ -21,8 +24,6 @@ export async function getPageTemplate ({pageName, appName}) {
   let pageTemplateDir = getDirForPageTemplate({pageName, appName});
   let [pageTemplateString] = await capture(readFileAsync(pageTemplateDir, 'utf8'));
 
-  console.log("processTemplateString", pageTemplateString);
-
   if (pageTemplateString) {
     let pageTemplateStringProcessed = await processTemplateString({appName, pageTemplateString});
 
@@ -31,13 +32,38 @@ export async function getPageTemplate ({pageName, appName}) {
   }
 }
 
-export function getDataForPage () {
-  console.log("getDataForPage");
-  let [currentItem, parentItem] = addIdsAndGetItemData({user, itemId, appName})
+export async function getDataForPage ({req, res, pageAuthor, appName}) {
+  let params = req.params;
+  let usernameFromParams = params.username;
+  let query = req.query;
+  let pathname = parseUrl(req).pathname;
+  let currentUser = req.pageAuthor;
+  let data = pageAuthor && pageAuthor.appData;
+  let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
+  let flashErrors = req.flash("error");
+  let [itemData] = await capture(processData({res, pageAuthor, data, params}));
+  let [currentItem, parentItem] = itemData;
+
+  return {
+    data,
+    params,
+    query,
+    pathname,
+    currentItem,
+    parentItem,
+    flashErrors,
+    currentUser,
+    pageAuthor,
+    isPageAuthor,
+    pageHasAppData: !!pageAuthor
+  }
+
 }
 
-export function getPageHtml () {
-  console.log("getPageHtml");
+export function getPageHtml ({pageTemplate, data, appName}) {
+  let html = template(data);
+  let htmlWithAppStatus = addRemakeAppStatusToPage({html, currentUser, params});
+  return htmlWithAppStatus;
 }
 
 

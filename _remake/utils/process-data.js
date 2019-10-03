@@ -1,9 +1,38 @@
 import { set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
-import getUniqueId from "./get-unique-id";
-import { setUserData } from "./user-data";
+import getUniqueId from "../lib/get-unique-id";
+import { setUserData } from "../lib/user-data";
 
-export async function addIdsAndGetItemData ({data, user, params}) {
+export async function processData ({res, pageAuthor, data, params, requestType}) {
+  let itemData, itemDataError;
+
+  if (pageAuthor) {
+    // add unique ids to data & get currentItem and parentItem
+    [itemData, itemDataError] = await capture(addIdsAndGetItemData({data, user: pageAuthor, params}));
+
+    if (itemDataError) {
+      if (requestType === "ajax") {
+        res.json({success: false, reason: "addingUniqueIds"});
+      } else {
+        res.status(500).send("500 Server Error");
+      }
+      return;
+    }
+  }
+
+  if (params.id && !itemData.currentItem) {
+    if (requestType === "ajax") {
+      res.json({success: false, reason: "noCurrentItem"});
+    } else {
+      res.status(404).send("404 Not Found");
+    }
+    return;
+  }
+
+  return itemData;
+}
+
+async function addIdsAndGetItemData ({data, user, params}) {
   let currentItem;
   let parentItem;
   let someUniqueIdsAdded = false;

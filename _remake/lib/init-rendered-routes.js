@@ -7,7 +7,6 @@ import {
   getRootAppsPageHtml 
 } from "../utils/page-utils";
 import { getUserData } from "./user-data";
-import { addIdsAndGetItemData } from "./add-ids-and-get-item-data";
 import RemakeStore from "./remake-store";
 
 /*
@@ -24,7 +23,7 @@ import RemakeStore from "./remake-store";
   • /username/pageName/id
 */
 
-async function renderPage ({res, appName, pageName, username, itemId}) {
+async function renderPage ({req, res, appName, pageName, username, itemId}) {
   let pageTemplate = await getPageTemplate({pageName, appName});
 
   if (!pageTemplate) {
@@ -32,15 +31,19 @@ async function renderPage ({res, appName, pageName, username, itemId}) {
     return;
   }
 
-  let user = username && getUserData({username, appName});
+  let pageAuthor, userDataError;
+  if (username) {
+    [pageAuthor] = await capture(getUserData({username, appName}));
 
-  if (username && !user) {
-    res.status(404).send("404 Not Found");
-    return;
+    // if username is in the route, there should be a corresponding user
+    if (!pageAuthor) {
+      res.status(404).send("404 Not Found");
+      return;
+    }
   }
 
   // GET DATA
-  let data = getDataForPage({res, user, appName});
+  let [data] = await capture(getDataForPage({req, res, pageAuthor, appName}));
 
   if (itemId && !data.currentItem) {
     res.status(404).send("404 Not Found");
@@ -56,6 +59,9 @@ export async function initRenderedRoutes ({ app }) {
   // assumptions:
   // - if there's no firstParam, there can't be any other param either
   app.get("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?", async function (req, res) {
+
+    // don't cache html from these routes
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
     let {firstParam, secondParam, thirdParam, fourthParam} = req.params;
 
@@ -74,21 +80,21 @@ export async function initRenderedRoutes ({ app }) {
 
     if (!firstParam) { // route: /
 
-      await renderPage({res, appName, pageName: "index"});
+      await renderPage({req, res, appName, pageName: "index"});
       return;
 
     }
 
     if (firstParam && secondParam && thirdParam) { // route: /username/pageName/id
 
-      await renderPage({res, appName, username: firstParam, pageName: secondParam, itemId: thirdParam});
+      await renderPage({req, res, appName, username: firstParam, pageName: secondParam, itemId: thirdParam});
       return;
 
     }
 
     if (firstParam && secondParam) { // route: /username/pageName/
 
-      await renderPage({res, appName, username: firstParam, pageName: secondParam});
+      await renderPage({req, res, appName, username: firstParam, pageName: secondParam});
       return;
 
     }
@@ -99,12 +105,12 @@ export async function initRenderedRoutes ({ app }) {
 
       if (pageExists) {
        
-        await renderPage({res, appName, pageName: firstParam});
+        await renderPage({req, res, appName, pageName: firstParam});
         return;
       
       } else {
 
-        await renderPage({res, appName, pageName: "index", username: firstParam});
+        await renderPage({req, res, appName, pageName: "index", username: firstParam});
         return;
 
       }

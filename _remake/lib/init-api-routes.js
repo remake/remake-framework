@@ -9,7 +9,7 @@ import { getUserData, setUserData } from "./user-data";
 import { getPartials, getBootstrapData } from "./get-project-info";
 import { getParamsFromPathname } from "../utils/get-params-from-pathname";
 import { capture } from "../utils/async-utils";
-import { addIdsAndGetItemData } from "./add-ids-and-get-item-data";
+import { processData } from "../utils/process-data";
 import { showConsoleError } from "../utils/console-utils";
 import RemakeStore from "./remake-store";
 
@@ -158,18 +158,8 @@ export function initApiRoutes ({app}) {
       return;
     }
 
-    let currentItem;
-    let parentItem; 
-    if (pageAuthor) {
-      let [processResponse, processResponseError] = await capture(addIdsAndGetItemData({data, user: pageAuthor, params, addUniqueIdsToData: true}));
-      if (processResponseError) {
-        res.json({success: false, reason: "addIdsAndGetItemData"});
-        return;
-      }
-
-      currentItem = processResponse.currentItem;
-      parentItem = processResponse.parentItem;
-    }
+    let [itemData] = await capture(processData({res, pageAuthor, data, params, requestType: "ajax"}));
+    let [currentItem, parentItem] = itemData;
 
     if (usernameFromParams && !pageAuthor) {
       res.json({success: false, reason: "notAuthorized"});
