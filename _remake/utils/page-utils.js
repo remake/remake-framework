@@ -1,5 +1,5 @@
 import { capture } from "./async-utils";
-import { getDirForPageTemplate, getDirForRootApp } from "./directory-helpers";
+import { getDirForPageTemplate, getDirForRootApp, getDirForLayoutTemplate } from "./directory-helpers";
 import { readFileAsync, readdirAsync } from "./async-utils";
 import { getHandlebarsContext } from "./handlebars-context";
 
@@ -19,13 +19,15 @@ export async function getRootAppsPageHtml () {
 //   must be inside a layout, for...in helpers replaced, and compiled by handlebars
 export async function getPageTemplate ({pageName, appName}) {
   let pageTemplateDir = getDirForPageTemplate({pageName, appName});
-  let [pageTemplateString] = await capture(readFileAsync(pageTemplateDir));
+  let [pageTemplateString] = await capture(readFileAsync(pageTemplateDir, 'utf8'));
+
+  console.log("processTemplateString", pageTemplateString);
 
   if (pageTemplateString) {
-    let pageTemplateString = await processTemplateString({appName, pageTemplateString});
+    let pageTemplateStringProcessed = await processTemplateString({appName, pageTemplateString});
 
     const Handlebars = getHandlebarsContext({appName});
-    return Handlebars.compile(pageTemplateString);
+    return Handlebars.compile(pageTemplateStringProcessed);
   }
 }
 
@@ -53,7 +55,7 @@ async function processTemplateString ({appName, pageTemplateString}) {
 
   // 2. get layout template string
   let layoutTemplateDir = getDirForLayoutTemplate({appName, layoutName});
-  let [layoutTemplateString] = await capture(readFileAsync(layoutTemplateDir));
+  let [layoutTemplateString] = await capture(readFileAsync(layoutTemplateDir, 'utf8'));
 
   // 3. remove the custom "layout" command from the page template. 
   //    looks like: {{ layout "layoutName" }}

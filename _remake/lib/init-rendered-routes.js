@@ -40,7 +40,7 @@ async function renderPage ({res, appName, pageName, username, itemId}) {
   }
 
   // GET DATA
-  let data = getDataForPage({req, user, appName});
+  let data = getDataForPage({res, user, appName});
 
   if (itemId && !data.currentItem) {
     res.status(404).send("404 Not Found");
@@ -69,7 +69,7 @@ export async function initRenderedRoutes ({ app }) {
       }
 
       [appName, firstParam, secondParam, thirdParam] = [firstParam, secondParam, thirdParam, fourthParam];
-      
+
     }
 
     if (!firstParam) { // route: /
