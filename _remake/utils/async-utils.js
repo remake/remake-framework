@@ -1,3 +1,7 @@
+const {promisify} = require('util');
+const fs = require('fs');
+const readFileAsync = promisify(fs.readFile);
+
 // e.g. let [posts, postErr] = await capture(getUsersPosts(userId));
 //   source: https://dev.to/sobiodarlington/better-error-handling-with-async-await-2e5m
 const capture = (promise) => {
@@ -7,5 +11,6 @@ const capture = (promise) => {
 }
 
 export {
-  capture
+  capture,
+  readFileAsync
 }

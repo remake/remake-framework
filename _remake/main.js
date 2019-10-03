@@ -11,11 +11,12 @@ import { initUserAccounts } from "./lib/init-user-accounts";
 import { initPartialsWatcher } from "./lib/init-partials-watcher";
 import RemakeStore from "./lib/remake-store";
 
-// set up vars
+// set up environment variables
 dotenv.config({ path: "variables.env" });
 if (process.env.REMAKE_MULTI_TENANT) {
   RemakeStore.enableMultiTenantArchitecture();
 }
+
 
 const app = express();
 

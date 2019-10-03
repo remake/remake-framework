@@ -3,18 +3,19 @@ const path = require('upath');
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
 import { getBootstrapData } from "./get-project-info";
+import { getDirForUserFile } from "../directory-helpers";
 
 // create new user data files
 // returns: {details, appData}
-async function createUserData ({ username, hash }) {
+async function createUserData ({ username, hash, appName }) {
 
   let {details, appData} = getBootstrapData().user;
 
   // extend user details with args
   Object.assign(details, { username, hash });
 
-  let detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/user-details/", `${username}.json`), details, { spaces: 2 });
-  let appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../_remake-data/user-app-data/", `${username}.json`), appData, { spaces: 2 });
+  let detailsWritePromise = jsonfile.writeFile(getDirForUserFile({type: "details", appName, username}), details, { spaces: 2 });
+  let appDataWritePromise = jsonfile.writeFile(getDirForUserFile({type: "appData", appName, username}), appData, { spaces: 2 });
 
   // let higher-level functions capture this if it errors
   await Promise.all([detailsWritePromise, appDataWritePromise]);
@@ -24,10 +25,10 @@ async function createUserData ({ username, hash }) {
 
 // get all user data
 // returns: {details, appData}
-async function getUserData ({ username, type }) {
+async function getUserData ({ username, type, appName }) {
   try {
-    let detailsPromise = type === "appData" ? null : jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/user-details/", `${username}.json`)); 
-    let appDataPromise = type === "details" ? null : jsonfile.readFile(path.join(__dirname, "../../", "_remake-data/user-app-data/", `${username}.json`));
+    let detailsPromise = type === "appData" ? null : jsonfile.readFile(getDirForUserFile({type: "details", appName, username})); 
+    let appDataPromise = type === "details" ? null : jsonfile.readFile(getDirForUserFile({type: "details", appName, username}));
     let [ details, appData ] = await Promise.all([detailsPromise, appDataPromise]);
     return { details, appData }; 
   } catch (e) {
@@ -37,13 +38,13 @@ async function getUserData ({ username, type }) {
 
 // set EITHER details data OR appData data by username
 // returns: {username, type, data}
-async function setUserData ({ username, data, type }) {
+async function setUserData ({ username, data, type, appName }) {
   let detailsWritePromise;
   let appDataWritePromise;
 
   try {
     if (type === "details") {
-      detailsWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/user-details/", `${username}.json`), data, { spaces: 2 });
+      detailsWritePromise = jsonfile.writeFile(getDirForUserFile({type: "details", appName, username}), data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user details");
@@ -51,7 +52,7 @@ async function setUserData ({ username, data, type }) {
 
   try {
     if (type === "appData") {
-      appDataWritePromise = jsonfile.writeFile(path.join(__dirname, "../../", "_remake-data/user-app-data/", `${username}.json`), data, { spaces: 2 });
+      appDataWritePromise = jsonfile.writeFile(getDirForUserFile({type: "appData", appName, username}), data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user appData");
