@@ -43,14 +43,14 @@ async function renderPage ({req, res, appName, pageName, username, itemId}) {
   }
 
   // GET DATA
-  let [data] = await capture(getDataForPage({req, res, pageAuthor, appName}));
+  let [data] = await capture(getDataForPage({req, res, appName, pageAuthor, itemId}));
 
   if (itemId && !data.currentItem) {
     res.status(404).send("404 Not Found");
     return;
   }
 
-  let html = getPageHtml({pageTemplate, data, appName});
+  let html = getPageHtml({pageTemplate, data, appName, username, itemId});
   res.send(html);
 }
 

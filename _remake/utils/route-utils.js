@@ -1,11 +1,11 @@
-function isBaseRoute (params) {
-  return !params.id && !params.username;
+function isBaseRoute ({username, itemId}) {
+  return !itemId && !username;
 }
-function isUsernameRoute (params) {
-  return !!params.username;
+function isUsernameRoute ({username, itemId}) {
+  return !!username;
 }
-function isItemRoute (params) {
-  return !!params.id;
+function isItemRoute ({username, itemId}) {
+  return !!itemId;
 }
 
 export default {

@@ -32,16 +32,15 @@ export async function getPageTemplate ({pageName, appName}) {
   }
 }
 
-export async function getDataForPage ({req, res, pageAuthor, appName}) {
+export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let params = req.params;
-  let usernameFromParams = params.username;
   let query = req.query;
   let pathname = parseUrl(req).pathname;
   let currentUser = req.pageAuthor;
   let data = pageAuthor && pageAuthor.appData;
   let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
   let flashErrors = req.flash("error");
-  let [itemData] = await capture(processData({res, pageAuthor, data, params}));
+  let [itemData] = await capture(processData({res, pageAuthor, data, itemId}));
   let [currentItem, parentItem] = itemData;
 
   return {
@@ -60,9 +59,9 @@ export async function getDataForPage ({req, res, pageAuthor, appName}) {
 
 }
 
-export function getPageHtml ({pageTemplate, data, appName}) {
+export function getPageHtml ({pageTemplate, data, appName, username, itemId}) {
   let html = template(data);
-  let htmlWithAppStatus = addRemakeAppStatusToPage({html, currentUser, params});
+  let htmlWithAppStatus = addRemakeAppStatusToPage({html, currentUser, username, itemId});
   return htmlWithAppStatus;
 }
 

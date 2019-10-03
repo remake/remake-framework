@@ -3,12 +3,12 @@ import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
 
-export async function processData ({res, pageAuthor, data, params, requestType}) {
+export async function processData ({res, pageAuthor, data, itemId, requestType}) {
   let itemData, itemDataError;
 
   if (pageAuthor) {
     // add unique ids to data & get currentItem and parentItem
-    [itemData, itemDataError] = await capture(addIdsAndGetItemData({data, user: pageAuthor, params}));
+    [itemData, itemDataError] = await capture(addIdsAndGetItemData({data, user: pageAuthor, itemId}));
 
     if (itemDataError) {
       if (requestType === "ajax") {
@@ -20,7 +20,7 @@ export async function processData ({res, pageAuthor, data, params, requestType})
     }
   }
 
-  if (params.id && !itemData.currentItem) {
+  if (itemId && !itemData.currentItem) {
     if (requestType === "ajax") {
       res.json({success: false, reason: "noCurrentItem"});
     } else {
@@ -32,7 +32,7 @@ export async function processData ({res, pageAuthor, data, params, requestType})
   return itemData;
 }
 
-async function addIdsAndGetItemData ({data, user, params}) {
+async function addIdsAndGetItemData ({data, user, itemId}) {
   let currentItem;
   let parentItem;
   let someUniqueIdsAdded = false;
@@ -42,7 +42,7 @@ async function addIdsAndGetItemData ({data, user, params}) {
     if (isPlainObject(value)) {
 
       // if an :id is specified in the route, get the data for it (currentItem and its parentItem)
-      if (params.id && value.id === params.id) {
+      if (itemId && itemId === value.id) {
         currentItem = value;
 
         // loop through all parent items (objects & arrays)
