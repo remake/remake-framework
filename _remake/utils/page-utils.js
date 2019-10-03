@@ -9,10 +9,10 @@ export async function getPageTemplate ({pageName, appName}) {
   let [pageTemplateString] = await capture(readFileAsync(pageTemplateDir));
 
   if (pageTemplateString) {
-    pageTemplateStringProcessed = await processTemplateString({appName, pageTemplateString});
+    let pageTemplateString = await processTemplateString({appName, pageTemplateString});
 
     const Handlebars = getHandlebarsContext({appName});
-    return Handlebars.compile(pageTemplateStringProcessed);
+    return Handlebars.compile(pageTemplateString);
   }
 }
 

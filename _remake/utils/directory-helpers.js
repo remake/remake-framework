@@ -19,3 +19,13 @@ export function getDirForLayoutTemplate ({appName, layoutName}) {
   let pathString = `../../app/${innerAppPath}layouts/${layoutName}.hbs`;
   return path.join(__dirname, pathString);
 }
+
+export function getDirForRootApp ({appName, layoutName}) {
+  let pathString = `../../app`;
+  return path.join(__dirname, pathString);
+}
+
+
+
+
+
