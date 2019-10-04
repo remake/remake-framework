@@ -68,6 +68,10 @@ export function getPageHtml ({pageTemplate, data, appName, username, itemId}) {
   return htmlWithAppStatus;
 }
 
+export function doesPageExist ({pageName}) {
+  // todo
+}
+
 
 // UTILS
 

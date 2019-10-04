@@ -1,18 +1,52 @@
-import { getRoutes } from "../lib/get-project-info";
-var pathMatch = require('path-match')({});
+const pathMatch = require('path-match')({});
+import RemakeStore from "../lib/remake-store";
+
+/*
+  Remake has 3 types of routes
+  • BaseRoute
+  • UsernameRoute
+  • ItemRoute
+
+  Combined, these routes can render these patterns:
+  • /
+  • /pageName
+  • /username
+  • /username/pageName/
+  • /username/pageName/id
+*/
 
 export function getParamsFromPathname (pathname) {
-  let routes = getRoutes();
+  let routeMatcher = route("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
+  let params = routeMatcher(pathname) || [];
 
-  for (var i = 0; i < routes.length; i++) {
-    let routeObj = routes[i];
-    let route = routeObj && routeObj.route; // e.g. "/:username/todo-list/:id?"
+  let {firstParam, secondParam, thirdParam, fourthParam} = params;
 
-    let match = pathMatch(route);
-    let params = match(pathname);
+  let appName;
+  if (!RemakeStore.isMultiTenant()) {
+    [username, pageName, itemId] = [firstParam, secondParam, thirdParam];
+  } else {
+    [appName, username, pageName, itemId] = [firstParam, secondParam, thirdParam, fourthParam];
 
-    if (params) {
-      return params;
+    if (!appName) {
+      return {multiTenantBaseRoute: true};
     }
   }
+
+  // route: /
+  if (!username) {
+    pageName = "index";
+  }
+
+  if (username && !pageName) {
+    if (doesPageExist({pageName: username})) {
+      // route: /pageName 
+      // if there's no second param, the first param MIGHT be a page name
+      pageName = username;
+    } else {
+      // route: /username
+      pageName = "index";
+    }
+  }
+
+  return {appName, username, pageName, itemId};
 }

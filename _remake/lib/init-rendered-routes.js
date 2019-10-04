@@ -68,6 +68,17 @@ export async function initRenderedRoutes ({ app }) {
     // don't cache html from these routes
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
+
+    // todo
+    // use app.get("*") here, with:
+    // let params = getParamsFromPathname(parseUrl(req).pathname)
+    // if (params.multiTenantBaseRoute) { // todo }
+    // await renderPage({req, res, ...params})
+
+
+
+
+
     let {firstParam, secondParam, thirdParam, fourthParam} = req.params;
 
     let appName;
