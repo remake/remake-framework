@@ -7,6 +7,8 @@ import {
   getRootAppsPageHtml 
 } from "../utils/page-utils";
 import { getUserData } from "./user-data";
+import parseUrl from "parseurl";
+import { getParamsFromPathname } from "../utils/get-params-from-pathname";
 import RemakeStore from "./remake-store";
 
 /*
@@ -68,10 +70,13 @@ export async function initRenderedRoutes ({ app }) {
     // don't cache html from these routes
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
+    let params = await capture(getParamsFromPathname(parseUrl(req).pathname));
+
+    console.log("params", params);
 
     // todo
     // use app.get("*") here, with:
-    // let params = getParamsFromPathname(parseUrl(req).pathname)
+    // 
     // if (params.multiTenantBaseRoute) { // todo }
     // await renderPage({req, res, ...params})
 

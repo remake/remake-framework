@@ -15,13 +15,13 @@ import RemakeStore from "../lib/remake-store";
   • /username/pageName/id
 */
 
-export function getParamsFromPathname (pathname) {
-  let routeMatcher = route("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
+export async function getParamsFromPathname (pathname) {
+  let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
   let params = routeMatcher(pathname) || [];
 
   let {firstParam, secondParam, thirdParam, fourthParam} = params;
 
-  let appName;
+  let appName, username, pageName, itemId;
   if (!RemakeStore.isMultiTenant()) {
     [username, pageName, itemId] = [firstParam, secondParam, thirdParam];
   } else {
@@ -38,7 +38,9 @@ export function getParamsFromPathname (pathname) {
   }
 
   if (username && !pageName) {
-    if (doesPageExist({pageName: username})) {
+    let pageExists = await capture(doesPageExist({pageName: username}));
+
+    if (pageExists) {
       // route: /pageName 
       // if there's no second param, the first param MIGHT be a page name
       pageName = username;
