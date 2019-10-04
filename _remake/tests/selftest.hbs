@@ -1,0 +1,71 @@
+<style>
+	.page {
+		max-width: 50%;
+	}
+	h1,
+	h2,
+	h3 {
+		margin-bottom: 10px;
+	}
+	p {
+		margin-top: 10px;
+	}
+	#parse2TestDiv {
+		margin-top: 20px;
+	}
+	.leaveSomeRoomForJesus {
+		margin: 5px;
+	}
+	.testPassMsg {
+		font-weight: bold;
+		text-align: center;
+	}
+	xmp {
+		white-space: normal;
+		word-wrap: break-word;
+		background-color: lightgrey;
+		padding: 10px;
+		margin: 5px;
+		border: 1px solid black;
+	}
+	xmp:nth-of-type(1) {
+		width: 50%;
+	}
+	xmp:nth-of-type(2) {
+		width: 50%;
+	}
+	xmp:nth-of-type(n+3) {
+		width: 0;
+	}
+	.headerTest *:nth-of-type(1) {
+		width: 50%;
+	}
+	.headerTest *:nth-of-type(2) {
+		width: 50%;
+	}
+	.headerTest *:nth-of-type(n+3) {
+		width: 0;
+	}
+</style>
+<div class="page">
+	<div id="introduction">
+		{{#if currentUser}}
+			<h1>Oh hey {{currentUser.details.username}}! Welcome to the self test page!</h1>
+		{{else}}
+			<h1>Oh, hello! Welcome to the self test page!</h1>
+		{{/if}}
+		<p>
+			This is the self test page where developers can test the function of the framework.<br>Mainly to see if they didn't break it again.
+		</p>
+	</div>
+	<!-- Tests for getDataFromRootNode in this parent -->
+	<div id="parse2TestDiv" selfTest-test="getDataFromRootNode" selfTest-arguments="(testcode)">
+		<xmp>
+<div data-o-type="object" data-o-key-id="zWIo5v3pSlSDs6" data-o-key-name="Tasks"></div>
+		</xmp>
+		<xmp>
+<div data-o-type="list" data-o-key="todoLists"></div>
+		</xmp>
+	</div>
+	<script src="/selftest_clientside.js"></script>
+</div>

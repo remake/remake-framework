@@ -27,6 +27,7 @@ app.use(expressSession({
 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './dist')));
+app.use(express.static(path.join(__dirname, './tests'))); // So selftest.hbs can get src it's files
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(flash());

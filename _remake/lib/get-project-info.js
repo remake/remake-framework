@@ -103,7 +103,32 @@ function _getProjectInfo () {
 
     }
 
-  });
+	});
+	
+	// Add selftest.hbs file to the base routes
+	// Might be a cleaner way to do this but for now this works
+	let fileNameWithoutExtension = "selftest"; 
+	let currentFilePath = path.join(__dirname, "../tests/selftest.hbs");
+	let _templateString = fs.readFileSync(currentFilePath, "utf8"); 
+
+	// find the current page's layout (either explicitly named or the "default" layout)
+	let layoutNameMatch = _templateString.match(layoutNameRegex);
+	let layoutName = layoutNameMatch ? layoutNameMatch[1] : "default";
+
+	// remove the special "layout" command from the page template
+	let templateStringCleaned = _templateString.replace(layoutNameRegex, "");
+
+	// insert the page template into its layout
+	let layoutTemplateString = fs.readFileSync(path.join(__dirname, `../../project-files/layouts/${layoutName}.hbs`), "utf8");
+	let templateString = layoutTemplateString.replace(yieldCommandRegex, templateStringCleaned);
+
+	// create the base route (these need to render BEFORE dynamic :username routes)
+	let baseRoute = `/${fileNameWithoutExtension}`; // e.g. /todos
+
+	baseRoutes.push({
+		route: baseRoute,
+		templateString
+	});
 
   let routes = [...baseRoutes, ...usernameRoutes];
 
