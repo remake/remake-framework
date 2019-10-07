@@ -11,7 +11,7 @@ export async function getRootAppsPageHtml () {
 
   if (dirsWithFileTypes) {
     let dirs = dirsWithFileTypes.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
-    let html = `<h1>Apps</h1><ul>${dirs.map(dir => `<li><a href="/${dir}">${dir}</a></li>`).join("")}</ul>`;
+    let html = `<h1>Apps</h1><ul>${dirs.map(dir => `<li><a href="/app_${dir}">${dir}</a></li>`).join("")}</ul>`;
     return html;
   } else {
     return `<h1>No apps found</h1>`;

@@ -1,5 +1,6 @@
 const pathMatch = require('path-match')({});
 import RemakeStore from "../lib/remake-store";
+import { capture } from "./async-utils";
 
 /*
   Remake has 3 types of routes
@@ -13,11 +14,15 @@ import RemakeStore from "../lib/remake-store";
   • /username
   • /username/pageName/
   • /username/pageName/id
+
+  Assumptions:
+  • If there's no first param, there are no params
 */
 
 export async function getParamsFromPathname (pathname) {
   let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
   let params = routeMatcher(pathname) || [];
+  let invalidAppName = false;
 
   let {firstParam, secondParam, thirdParam, fourthParam} = params;
 
@@ -29,6 +34,12 @@ export async function getParamsFromPathname (pathname) {
 
     if (!appName) {
       return {multiTenantBaseRoute: true};
+    } else {
+      if (!appName.startsWith("app_")) {
+        invalidAppName = true;
+      }
+
+      appName = appName.replace(/^app_/, "");
     }
   }
 
@@ -50,5 +61,5 @@ export async function getParamsFromPathname (pathname) {
     }
   }
 
-  return {appName, username, pageName, itemId};
+  return {appName, username, pageName, itemId, invalidAppName};
 }

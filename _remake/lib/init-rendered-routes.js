@@ -25,7 +25,13 @@ import RemakeStore from "./remake-store";
   • /username/pageName/id
 */
 
-async function renderPage ({req, res, appName, pageName, username, itemId}) {
+async function renderPage ({req, res, appName, pageName, username, itemId, invalidAppName}) {
+  if (invalidAppName) {
+    let redirectPath = addAppNameToInvalidRequestPath({req});
+    res.redirect(redirectPath);
+    return;
+  }
+
   let pageTemplate = await getPageTemplate({pageName, appName});
 
   if (!pageTemplate) {
@@ -63,80 +69,23 @@ async function renderPage ({req, res, appName, pageName, username, itemId}) {
 
 export async function initRenderedRoutes ({ app }) {
 
-  // assumptions:
-  // - if there's no firstParam, there can't be any other param either
   app.get("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?", async function (req, res) {
 
     // don't cache html from these routes
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-    let params = await capture(getParamsFromPathname(parseUrl(req).pathname));
-
-    console.log("params", params);
-
-    // todo
-    // use app.get("*") here, with:
-    // 
-    // if (params.multiTenantBaseRoute) { // todo }
-    // await renderPage({req, res, ...params})
-
-
-
-
-
-    let {firstParam, secondParam, thirdParam, fourthParam} = req.params;
-
-    let appName;
-    if (RemakeStore.isMultiTenant()) {
-
-      if (!firstParam) {
-        let html = await getRootAppsPageHtml();
-        res.send(html);
-        return;
-      }
-
-      [appName, firstParam, secondParam, thirdParam] = [firstParam, secondParam, thirdParam, fourthParam];
-
+    let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
+    if (paramsError) {
+      console.log(paramsError);
     }
 
-    if (!firstParam) { // route: /
-
-      await renderPage({req, res, appName, pageName: "index"});
+    if (params.multiTenantBaseRoute) {
+      let html = await getRootAppsPageHtml();
+      res.send(html);
       return;
-
     }
 
-    if (firstParam && secondParam && thirdParam) { // route: /username/pageName/id
-
-      await renderPage({req, res, appName, username: firstParam, pageName: secondParam, itemId: thirdParam});
-      return;
-
-    }
-
-    if (firstParam && secondParam) { // route: /username/pageName/
-
-      await renderPage({req, res, appName, username: firstParam, pageName: secondParam});
-      return;
-
-    }
-
-    if (firstParam) { // route: /pageName OR /username
-
-      let pageExists = doesPageExist({pageName: firstParam});
-
-      if (pageExists) {
-       
-        await renderPage({req, res, appName, pageName: firstParam});
-        return;
-      
-      } else {
-
-        await renderPage({req, res, appName, pageName: "index", username: firstParam});
-        return;
-
-      }
-
-    }
+    await renderPage({req, res, ...params});
 
   });
 
