@@ -1,4 +1,5 @@
 const pathMatch = require('path-match')({});
+import parseUrl from "parseurl";
 import RemakeStore from "../lib/remake-store";
 import { capture } from "./async-utils";
 import { doesPageExist } from "./page-utils";
@@ -19,6 +20,19 @@ import { doesPageExist } from "./page-utils";
   Assumptions:
   • If there's no first param, there are no params
 */
+
+export async function getParamsFromRequest ({req}) {
+  let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
+  return params || {};
+}
+
+export async function getParamsFromRequestReferrer ({req}) {
+  let referrerUrl = req.get('Referrer');
+  let referrerUrlParsed = new URL(referrerUrl);
+  let referrerUrlPath = referrerUrlParsed.pathname;
+  let [params, paramsError] = await capture(getParamsFromPathname(referrerUrlPath));
+  return params || {};
+}
 
 export async function getParamsFromPathname (pathname) {
   let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");

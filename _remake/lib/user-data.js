@@ -1,18 +1,23 @@
 const jsonfile = require("jsonfile");
 const path = require('upath');
 import { showConsoleError } from "../utils/console-utils";
-import { capture } from "../utils/async-utils";
+import { capture, mkdirpAsync } from "../utils/async-utils";
 import { getBootstrapData } from "./get-project-info";
-import { getDirForUserFile } from "../utils/directory-helpers";
+import { getDirForUserFile, getAllDirsForUserData } from "../utils/directory-helpers";
 
 // create new user data files
 // returns: {details, appData}
 async function createUserData ({ username, hash, appName }) {
 
-  let {details, appData} = getBootstrapData().user;
+  let userBootstrapData = getBootstrapData({fileName: "_user", appName});
+  let details = userBootstrapData.details || {};
+  let appData = userBootstrapData.appData || {};
 
   // extend user details with args
   Object.assign(details, { username, hash });
+
+  // make sure all the user data directories exist before writing to them
+  await makeSureUserDataDirectoriesExist({appName});
 
   let detailsWritePromise = jsonfile.writeFile(getDirForUserFile({type: "details", appName, username}), details, { spaces: 2 });
   let appDataWritePromise = jsonfile.writeFile(getDirForUserFile({type: "appData", appName, username}), appData, { spaces: 2 });
@@ -62,6 +67,23 @@ async function setUserData ({ username, data, type, appName }) {
   await Promise.all([detailsWritePromise, appDataWritePromise]);
 
   return {username, type, data};
+}
+
+// UTILS
+
+async function makeSureUserDataDirectoriesExist ({appName}) {
+  let ret = [];
+  let dirs = getAllDirsForUserData({appName});
+
+  let promisesArray = dirs.map(function (dir) {
+    return mkdirpAsync(dir);
+  });
+
+  for (var i = 0; i< promisesArray.length; i++) {
+    ret.push(await promisesArray[i]);
+  }
+
+  return ret;
 }
 
 export {

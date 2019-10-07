@@ -6,6 +6,7 @@ const jsonfile = require("jsonfile");
 import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
+import { getParamsFromRequestReferrer } from "../utils/get-params-from-pathname";
 import { getReservedWordInfo } from "./get-reserved-word-info";
 
 function initUserAccounts ({ app }) {
@@ -48,9 +49,13 @@ function initUserAccounts ({ app }) {
     }
   });
 
-  app.post('/signup', async function(req, res) {
+  app.post('/api/signup', async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
+
+    // get app name
+    let [params] = await capture(getParamsFromRequestReferrer({req}));
+    let appName = params && params.appName;
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
@@ -93,7 +98,9 @@ function initUserAccounts ({ app }) {
     }
 
     let [hash] = await capture(bcrypt.hash(password, 14));
-    let [newUser] = await capture(createUserData({ username, hash }));
+    let [newUser, newUserError] = await capture(createUserData({ appName, username, hash }));
+
+    console.log(newUser, newUserError);
 
     req.login(newUser, function (err) {
       if (!err){
