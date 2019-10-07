@@ -1,6 +1,7 @@
 const pathMatch = require('path-match')({});
 import RemakeStore from "../lib/remake-store";
 import { capture } from "./async-utils";
+import { doesPageExist } from "./page-utils";
 
 /*
   Remake has 3 types of routes

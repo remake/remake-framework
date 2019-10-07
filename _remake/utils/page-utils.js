@@ -1,10 +1,17 @@
 import { capture } from "./async-utils";
-import { getDirForPageTemplate, getDirForRootApp, getDirForLayoutTemplate } from "./directory-helpers";
+import { 
+  getDirForPageTemplate, 
+  getDirForRootApp, 
+  getDirForLayoutTemplate
+} from "./directory-helpers";
 import { readFileAsync, readdirAsync } from "./async-utils";
 import { getHandlebarsContext } from "./handlebars-context";
 import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
 const parseUrl = require('parseurl');
+const {promisify} = require('util');
+const fs = require('fs');
+const accessAsync = promisify(fs.access);
 
 export async function getRootAppsPageHtml () {
   let [dirsWithFileTypes] = await capture(readdirAsync(getDirForRootApp(), { withFileTypes: true }));
@@ -68,8 +75,9 @@ export function getPageHtml ({pageTemplate, data, appName, username, itemId}) {
   return htmlWithAppStatus;
 }
 
-export function doesPageExist ({pageName}) {
-  // todo
+export async function doesPageExist ({appName, pageName}) {
+  let pageTemplateDir = getDirForPageTemplate({appName, pageName});
+  return await accessAsync(pageTemplateDir, fs.constants.F_OK);
 }
 
 

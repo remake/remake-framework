@@ -9,6 +9,7 @@ import {
 import { getUserData } from "./user-data";
 import parseUrl from "parseurl";
 import { getParamsFromPathname } from "../utils/get-params-from-pathname";
+import routeUtils from "../utils/route-utils";
 import RemakeStore from "./remake-store";
 
 /*
@@ -27,7 +28,7 @@ import RemakeStore from "./remake-store";
 
 async function renderPage ({req, res, appName, pageName, username, itemId, invalidAppName}) {
   if (invalidAppName) {
-    let redirectPath = addAppNameToInvalidRequestPath({req});
+    let [redirectPath] = await capture(routeUtils.addAppNameToInvalidPath({req}));
     res.redirect(redirectPath);
     return;
   }
