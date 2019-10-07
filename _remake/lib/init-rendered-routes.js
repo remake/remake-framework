@@ -76,9 +76,8 @@ export async function initRenderedRoutes ({ app }) {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
     let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
-    if (paramsError) {
-      console.log(paramsError);
-    }
+    
+    console.log(params, paramsError);
 
     if (params.multiTenantBaseRoute) {
       let html = await getRootAppsPageHtml();

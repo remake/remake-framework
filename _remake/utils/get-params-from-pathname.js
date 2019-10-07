@@ -54,8 +54,8 @@ export async function getParamsFromPathname (pathname) {
 
     if (pageExists) {
       // route: /pageName 
-      // if there's no second param, the first param MIGHT be a page name
       pageName = username;
+      username = undefined;
     } else {
       // route: /username
       pageName = "index";
