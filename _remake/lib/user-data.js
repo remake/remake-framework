@@ -14,7 +14,7 @@ async function createUserData ({ username, hash, appName }) {
   let appData = userBootstrapData.appData || {};
 
   // extend user details with args
-  Object.assign(details, { username, hash });
+  Object.assign(details, { username, hash, appName });
 
   // make sure all the user data directories exist before writing to them
   await makeSureUserDataDirectoriesExist({appName});
@@ -33,7 +33,7 @@ async function createUserData ({ username, hash, appName }) {
 async function getUserData ({ username, type, appName }) {
   try {
     let detailsPromise = type === "appData" ? null : jsonfile.readFile(getDirForUserFile({type: "details", appName, username})); 
-    let appDataPromise = type === "details" ? null : jsonfile.readFile(getDirForUserFile({type: "details", appName, username}));
+    let appDataPromise = type === "details" ? null : jsonfile.readFile(getDirForUserFile({type: "appData", appName, username}));
     let [ details, appData ] = await Promise.all([detailsPromise, appDataPromise]);
     return { details, appData }; 
   } catch (e) {
@@ -49,7 +49,7 @@ async function setUserData ({ username, data, type, appName }) {
 
   try {
     if (type === "details") {
-      detailsWritePromise = jsonfile.writeFile(getDirForUserFile({type: "details", appName, username}), data, { spaces: 2 });
+      detailsWritePromise = jsonfile.writeFile(getDirForUserFile({appName, type: "details", username}), data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user details");
@@ -57,7 +57,7 @@ async function setUserData ({ username, data, type, appName }) {
 
   try {
     if (type === "appData") {
-      appDataWritePromise = jsonfile.writeFile(getDirForUserFile({type: "appData", appName, username}), data, { spaces: 2 });
+      appDataWritePromise = jsonfile.writeFile(getDirForUserFile({appName, type: "appData", username}), data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user appData");

@@ -9,10 +9,13 @@ const mkdirpAsync = promisify(mkdirp);
 //   source: https://dev.to/sobiodarlington/better-error-handling-with-async-await-2e5m
 const capture = (promise) => {
   return promise
-    .then(data => ([data, undefined]))
+    .then(data => {
+      // console.log("capture data:", data);
+      return [data, undefined];
+    })
     .catch(error => {
-      // console.log({error});
-      Promise.resolve([undefined, error]);
+      // console.log("capture error:", error);
+      return Promise.resolve([undefined, error]);
     });
 }
 

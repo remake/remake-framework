@@ -1,15 +1,16 @@
+import { capture } from "./async-utils";
 import { set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
 
-export async function processData ({res, pageAuthor, data, itemId, requestType}) {
+export async function processData ({res, appName, pageAuthor, data, itemId, requestType}) {
   let itemData = {currentItem: undefined, parentItem: undefined};
   let itemDataError;
 
   if (pageAuthor) {
     // add unique ids to data & get currentItem and parentItem
-    [itemData, itemDataError] = await capture(addIdsAndGetItemData({data, user: pageAuthor, itemId}));
+    [itemData, itemDataError] = await capture(addIdsAndGetItemData({appName, data, user: pageAuthor, itemId}));
 
     if (itemDataError) {
       if (requestType === "ajax") {
@@ -33,7 +34,7 @@ export async function processData ({res, pageAuthor, data, itemId, requestType})
   return itemData;
 }
 
-async function addIdsAndGetItemData ({data, user, itemId}) {
+async function addIdsAndGetItemData ({appName, data, user, itemId}) {
   let currentItem;
   let parentItem;
   let someUniqueIdsAdded = false;
@@ -71,7 +72,7 @@ async function addIdsAndGetItemData ({data, user, itemId}) {
   // save the data if some new ids have been added to it
   if (someUniqueIdsAdded) {
     // let higher-level functions capture this if it errors
-    await setUserData({username: user.details.username, data, type: "appData"});
+    await setUserData({appName, username: user.details.username, data, type: "appData"});
   }
 
   return { currentItem, parentItem };

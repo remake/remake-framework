@@ -21,9 +21,25 @@ import { doesPageExist } from "./page-utils";
   • If there's no first param, there are no params
 */
 
+// get data from request pathname
+
+export async function getAppNameFromRequest ({req}) {
+  let [params, paramsError] = await capture(getParamsFromRequest({req}));
+  let paramsObj =  params || {};
+  return paramsObj.appName;
+}
+
 export async function getParamsFromRequest ({req}) {
   let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
   return params || {};
+}
+
+// get data from request referrer pathname
+
+export async function getAppNameFromRequestReferrer ({req}) {
+  let [params, paramsError] = await capture(getParamsFromRequestReferrer({req}));
+  let paramsObj =  params || {};
+  return paramsObj.appName;
 }
 
 export async function getParamsFromRequestReferrer ({req}) {
@@ -33,6 +49,8 @@ export async function getParamsFromRequestReferrer ({req}) {
   let [params, paramsError] = await capture(getParamsFromPathname(referrerUrlPath));
   return params || {};
 }
+
+// get params from a generic pathname
 
 export async function getParamsFromPathname (pathname) {
   let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
@@ -52,9 +70,10 @@ export async function getParamsFromPathname (pathname) {
     } else {
       if (!appName.startsWith("app_")) {
         invalidAppName = true;
+        appName = undefined;
+      } else {
+        appName = appName.replace(/^app_/, "");
       }
-
-      appName = appName.replace(/^app_/, "");
     }
   }
 
@@ -64,7 +83,7 @@ export async function getParamsFromPathname (pathname) {
   }
 
   if (username && !pageName) {
-    let pageExists = await capture(doesPageExist({pageName: username}));
+    let [pageExists] = await capture(doesPageExist({appName, pageName: username}));
 
     if (pageExists) {
       // route: /pageName 

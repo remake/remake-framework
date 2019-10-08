@@ -26,21 +26,27 @@ import RemakeStore from "./remake-store";
   • /username/pageName/id
 */
 
-async function renderPage ({req, res, appName, pageName, username, itemId, invalidAppName}) {
+async function renderPage ({req, res, appName, pageName, username, itemId, invalidAppName, multiTenantBaseRoute}) {
+  if (multiTenantBaseRoute) {
+    let html = await getRootAppsPageHtml();
+    res.send(html);
+    return;
+  }
+
   if (invalidAppName) {
     let [redirectPath] = await capture(routeUtils.addAppNameToInvalidPath({req}));
     res.redirect(redirectPath);
     return;
   }
 
-  let pageTemplate = await getPageTemplate({pageName, appName});
+  let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName}));
 
   if (!pageTemplate) {
     res.status(404).send("404 Not Found");
     return;
   }
 
-  let pageAuthor, userDataError;
+  let pageAuthor;
   if (username) {
     [pageAuthor] = await capture(getUserData({username, appName}));
 
@@ -76,12 +82,6 @@ export async function initRenderedRoutes ({ app }) {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
     let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
-
-    if (params.multiTenantBaseRoute) {
-      let html = await getRootAppsPageHtml();
-      res.send(html);
-      return;
-    }
 
     await renderPage({req, res, ...params});
 

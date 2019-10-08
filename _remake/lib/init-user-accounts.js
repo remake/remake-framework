@@ -6,7 +6,7 @@ const jsonfile = require("jsonfile");
 import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
-import { getParamsFromRequestReferrer } from "../utils/get-params-from-pathname";
+import { getParamsFromRequestReferrer, getAppNameFromRequestReferrer } from "../utils/get-params-from-pathname";
 import { getReservedWordInfo } from "./get-reserved-word-info";
 
 function initUserAccounts ({ app }) {
@@ -14,9 +14,13 @@ function initUserAccounts ({ app }) {
   app.use(passport.session());
 
   // The local strategy require a `verify` function which receives the credentials
-  passport.use(new LocalStrategy(async function(username, password, cb) {
+  passport.use(new LocalStrategy({
+    passReqToCallback: true
+  }, async function(req, username, password, cb) {
+    let [appName] = await capture(getAppNameFromRequestReferrer({req}));
+
     try {
-      let [currentUser] = await capture(getUserData({ username }));
+      let [currentUser] = await capture(getUserData({ username, appName }));
 
       if (!currentUser) { 
         cb(null, false);
@@ -38,11 +42,17 @@ function initUserAccounts ({ app }) {
   }));
 
   passport.serializeUser(function(currentUser, cb) {
-    cb(null, currentUser.details.username);
+    cb(null, {
+      username: currentUser.details.username, 
+      appName: currentUser.details.appName
+    });
   });
 
-  passport.deserializeUser(async function(username, cb) {
-    let [currentUser] = await capture(getUserData({ username }));
+  passport.deserializeUser(async function(currentUserData, cb) {
+    let [currentUser] = await capture(getUserData({
+      username: currentUserData.username,
+      appName: currentUserData.appName
+    }));
 
     if (currentUser) {
       cb(null, currentUser);
@@ -99,8 +109,6 @@ function initUserAccounts ({ app }) {
 
     let [hash] = await capture(bcrypt.hash(password, 14));
     let [newUser, newUserError] = await capture(createUserData({ appName, username, hash }));
-
-    console.log(newUser, newUserError);
 
     req.login(newUser, function (err) {
       if (!err){

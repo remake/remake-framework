@@ -43,11 +43,11 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let params = req.params;
   let query = req.query;
   let pathname = parseUrl(req).pathname;
-  let currentUser = req.pageAuthor;
+  let currentUser = req.user;
   let data = pageAuthor && pageAuthor.appData;
   let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
   let flashErrors = req.flash("error");
-  let [itemData, itemDataError] = await capture(processData({res, pageAuthor, data, itemId}));
+  let [itemData, itemDataError] = await capture(processData({res, appName, pageAuthor, data, itemId}));
   let {currentItem, parentItem} = itemData;
 
   let allData = {
