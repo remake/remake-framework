@@ -58,7 +58,7 @@ function initUserAccounts ({ app }) {
     }
   });
 
-  app.post('/api/signup', async function(req, res) {
+  app.post('/signup', async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
     let appName = req.session.appName;
