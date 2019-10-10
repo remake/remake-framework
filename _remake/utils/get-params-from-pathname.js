@@ -21,35 +21,6 @@ import { doesPageExist } from "./page-utils";
   • If there's no first param, there are no params
 */
 
-// get data from request pathname
-
-export async function getAppNameFromRequest ({req}) {
-  let [params, paramsError] = await capture(getParamsFromRequest({req}));
-  let paramsObj =  params || {};
-  return paramsObj.appName;
-}
-
-export async function getParamsFromRequest ({req}) {
-  let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
-  return params || {};
-}
-
-// get data from request referrer pathname
-
-export async function getAppNameFromRequestReferrer ({req}) {
-  let [params, paramsError] = await capture(getParamsFromRequestReferrer({req}));
-  let paramsObj =  params || {};
-  return paramsObj.appName;
-}
-
-export async function getParamsFromRequestReferrer ({req}) {
-  let referrerUrl = req.get('Referrer');
-  let referrerUrlParsed = new URL(referrerUrl);
-  let referrerUrlPath = referrerUrlParsed.pathname;
-  let [params, paramsError] = await capture(getParamsFromPathname(referrerUrlPath));
-  return params || {};
-}
-
 // get params from a generic pathname
 
 export async function getParamsFromPathname (pathname) {

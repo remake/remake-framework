@@ -35,8 +35,13 @@ async function renderPage ({req, res, appName, pageName, username, itemId, inval
 
   if (invalidAppName) {
     let [redirectPath] = await capture(routeUtils.addAppNameToInvalidPath({req}));
-    res.redirect(redirectPath);
-    return;
+    if (redirectPath) {
+      res.redirect(redirectPath);
+      return;
+    } else {
+      res.status(404).send("404 Not Found");
+      return;
+    }
   }
 
   let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName}));
@@ -82,6 +87,10 @@ export async function initRenderedRoutes ({ app }) {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
     let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
+
+    if (params.appName) {
+      req.session.appName = params.appName;
+    }
 
     await renderPage({req, res, ...params});
 

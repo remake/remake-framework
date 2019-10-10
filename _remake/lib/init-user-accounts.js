@@ -6,7 +6,6 @@ const jsonfile = require("jsonfile");
 import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
-import { getParamsFromRequestReferrer, getAppNameFromRequestReferrer } from "../utils/get-params-from-pathname";
 import { getReservedWordInfo } from "./get-reserved-word-info";
 
 function initUserAccounts ({ app }) {
@@ -17,7 +16,7 @@ function initUserAccounts ({ app }) {
   passport.use(new LocalStrategy({
     passReqToCallback: true
   }, async function(req, username, password, cb) {
-    let [appName] = await capture(getAppNameFromRequestReferrer({req}));
+    let appName = req.session.appName;
 
     try {
       let [currentUser] = await capture(getUserData({ username, appName }));
@@ -62,10 +61,7 @@ function initUserAccounts ({ app }) {
   app.post('/api/signup', async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
-
-    // get app name
-    let [params] = await capture(getParamsFromRequestReferrer({req}));
-    let appName = params && params.appName;
+    let appName = req.session.appName;
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
