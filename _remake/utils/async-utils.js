@@ -4,6 +4,7 @@ const readFileAsync = promisify(fs.readFile);
 const readdirAsync = promisify(fs.readdir);
 const mkdirp = require('mkdirp');
 const mkdirpAsync = promisify(mkdirp);
+const statAsync = promisify(fs.stat);
 
 // e.g. let [posts, postErr] = await capture(getUsersPosts(userId));
 //   source: https://dev.to/sobiodarlington/better-error-handling-with-async-await-2e5m
@@ -23,5 +24,6 @@ export {
   capture,
   readFileAsync,
   readdirAsync,
-  mkdirpAsync
+  mkdirpAsync,
+  statAsync
 }

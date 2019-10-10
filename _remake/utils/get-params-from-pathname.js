@@ -55,7 +55,7 @@ export async function getParamsFromPathname (pathname) {
 
   if (username && !pageName) {
     let [pageExists] = await capture(doesPageExist({appName, pageName: username}));
-
+    
     if (pageExists) {
       // route: /pageName 
       pageName = username;
