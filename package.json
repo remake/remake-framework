@@ -10,7 +10,8 @@
     "sass": "sass --watch project-files/assets/sass/main.sass _remake/dist/main.dist.css",
     "copy-assets": "copy-and-watch --watch project-files/assets/**/*.{ico,png,jpg,gif} _remake/dist",
     "build": "parcel build ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --log-level 2 && sass --style=compressed project-files/assets/sass/main.sass _remake/dist/main.dist.css",
-    "start": "node server.js"
+    "start": "node server.js",
+    "clean": "rm -rf .cache && rm -rf _remake/dist"
   },
   "keywords": [],
   "author": "",
