@@ -1,10 +1,11 @@
-import { capture } from "./async-utils";
+const parseUrl = require('parseurl');
 import { 
   getDirForPageTemplate, 
   getDirForRootApp, 
   getDirForLayoutTemplate
 } from "./directory-helpers";
 import { 
+  capture,
   readFileAsync, 
   readdirAsync, 
   statAsync 
@@ -12,9 +13,7 @@ import {
 import { getHandlebarsContext } from "./handlebars-context";
 import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
-const parseUrl = require('parseurl');
-const {promisify} = require('util');
-const fs = require('fs');
+import { getPartialsAsInlinePartials } from "./get-partials-as-inline-partials";
 
 
 export async function getRootAppsPageHtml () {
@@ -111,7 +110,11 @@ async function processTemplateString ({appName, pageTemplateString}) {
 
   // 5. insert the page template into its layout
   //    yield command looks like: {{> yield }}
-  let finalTemplateString = layoutTemplateString.replace(yieldCommandRegex, templateStringWithoutForInLoop);
+  let templateStringWithLayout = layoutTemplateString.replace(yieldCommandRegex, templateStringWithoutForInLoop);
+
+  // 6. insert inline partials into template
+  let [inlinePartialsString] = await capture(getPartialsAsInlinePartials({appName}));
+  let finalTemplateString = inlinePartialsString + templateStringWithLayout;
 
   return finalTemplateString;
 }

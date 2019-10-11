@@ -23,17 +23,40 @@ const capture = (promise) => {
 
 async function getAllFileContentsInDirectory ({dir, fileType}) {
   let [filesInDir] = await capture(readdirAsync(dir));
+  let fileExtension = "." + fileType;
 
   if (filesInDir && filesInDir.length) {
-    let filesInDirFiltered = filesInDir.filter(f => f.endsWith("." + fileType));
+    
+    let filesInDirFiltered = filesInDir.filter(f => f.endsWith(fileExtension));
+    
     let readPromises = filesInDirFiltered.map(fileName => {
       let fileDir = path.join(dir, fileName);
       return readFileAsync(fileDir, "utf8");
     });
+
     let [fileContentsArray] = await capture(Promise.all(readPromises));
-    return fileContentsArray || [];
+
+    if (fileContentsArray && fileContentsArray.length) {
+
+      let fileExtensionRegex = new RegExp(`${fileExtension}$`, "i");
+
+      let files = fileContentsArray.map((contents, index) => {
+        let fileName = filesInDirFiltered[index].replace(fileExtensionRegex, "");
+        return { contents, fileName };
+      });
+
+      return files;
+
+    } else {
+
+      return [];
+
+    }
+
   } else {
+
     return [];
+    
   }
 }
 
