@@ -45,6 +45,12 @@ export function getDirForLayoutTemplate ({appName, layoutName}) {
   return path.join(__dirname, pathString);
 }
 
+export function getDirForAllPartials ({appName}) {
+  let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
+  let pathString = `../../app/${innerAppPath}partials`;
+  return path.join(__dirname, pathString);
+}
+
 export function getDirForRootApp () {
   let pathString = `../../app`;
   return path.join(__dirname, pathString);

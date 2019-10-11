@@ -8,14 +8,16 @@ const FileStore = require('session-file-store')(expressSession);
 import { initApiRoutes } from "./lib/init-api-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
-import { initPartialsWatcher } from "./lib/init-partials-watcher";
 import RemakeStore from "./lib/remake-store";
+import { getPartialsAsInlinePartials } from "./utils/get-partials-as-inline-partials";
 
 // set up environment variables
 dotenv.config({ path: "variables.env" });
 if (process.env.REMAKE_MULTI_TENANT === "true") {
   RemakeStore.enableMultiTenantArchitecture();
 }
+
+getPartialsAsInlinePartials({appName: "test-app1"});
 
 
 const app = express();
@@ -41,7 +43,6 @@ app.use(flash());
 initUserAccounts({ app });
 initApiRoutes({ app });
 initRenderedRoutes({ app });
-initPartialsWatcher();
 
 
 const PORT = process.env.PORT || 3000;

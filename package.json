@@ -18,7 +18,6 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "camelcase": "^5.3.1",
-    "chokidar": "^3.2.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.4",
     "crostini": "^1.0.3",

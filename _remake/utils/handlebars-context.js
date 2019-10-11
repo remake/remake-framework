@@ -1,20 +1,10 @@
 const Handlebars = require('handlebars');
 import RemakeStore from "../lib/remake-store";
 
-let contextLookup = {};
+// available for if we ever need to use 
+// more than one context with Handlebars.create()
 export function getHandlebarsContext ({appName, regenerate}) {
-  if (!RemakeStore.isMultiTenant()) {
-    appName = "singleApp";
-  }
-
-  let cachedContext = contextLookup[appName];
-
-  if (regenerate || !cachedContext) {
-    contextLookup[appName] = Handlebars.create();
-    return contextLookup[appName];
-  } else {
-    return cachedContext;
-  }
+  return Handlebars;
 }
 
 
