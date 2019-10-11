@@ -21,9 +21,24 @@ import { doesPageExist } from "./page-utils";
   • If there's no first param, there are no params
 */
 
+export async function getParams ({req, fromReferrer}) {
+  let pathname;
+
+  if (!fromReferrer) {
+    pathname = parseUrl(req).pathname;
+  } else {
+    let url = new URL(req.get('Referrer'));
+    pathname = url.pathname;
+  }
+
+  let [params] = await capture(getParamsFromPathname(pathname));
+
+  return params;
+}
+
 // get params from a generic pathname
 
-export async function getParamsFromPathname (pathname) {
+async function getParamsFromPathname (pathname) {
   let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
   let params = routeMatcher(pathname) || [];
   let invalidAppName = false;

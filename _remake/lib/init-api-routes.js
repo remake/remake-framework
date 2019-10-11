@@ -7,7 +7,7 @@ import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
 import { getUserData, setUserData } from "./user-data";
 // import { getPartials, getBootstrapData } from "./get-project-info";
-import { getParamsFromPathname } from "../utils/get-params-from-pathname";
+import { getParams } from "../utils/get-params";
 import { capture } from "../utils/async-utils";
 import { processData } from "../utils/process-data";
 import { showConsoleError } from "../utils/console-utils";
@@ -23,12 +23,9 @@ export function initApiRoutes ({app}) {
       return;
     }
 
-    // referrer url
-    let referrerUrl = req.get('Referrer'); // e.g. "http://exampleapp.org/jane/todo-list/123"
-    let referrerUrlParsed = new URL(referrerUrl);
-    let referrerUrlPath = referrerUrlParsed.pathname; // e.g. "/jane/todo-list/123"
-    let params = getParamsFromPathname(referrerUrlPath); // e.g. { username: 'jane', id: '123' }
-    let usernameFromParams = params.username;
+    let [params, paramsError] = await capture(getParams({req, fromReferrer: true}));
+
+    let {appName, username, pageName, itemId} = params;
 
     // get incoming data
     let incomingData = req.body.data;
@@ -42,56 +39,58 @@ export function initApiRoutes ({app}) {
 
     // get existing data
     let currentUser = req.user;
-    let isPageAuthor = currentUser && usernameFromParams && currentUser.details.username === usernameFromParams;
+    let isPageAuthor = currentUser && username && currentUser.details.username === username;
     let existingData = currentUser.appData;
 
-    if (isPageAuthor) {
-      // option 1: save path
-      if (savePath) {
-        let dataAtPath = get(existingData, savePath); 
-
-        if (isPlainObject(dataAtPath)) {
-          // deep extend, using ids to match objects in arrays
-          specialDeepExtend(dataAtPath, incomingData);
-          set(existingData, savePath, incomingData);
-        } else if (Array.isArray(dataAtPath)) {
-          specialDeepExtend(dataAtPath, incomingData);
-          set(existingData, savePath, incomingData);
-        } else {
-          // if we're not auto generating ids OR
-          // if dataAtPath is NOT an object or array
-          // replace the data the the path
-          set(existingData, savePath, incomingData);
-        }
-      // option 2: save to id
-      } else if (saveToId) {
-        let itemData = getItemWithId(existingData, saveToId);
-
-        if (!itemData) {
-          res.json({success: false, reason: "noItemFound"});
-          return;
-        }
-
-        specialDeepExtend(itemData, incomingData);
-        Object.assign(itemData, incomingData);
-      // option 3: extend existing data at root level
-      } else {
-        specialDeepExtend(existingData, incomingData);
-        existingData = incomingData;
-      }
-
-      let [setUserDataResponse, setUserDataError] = await capture(setUserData({username: currentUser.details.username, data: existingData, type: "appData"}));
-      if (setUserDataError) {
-        res.json({success: false, reason: "userData"});
-        return;
-      }
-
-      res.json({success: true});
-
-    } else {
+    if (!isPageAuthor) {
       res.json({success: false, reason: "notAuthorized"});
       return;
     }
+
+    // option 1: save path
+    if (savePath) {
+      let dataAtPath = get(existingData, savePath); 
+
+      if (isPlainObject(dataAtPath)) {
+        // deep extend, using ids to match objects in arrays
+        specialDeepExtend(dataAtPath, incomingData);
+        set(existingData, savePath, incomingData);
+      } else if (Array.isArray(dataAtPath)) {
+        specialDeepExtend(dataAtPath, incomingData);
+        set(existingData, savePath, incomingData);
+      } else {
+        // if we're not auto generating ids OR
+        // if dataAtPath is NOT an object or array
+        // replace the data the the path
+        set(existingData, savePath, incomingData);
+      }
+
+    // option 2: save to id
+    } else if (saveToId) {
+      let itemData = getItemWithId(existingData, saveToId);
+
+      if (!itemData) {
+        res.json({success: false, reason: "noItemFound"});
+        return;
+      }
+
+      specialDeepExtend(itemData, incomingData);
+      Object.assign(itemData, incomingData);
+
+    // option 3: extend existing data at root level
+    } else {
+      specialDeepExtend(existingData, incomingData);
+      existingData = incomingData;
+    }
+
+    let [setUserDataResponse, setUserDataError] = await capture(setUserData({appName, username, data: existingData, type: "appData"}));
+
+    if (setUserDataError) {
+      res.json({success: false, reason: "userData"});
+      return;
+    }
+
+    res.json({success: true});
 
   })
 

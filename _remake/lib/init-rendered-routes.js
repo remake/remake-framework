@@ -8,7 +8,7 @@ import {
 } from "../utils/page-utils";
 import { getUserData } from "./user-data";
 import parseUrl from "parseurl";
-import { getParamsFromPathname } from "../utils/get-params-from-pathname";
+import { getParams } from "../utils/get-params";
 import routeUtils from "../utils/route-utils";
 import RemakeStore from "./remake-store";
 
@@ -86,7 +86,7 @@ export async function initRenderedRoutes ({ app }) {
     // don't cache html from these routes
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-    let [params, paramsError] = await capture(getParamsFromPathname(parseUrl(req).pathname));
+    let [params, paramsError] = await capture(getParams({req}));
 
     if (params.appName) {
       req.session.appName = params.appName;

@@ -45,13 +45,14 @@ export async function getUserData ({ username, type, appName }) {
 
 // set EITHER details data OR appData data by username
 // returns: {username, type, data}
-export async function setUserData ({ username, data, type, appName }) {
+export async function setUserData ({ appName, username, data, type }) {
   let detailsWritePromise;
   let appDataWritePromise;
 
   try {
     if (type === "details") {
-      detailsWritePromise = jsonfile.writeFile(getDirForUserFile({appName, type: "details", username}), data, { spaces: 2 });
+      let dirForUserFile = getDirForUserFile({appName, type: "details", username});
+      detailsWritePromise = jsonfile.writeFile(dirForUserFile, data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user details");
@@ -59,7 +60,8 @@ export async function setUserData ({ username, data, type, appName }) {
 
   try {
     if (type === "appData") {
-      appDataWritePromise = jsonfile.writeFile(getDirForUserFile({appName, type: "appData", username}), data, { spaces: 2 });
+      let dirForUserFile = getDirForUserFile({appName, type: "appData", username});
+      appDataWritePromise = jsonfile.writeFile(dirForUserFile, data, { spaces: 2 });
     }
   } catch (e) {
     showConsoleError("Error: Setting user appData");

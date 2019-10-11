@@ -1,7 +1,6 @@
 const path = require('upath');
 import parseUrl from "parseurl";
 import { capture } from "./async-utils";
-import { getParamsFromPathname } from "./get-params-from-pathname";
 
 function isBaseRoute ({username, itemId}) {
   return !itemId && !username;

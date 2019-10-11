@@ -81,7 +81,12 @@ export function getPageHtml ({pageTemplate, data, appName, username, itemId}) {
 
 export async function doesPageExist ({appName, pageName}) {
   let pageTemplateFileDir = getDirForPageTemplate({appName, pageName});
-  return await statAsync(pageTemplateFileDir);
+
+  try {
+    return await statAsync(pageTemplateFileDir);
+  } catch (e) {
+    return false;
+  }
 }
 
 
