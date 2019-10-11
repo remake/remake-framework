@@ -6,7 +6,7 @@ import { getItemWithId } from "./get-item-with-id";
 import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
 import { getUserData, setUserData } from "./user-data";
-import { getPartials, getBootstrapData } from "./get-project-info";
+// import { getPartials, getBootstrapData } from "./get-project-info";
 import { getParamsFromPathname } from "../utils/get-params-from-pathname";
 import { capture } from "../utils/async-utils";
 import { processData } from "../utils/process-data";
@@ -105,12 +105,12 @@ export function initApiRoutes ({app}) {
     let templateName = req.body.templateName;
     
     // get the partials data every time so it returns a new (copied!) object and you don't mistakenly use a modified object from the previous call
-    let partials = getPartials();
+    let partials = undefined;//getPartials();
     let matchingPartial = partials.find(partial => partial.name === templateName);
 
     // default to using inline named partials as opposed to partial files
     let templateRenderFunc = RemakeStore.getNewItemRenderFunction({name: templateName});
-    let bootstrapData = getBootstrapData().partials[templateName] || {};
+    let bootstrapData = undefined;// getBootstrapData().partials[templateName] || {};
 
     if (!templateRenderFunc && (!matchingPartial || !matchingPartial.templateString)) {
       showConsoleError(`Error: Couldn't find a template or partial named "${templateName}"`);

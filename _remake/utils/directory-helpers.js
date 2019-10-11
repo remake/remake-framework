@@ -52,7 +52,7 @@ export function getDirForRootApp () {
 
 export function getDirForBootstrapDataFile ({fileName, appName}) {
   let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
-  let pathString = `../../app/${innerAppPath}data/${fileName}.hbs`;
+  let pathString = `../../app/${innerAppPath}data/${fileName}.json`;
   return path.join(__dirname, pathString);
 }
 

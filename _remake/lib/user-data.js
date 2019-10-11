@@ -2,16 +2,18 @@ const jsonfile = require("jsonfile");
 const path = require('upath');
 import { showConsoleError } from "../utils/console-utils";
 import { capture, mkdirpAsync } from "../utils/async-utils";
-import { getBootstrapData } from "./get-project-info";
+import { getBootstrapData } from "../utils/get-bootstrap-data";
 import { getDirForUserFile, getAllDirsForUserData } from "../utils/directory-helpers";
 
 // create new user data files
 // returns: {details, appData}
-async function createUserData ({ username, hash, appName }) {
+export async function createUserData ({ username, hash, appName }) {
 
-  let userBootstrapData = getBootstrapData({fileName: "_user", appName});
-  let details = userBootstrapData.details || {};
-  let appData = userBootstrapData.appData || {};
+  let [userAppDataBootstrap] = await capture(getBootstrapData({fileName: "_user-app-data", appName}));
+  let [userDetailsBootstrap] = await capture(getBootstrapData({fileName: "_user-details", appName}));
+
+  let appData = userAppDataBootstrap;
+  let details = userDetailsBootstrap;
 
   // extend user details with args
   Object.assign(details, { username, hash, appName });
@@ -30,7 +32,7 @@ async function createUserData ({ username, hash, appName }) {
 
 // get all user data
 // returns: {details, appData}
-async function getUserData ({ username, type, appName }) {
+export async function getUserData ({ username, type, appName }) {
   try {
     let detailsPromise = type === "appData" ? null : jsonfile.readFile(getDirForUserFile({type: "details", appName, username})); 
     let appDataPromise = type === "details" ? null : jsonfile.readFile(getDirForUserFile({type: "appData", appName, username}));
@@ -43,7 +45,7 @@ async function getUserData ({ username, type, appName }) {
 
 // set EITHER details data OR appData data by username
 // returns: {username, type, data}
-async function setUserData ({ username, data, type, appName }) {
+export async function setUserData ({ username, data, type, appName }) {
   let detailsWritePromise;
   let appDataWritePromise;
 
@@ -86,8 +88,3 @@ async function makeSureUserDataDirectoriesExist ({appName}) {
   return ret;
 }
 
-export {
-  createUserData,
-  getUserData,
-  setUserData
-}

@@ -110,6 +110,7 @@ function initUserAccounts ({ app }) {
       if (!err){
         res.redirect('/' + newUser.details.username);
       } else {
+        req.flash("error", "Error creating user account");
         res.redirect('/login');
       }
     });
