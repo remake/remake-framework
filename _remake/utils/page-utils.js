@@ -13,7 +13,7 @@ import {
 import { getHandlebarsContext } from "./handlebars-context";
 import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
-import { getPartialsAsInlinePartials } from "./get-partials-as-inline-partials";
+import { getPartialsAsInlinePartials } from "./get-partials";
 
 
 export async function getRootAppsPageHtml () {

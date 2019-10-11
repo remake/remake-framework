@@ -19,6 +19,20 @@ if (process.env.REMAKE_MULTI_TENANT === "true") {
 
 const app = express();
 
+// attach all url data to the request
+app.use(function (req, res, next) {
+  req.urlData = {};
+  req.urlData.url = req.protocol + '://' + req.get('host') + req.originalUrl;
+  req.urlData.referrerUrl = req.get('Referrer');
+
+  req.urlData.urlObj = new URL(req.urlData.url);
+  req.urlData.urlPathname = req.urlData.urlObj.pathname;
+
+  req.urlData.referrerUrlObj = new URL(req.urlData.referrerUrl);
+  req.urlData.referrerUrlPathname = req.urlData.referrerUrlObj.pathname;
+  next();
+})
+
 // express session
 app.use(expressSession({ 
   store: new FileStore({path: path.join(__dirname, './.sessions')}),

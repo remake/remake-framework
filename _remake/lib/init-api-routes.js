@@ -6,11 +6,13 @@ import { getItemWithId } from "./get-item-with-id";
 import { specialDeepExtend } from "./special-deep-extend";
 import getUniqueId from "./get-unique-id";
 import { getUserData, setUserData } from "./user-data";
-// import { getPartials, getBootstrapData } from "./get-project-info";
 import { getParams } from "../utils/get-params";
+import { getPartial } from "../utils/get-partials";
 import { capture } from "../utils/async-utils";
 import { processData } from "../utils/process-data";
 import { showConsoleError } from "../utils/console-utils";
+import { getBootstrapData } from "../utils/get-bootstrap-data";
+import { getQueryParams } from "../utils/get-query-params";
 import RemakeStore from "./remake-store";
 
 
@@ -101,51 +103,48 @@ export function initApiRoutes ({app}) {
       return;
     }
 
-    let templateName = req.body.templateName;
+    let partialName = req.body.templateName;
+    let [params, paramsError] = await capture(getParams({req, fromReferrer: true}));
+    let {appName, username, pageName, itemId} = params;
     
-    // get the partials data every time so it returns a new (copied!) object and you don't mistakenly use a modified object from the previous call
-    let partials = undefined;//getPartials();
-    let matchingPartial = partials.find(partial => partial.name === templateName);
-
     // default to using inline named partials as opposed to partial files
-    let templateRenderFunc = RemakeStore.getNewItemRenderFunction({name: templateName});
-    let bootstrapData = undefined;// getBootstrapData().partials[templateName] || {};
+    let partialRenderFunc = RemakeStore.getNewItemRenderFunction({name: partialName});
 
-    if (!templateRenderFunc && (!matchingPartial || !matchingPartial.templateString)) {
-      showConsoleError(`Error: Couldn't find a template or partial named "${templateName}"`);
+    // use the user-defined partial files only if no render functions are found
+    if (!partialRenderFunc) {
+      let [partialFileString] = await capture(getPartial({appName, partialName}));
+
+      if (partialFileString) {
+        partialRenderFunc = Handlebars.compile(partialFileString);
+      }
+    }
+
+    if (!partialRenderFunc) {
+      showConsoleError(`Error: Couldn't find a template or partial named "${partialName}"`);
       return;
     }
 
-    // use the user-defined partial files only if no render functions are found
-    if (!templateRenderFunc) {
-      templateRenderFunc = Handlebars.compile(matchingPartial.templateString);
-    }
+    let [partialBootstrapData] = await capture(getBootstrapData({fileName: partialName, appName}));
 
     // add a unique key to every plain object in the bootstrap data
-    forEachDeep(bootstrapData, function (value, key, parentValue, context) {
+    forEachDeep(partialBootstrapData, function (value, key, parentValue, context) {
       if (isPlainObject(value)) {
         value.id = getUniqueId();
       }
     });
 
-    // construct referrer url, pathname, params, and query object from referrer url
-    let referrerUrl = req.get('Referrer'); // e.g. "http://exampleapp.org/jane/todo-list/123"
-    let referrerUrlParsed = new URL(referrerUrl);
-    let referrerUrlPath = referrerUrlParsed.pathname; // e.g. "/jane/todo-list/123"
-    let params = getParamsFromPathname(referrerUrlPath); // e.g. { username: 'jane', id: '123' }
-    
-    let query = {};
-    for (let searchParamsPair of referrerUrlParsed.searchParams.entries()) {
-      query[searchParamsPair[0]] = searchParamsPair[1]; 
-    }
-
-    let usernameFromParams = params.username;
-    let pathname = referrerUrlPath;
+    let query = getQueryParams({req, fromReferrer: true});
+    let pathname = req.urlData.referrerUrlPathname;
     let currentUser = req.user;
-    let [pageAuthor, pageAuthorError] = await capture(getUserData({username: usernameFromParams}));
+    let [pageAuthor, pageAuthorError] = await capture(getUserData({username}));
 
     if (pageAuthorError) {
       res.json({success: false, reason: "userData"});
+      return;
+    }
+
+    if (username && !pageAuthor) {
+      res.json({success: false, reason: "notAuthorized"});
       return;
     }
 
@@ -157,13 +156,9 @@ export function initApiRoutes ({app}) {
       return;
     }
 
-    let [itemData] = await capture(processData({res, pageAuthor, data, params, requestType: "ajax"}));
-    let [currentItem, parentItem] = itemData;
-
-    if (usernameFromParams && !pageAuthor) {
-      res.json({success: false, reason: "notAuthorized"});
-      return;
-    }
+    // {res, appName, pageAuthor, data, itemId}
+    let [itemData] = await capture(processData({appName, res, pageAuthor, data, params, requestType: "ajax"}));
+    let {currentItem, parentItem} = itemData;
 
     let htmlString = templateRenderFunc({
       data,
@@ -176,7 +171,7 @@ export function initApiRoutes ({app}) {
       pageAuthor,
       isPageAuthor,
       pageHasAppData: !!pageAuthor,
-      ...bootstrapData
+      ...partialBootstrapData
     });
 
     res.json({success: true, htmlString: htmlString});

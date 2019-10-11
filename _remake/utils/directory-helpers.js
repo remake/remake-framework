@@ -51,6 +51,12 @@ export function getDirForAllPartials ({appName}) {
   return path.join(__dirname, pathString);
 }
 
+export function getDirForPartialTemplate ({appName, partialName}) {
+  let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
+  let pathString = `../../app/${innerAppPath}partials/${partialName}.hbs`;
+  return path.join(__dirname, pathString);
+}
+
 export function getDirForRootApp () {
   let pathString = `../../app`;
   return path.join(__dirname, pathString);

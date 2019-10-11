@@ -1,5 +1,11 @@
-import { getDirForAllPartials } from "./directory-helpers";
-import { capture, getAllFileContentsInDirectory } from "./async-utils";
+import { getDirForAllPartials, getDirForPartialTemplate } from "./directory-helpers";
+import { capture, readFileAsync, getAllFileContentsInDirectory } from "./async-utils";
+
+export async function getPartial ({appName, partialName}) {
+  let partialTemplateDir = getDirForPartialTemplate({partialName, appName});
+  let [partialTemplateString] = await capture(readFileAsync(partialTemplateDir, 'utf8'));
+  return partialTemplateString;
+}
 
 export async function getPartialsAsInlinePartials ({appName}) {
   let partialsDir = getDirForAllPartials({appName});

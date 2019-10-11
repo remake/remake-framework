@@ -4,7 +4,7 @@ import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
 
-export async function processData ({res, appName, pageAuthor, data, itemId, requestType}) {
+export async function processData ({appName, res, pageAuthor, data, itemId, requestType}) {
   let itemData = {currentItem: undefined, parentItem: undefined};
   let itemDataError;
 
