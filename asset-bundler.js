@@ -40,7 +40,7 @@ watcher.on("all", (event, filePath) => {
 function getValidDestinationPath ({filePath, isSass, isJs}) {
   let distFilePath = filePath.replace("./app/", "./_remake/dist/");
   if (isSass) {
-    distFilePath = distFilePath.replace(".sass", ".css");
+    distFilePath = distFilePath.replace(".sass", ".css").replace("/sass/", "/css/");
   }
 
   let distDir = path.dirname(distFilePath);

@@ -20,6 +20,17 @@ if (process.env.REMAKE_MULTI_TENANT === "true") {
 
 const app = express();
 
+// express session
+app.use(expressSession({ 
+  store: new FileStore({path: path.join(__dirname, './.sessions')}),
+  secret: process.env.SESSION_SECRET, 
+  resave: true, 
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 30
+  }
+}));
+
 // attach appName to request object and session if multi-tenant mode enabled
 if (RemakeStore.isMultiTenant()) {
   app.get(/\/app_([a-z]+[a-z0-9-]*)/, function (req, res, next) {
@@ -47,17 +58,6 @@ app.use(function (req, res, next) {
   req.urlData.referrerUrlPathname = req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname;
   next();
 })
-
-// express session
-app.use(expressSession({ 
-  store: new FileStore({path: path.join(__dirname, './.sessions')}),
-  secret: process.env.SESSION_SECRET, 
-  resave: true, 
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 30
-  }
-}));
 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, './dist')));

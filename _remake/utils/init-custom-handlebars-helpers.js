@@ -1,5 +1,6 @@
 import RemakeStore from "../lib/remake-store";
 import routeUtils from "../utils/route-utils";
+const path = require("upath");
 
 export function initCustomHandlebarsHelpers ({Handlebars}) {
   
@@ -66,8 +67,16 @@ export function initCustomHandlebarsHelpers ({Handlebars}) {
     }
   });
 
-  Handlebars.registerHelper('asset', function(options) {
-    console.log(arguments);
+
+  // regular asset route: /assets/js/main.js
+  // multi-tenant asset route: /appName/assets/js/main.js
+  Handlebars.registerHelper('asset', function(assetPath) {
+    if (!RemakeStore.isMultiTenant()) {
+      return path.join("/assets/", assetPath);
+    } else {
+      let appName = this.appName;
+      return path.join("/" + appName + "/assets/", assetPath);
+    }
   });
 
 }
