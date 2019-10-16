@@ -9,7 +9,7 @@ import { initApiRoutes } from "./lib/init-api-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 import RemakeStore from "./lib/remake-store";
-import { getAppNameFromRequest } from "./utils/get-params";
+
 
 // set up environment variables
 dotenv.config({ path: "variables.env" });
