@@ -28,8 +28,8 @@ app.use(function (req, res, next) {
   req.urlData.urlObj = new URL(req.urlData.url);
   req.urlData.urlPathname = req.urlData.urlObj.pathname;
 
-  req.urlData.referrerUrlObj = new URL(req.urlData.referrerUrl);
-  req.urlData.referrerUrlPathname = req.urlData.referrerUrlObj.pathname;
+  req.urlData.referrerUrlObj = req.urlData.referrerUrl && new URL(req.urlData.referrerUrl);
+  req.urlData.referrerUrlPathname = req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname;
   next();
 })
 
