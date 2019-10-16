@@ -9,6 +9,7 @@ import { initApiRoutes } from "./lib/init-api-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 import RemakeStore from "./lib/remake-store";
+import { getAppNameFromRequest } from "./utils/get-params";
 
 // set up environment variables
 dotenv.config({ path: "variables.env" });
@@ -19,8 +20,22 @@ if (process.env.REMAKE_MULTI_TENANT === "true") {
 
 const app = express();
 
-// attach all url data to the request
+// attach appName to request object and session if multi-tenant mode enabled
+if (RemakeStore.isMultiTenant()) {
+  app.get(/\/app_([a-z]+[a-z0-9-]*)/, function (req, res, next) {
+    let appName = req.params[0];
+
+    if (appName) {
+      req.appName = appName;
+      req.session.appName = appName;
+    }
+
+    next();
+  });
+}
+
 app.use(function (req, res, next) {
+  // attach all url data to the request
   req.urlData = {};
   req.urlData.url = req.protocol + '://' + req.get('host') + req.originalUrl;
   req.urlData.referrerUrl = req.get('Referrer');

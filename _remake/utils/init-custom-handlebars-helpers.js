@@ -1,4 +1,4 @@
-import RemakeStore from "./remake-store";
+import RemakeStore from "../lib/remake-store";
 import routeUtils from "../utils/route-utils";
 
 export function initCustomHandlebarsHelpers ({Handlebars}) {
@@ -64,6 +64,10 @@ export function initCustomHandlebarsHelpers ({Handlebars}) {
     } else {
       return options.inverse(this);
     }
+  });
+
+  Handlebars.registerHelper('asset', function(options) {
+    console.log(arguments);
   });
 
 }

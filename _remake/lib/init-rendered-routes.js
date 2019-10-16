@@ -88,10 +88,6 @@ export async function initRenderedRoutes ({ app }) {
 
     let [params, paramsError] = await capture(getParams({req}));
 
-    if (params.appName) {
-      req.session.appName = params.appName;
-    }
-
     await renderPage({req, res, ...params});
 
   });
