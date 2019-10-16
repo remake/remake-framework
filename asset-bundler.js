@@ -14,9 +14,10 @@ watcher.on("all", (event, filePath) => {
   let isJs = path.extname(filePath) === ".js";
   let isSass = path.extname(filePath) === ".sass";
   let {distDir, distFilePath, distFileName, distMinFileName} = getValidDestinationPath({filePath, isSass, isJs});
-  
-  console.log("path:", filePath);
-  console.log({isJs, isSass, distFilePath, distFileName, distMinFileName});
+
+  // DEBUG:  
+  // console.log("path:", filePath);
+  // console.log({isJs, isSass, distFilePath, distFileName, distMinFileName});
 
   if (isJs) {
     // using npx here to ensure babel is in our path
@@ -37,7 +38,7 @@ watcher.on("all", (event, filePath) => {
 });
 
 function getValidDestinationPath ({filePath, isSass, isJs}) {
-  let distFilePath = filePath.replace("src/", "_remake/dist/");
+  let distFilePath = filePath.replace("./app/", "./_remake/dist/");
   if (isSass) {
     distFilePath = distFilePath.replace(".sass", ".css");
   }

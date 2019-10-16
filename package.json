@@ -15,6 +15,9 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "alias": {
+    "remake-framework": "./_remake/client-side/index.js"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "camelcase": "^5.3.1",

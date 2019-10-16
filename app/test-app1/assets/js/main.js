@@ -1,4 +1,4 @@
-import Remake from '../../../_remake/client-side';
+import Remake from 'remake-framework';
 import './helpers/_event-helpers';
 import crostini from 'crostini';
 
