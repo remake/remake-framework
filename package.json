@@ -42,10 +42,13 @@
     "upath": "^1.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "chokidar": "^3.2.1",
     "concurrently": "^4.1.0",
     "copy-and-watch": "^0.1.4",
     "nodemon": "^1.19.1",
-    "parcel": "^1.12.3",
-    "sass": "^1.22.9"
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.23.0",
+    "shelljs": "^0.8.3"
   }
 }
