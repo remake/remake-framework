@@ -15,7 +15,15 @@
     "start": "node server.js"
   },
   "nodemonConfig": {
-    "ignore": ["node_modules/", ".cache/", "_remake", "_remake-data"],
+    "ignore": [
+      ".cache/",
+      "_remake/.sessions",
+      "_remake/client-side",
+      "_remake/dist",
+      "_remake-data",
+      "node_modules/",
+      "app"
+    ],
     "ext": "html,hbs,sass,css,js,png,gif,jpg,json"
   },
   "keywords": [],
@@ -38,6 +46,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.0",
     "express-session": "^1.16.2",
+    "glob": "^7.1.4",
     "handlebars": "^4.3.3",
     "handlebars-helpers": "^0.10.0",
     "jsonfile": "^5.0.0",
