@@ -63,10 +63,28 @@ export function initServiceRoutes({app}) {
   })
 
   app.get('/service/subdomain/availability', checkJWT, (req, res) => {
-    if (!req.query.subdomain)
-      return res.status(400).json({ message: 'Bad request: subdomain param is missing' }).end();
+    if (!req.query.subdomain || !req.query.email)
+      return res.status(400).json({ message: 'Bad request: subdomain or email params are missing' }).end();
     // TODO write logic for checking subdomain availability
-    return res.status(200).end();
+    const { subdomain, email } = req.query;
+
+    connection.query('SELECT * FROM users WHERE email = ?',
+      [email],
+      (err, result, _) => {
+        if (err) return res.status(500).json(err).end();
+        const user = result[0];
+
+        connection.query('INSERT INTO apps (name, user_id) VALUES ( ?, ?)',
+          [subdomain, user.id],
+          (err, results, fields) => {
+            if (err) {
+              if (err.code === "ER_DUP_ENTRY")
+                return res.status(400).json({ m: "duplicate_app_name"}).end();
+              else return res.status(500).json(err).end();
+            }
+            return res.status(200).end();
+          });
+      });
   })
 
   app.post('/service/deploy', checkJWT, (req, res) => {
