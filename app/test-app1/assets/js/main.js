@@ -10,7 +10,6 @@ Remake.init({
     }
   },
   addItemCallback: function ({templateName, ajaxResponse}) {
-    console.log(ajaxResponse);
     if (!ajaxResponse.success) {
       crostini("Error adding new item", {type: "error"});
     }

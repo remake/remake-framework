@@ -2,7 +2,7 @@ import RemakeStore from "../lib/remake-store";
 import routeUtils from "../utils/route-utils";
 const path = require("upath");
 
-export function initCustomHandlebarsHelpers ({Handlebars}) {
+export function initHandlebarsHelpers ({Handlebars}) {
   
   const handlebarsHelpers = require('handlebars-helpers')();
 
