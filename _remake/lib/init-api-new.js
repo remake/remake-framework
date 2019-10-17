@@ -27,7 +27,7 @@ export function initApiNew ({app}) {
     let {appName, username, pageName, itemId} = params;
     
     // default to using inline named partials as opposed to partial files
-    let partialRenderFunc = RemakeStore.getNewItemRenderFunction({name: partialName});
+    let partialRenderFunc = RemakeStore.getNewItemRenderFunction({appName, name: partialName});
 
     // use the user-defined partial files only if no render functions are found
     if (!partialRenderFunc) {
@@ -43,7 +43,7 @@ export function initApiNew ({app}) {
       return;
     }
 
-    let [partialBootstrapData] = await capture(getBootstrapData({fileName: partialName, appName}));
+    let [partialBootstrapData] = await capture(getBootstrapData({appName, fileName: partialName}));
 
     // add a unique key to every plain object in the bootstrap data
     forEachDeep(partialBootstrapData, function (value, key, parentValue, context) {
@@ -55,7 +55,7 @@ export function initApiNew ({app}) {
     let query = getQueryParams({req, fromReferrer: true});
     let pathname = req.urlData.referrerUrlPathname;
     let currentUser = req.user;
-    let [pageAuthor, pageAuthorError] = await capture(getUserData({username}));
+    let [pageAuthor, pageAuthorError] = await capture(getUserData({appName, username}));
 
     if (pageAuthorError) {
       res.json({success: false, reason: "userData"});
@@ -79,7 +79,7 @@ export function initApiNew ({app}) {
     let [itemData] = await capture(processData({appName, res, pageAuthor, data, params, requestType: "ajax"}));
     let {currentItem, parentItem} = itemData;
 
-    let htmlString = templateRenderFunc({
+    let htmlString = partialRenderFunc({
       data,
       params,
       query,

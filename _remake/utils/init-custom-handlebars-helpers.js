@@ -18,7 +18,8 @@ export function initCustomHandlebarsHelpers ({Handlebars}) {
   Handlebars.registerHelper('for', function(context, options) {
     RemakeStore.addNewItemRenderFunction({
       name: options.hash.itemName, 
-      func: options.fn
+      func: options.fn,
+      appName: RemakeStore.isMultiTenant() ? this.appName : undefined
     });
 
     if (!context) {

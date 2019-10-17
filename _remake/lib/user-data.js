@@ -31,6 +31,7 @@ export async function createUserData ({ username, hash, appName }) {
 }
 
 // get all user data
+// - `type` field optional
 // returns: {details, appData}
 export async function getUserData ({ username, type, appName }) {
   try {
