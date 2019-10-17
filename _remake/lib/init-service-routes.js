@@ -74,8 +74,8 @@ export function initServiceRoutes({app}) {
         if (err) return res.status(500).json(err).end();
         const user = result[0];
 
-        connection.query('INSERT INTO apps (name, user_id) VALUES ( ?, ?)',
-          [subdomain, user.id],
+        connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
+          [subdomain, user.id, `${subdomain}.remakeapps.com`],
           (err, results, fields) => {
             if (err) {
               if (err.code === "ER_DUP_ENTRY")
