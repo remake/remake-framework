@@ -5,7 +5,8 @@ import expressSession from "express-session";
 const flash = require('connect-flash');
 const path = require('upath');
 const FileStore = require('session-file-store')(expressSession);
-import { initApiRoutes } from "./lib/init-api-routes";
+import { initApiNew } from "./lib/init-api-new";
+import { initApiSave } from "./lib/init-api-save";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 import RemakeStore from "./lib/remake-store";
@@ -67,7 +68,8 @@ app.use(flash());
 
 // REMAKE FRAMEWORK CORE
 initUserAccounts({ app });
-initApiRoutes({ app });
+initApiNew({ app });
+initApiSave({ app });
 initRenderedRoutes({ app });
 
 
