@@ -10,6 +10,7 @@ import { initApiSave } from "./lib/init-api-save";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 import RemakeStore from "./lib/remake-store";
+import { showConsoleError } from "./utils/console-utils";
 
 
 // set up environment variables
@@ -24,7 +25,6 @@ app.use(express.static(path.join(__dirname, './dist')));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(flash());
 
 
 // attach url data to the request
@@ -38,18 +38,22 @@ app.use(function (req, res, next) {
 
   req.urlData.referrerUrlObj = req.urlData.referrerUrl && new URL(req.urlData.referrerUrl);
   req.urlData.referrerUrlPathname = req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname;
+
   next();
 });
 
 
 // add appName to request object
 if (RemakeStore.isMultiTenant()) {
-  let appNameRegex = /app_([a-z]+[a-z0-9-]*)/;
+  let appNameRegex = /\/app_([a-z]+[a-z0-9-]*)/;
 
-  app.get("/:firstParam*", function (req, res, next) {
+  app.use(function (req, res, next) {
 
-    let appNameMatch = req.params.firstParam.match(appNameRegex);
-    req.appName = appNameMatch && appNameMatch[1];
+    let urlPathname = req.urlData.urlPathname;
+    if (urlPathname) {
+      let appNameMatch = urlPathname.match(appNameRegex);
+      req.appName = appNameMatch && appNameMatch[1];
+    }
 
     let referrerPathname = req.urlData.referrerUrlPathname;
     if (referrerPathname) {
@@ -64,32 +68,34 @@ if (RemakeStore.isMultiTenant()) {
 // express session
 app.use(function (req, res, next) {
 
-  if (req.appName) {
-
-    let shouldUseCustomCookiePath = RemakeStore.isDevelopmentMode() && RemakeStore.isMultiTenant();
-    let cookiePathWithAppName = `/app_${req.appName}`;
-    let cookiePath = shouldUseCustomCookiePath ? cookiePathWithAppName : "/";
-  
-    let middlewareFunc = expressSession({ 
-      store: new FileStore({path: path.join(__dirname, './.sessions')}),
-      secret: process.env.SESSION_SECRET, 
-      resave: true, 
-      saveUninitialized: true,
-      cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-        // in development mode, set session cookies only for the current 
-        // remake application by setting them on the first path segment
-        path: cookiePath
-      }
-    });
-
-    middlewareFunc(req, res, next);
-
-  } else {
-    next();
+  if (RemakeStore.isDevelopmentMode() && RemakeStore.isMultiTenant() && !(req.appName || req.appNameFromReferrer)) {
+    showConsoleError("Couldn't find an app name, even though app is in multi-tenant mode");
+    return;
   }
 
+  let shouldUseAppNameCookiePath = RemakeStore.isDevelopmentMode() && RemakeStore.isMultiTenant();
+  let cookiePathWithAppName = `/app_${req.appName || req.appNameFromReferrer}`;
+  let cookiePath = shouldUseAppNameCookiePath ? cookiePathWithAppName : "/";
+
+  let middlewareFunc = expressSession({ 
+    store: new FileStore({path: path.join(__dirname, './.sessions')}),
+    secret: process.env.SESSION_SECRET, 
+    resave: true, 
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 2628000, // one month
+      // in development mode, set session cookies only for the current 
+      // remake application by setting them on the first path segment
+      path: cookiePath
+    }
+  });
+
+  middlewareFunc(req, res, next);
+
 });
+
+// requires sessions
+app.use(flash());
 
 
 // REMAKE FRAMEWORK CORE

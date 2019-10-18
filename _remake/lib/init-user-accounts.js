@@ -16,7 +16,7 @@ function initUserAccounts ({ app }) {
   passport.use(new LocalStrategy({
     passReqToCallback: true
   }, async function(req, username, password, cb) {
-    let appName = req.session.appName;
+    let appName = req.appName || req.appNameFromReferrer;
 
     try {
       let [currentUser] = await capture(getUserData({ username, appName }));
@@ -61,7 +61,7 @@ function initUserAccounts ({ app }) {
   app.post('/signup', async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
-    let appName = req.session.appName;
+    let appName = req.appName || req.appNameFromReferrer;
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
