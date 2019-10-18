@@ -1,13 +1,12 @@
 var store = {
   state: {
-    isMultiTenant: false,
     newItemTemplates: {}
   },
   isMultiTenant () {
-    return this.state.isMultiTenant;
+    return process.env.REMAKE_MULTI_TENANT === "true";
   },
-  enableMultiTenantArchitecture () {
-    this.state.isMultiTenant = true;
+  isDevelopmentMode () {
+    return process.env.NODE_ENV === "development";
   },
   addNewItemRenderFunction({name, func, appName} = {}) {
     if (!name || !func) {

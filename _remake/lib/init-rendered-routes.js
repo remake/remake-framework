@@ -34,7 +34,8 @@ async function renderPage ({req, res, appName, pageName, username, itemId, inval
   }
 
   if (invalidAppName) {
-    let [redirectPath] = await capture(routeUtils.addAppNameToInvalidPath({req}));
+    let [redirectPath, redirectPathError] = await capture(routeUtils.addAppNameToInvalidPath({req}));
+
     if (redirectPath) {
       res.redirect(redirectPath);
       return;

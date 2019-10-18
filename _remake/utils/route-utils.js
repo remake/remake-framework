@@ -15,9 +15,9 @@ function isItemRoute ({username, itemId}) {
 // If a route's url is missing its app name, this gets the app name from
 // the referrer url and adds it into the current route's url
 async function addAppNameToInvalidPath ({req}) {
-  if (req.session.appName) {
+  if (req.appNameFromReferrer) {
     let currentUrlPath = parseUrl(req).pathname;
-    let redirectPath = path.join("app_" + req.session.appName, currentUrlPath);
+    let redirectPath = path.join("app_" + req.appNameFromReferrer, currentUrlPath);
     return redirectPath;
   }
 }

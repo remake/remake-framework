@@ -14,40 +14,21 @@ import RemakeStore from "./lib/remake-store";
 
 // set up environment variables
 dotenv.config({ path: "variables.env" });
-if (process.env.REMAKE_MULTI_TENANT === "true") {
-  RemakeStore.enableMultiTenantArchitecture();
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "development";
 }
 
 
 const app = express();
+app.use(express.static(path.join(__dirname, './dist')));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(flash());
 
-// express session
-app.use(expressSession({ 
-  store: new FileStore({path: path.join(__dirname, './.sessions')}),
-  secret: process.env.SESSION_SECRET, 
-  resave: true, 
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 30
-  }
-}));
 
-// attach appName to request object and session if multi-tenant mode enabled
-if (RemakeStore.isMultiTenant()) {
-  app.get(/\/app_([a-z]+[a-z0-9-]*)/, function (req, res, next) {
-    let appName = req.params[0];
-
-    if (appName) {
-      req.appName = appName;
-      req.session.appName = appName;
-    }
-
-    next();
-  });
-}
-
+// attach url data to the request
 app.use(function (req, res, next) {
-  // attach all url data to the request
   req.urlData = {};
   req.urlData.url = req.protocol + '://' + req.get('host') + req.originalUrl;
   req.urlData.referrerUrl = req.get('Referrer');
@@ -58,13 +39,58 @@ app.use(function (req, res, next) {
   req.urlData.referrerUrlObj = req.urlData.referrerUrl && new URL(req.urlData.referrerUrl);
   req.urlData.referrerUrlPathname = req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname;
   next();
-})
+});
 
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, './dist')));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(flash());
+
+// add appName to request object
+if (RemakeStore.isMultiTenant()) {
+  let appNameRegex = /app_([a-z]+[a-z0-9-]*)/;
+
+  app.get("/:firstParam*", function (req, res, next) {
+
+    let appNameMatch = req.params.firstParam.match(appNameRegex);
+    req.appName = appNameMatch && appNameMatch[1];
+
+    let referrerPathname = req.urlData.referrerUrlPathname;
+    if (referrerPathname) {
+      let appNameMatchForReferrer = referrerPathname.match(appNameRegex);
+      req.appNameFromReferrer = appNameMatchForReferrer && appNameMatchForReferrer[1];
+    }
+
+    next();
+  });
+}
+
+// express session
+app.use(function (req, res, next) {
+
+  if (req.appName) {
+
+    let shouldUseCustomCookiePath = RemakeStore.isDevelopmentMode() && RemakeStore.isMultiTenant();
+    let cookiePathWithAppName = `/app_${req.appName}`;
+    let cookiePath = shouldUseCustomCookiePath ? cookiePathWithAppName : "/";
+  
+    let middlewareFunc = expressSession({ 
+      store: new FileStore({path: path.join(__dirname, './.sessions')}),
+      secret: process.env.SESSION_SECRET, 
+      resave: true, 
+      saveUninitialized: true,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        // in development mode, set session cookies only for the current 
+        // remake application by setting them on the first path segment
+        path: cookiePath
+      }
+    });
+
+    middlewareFunc(req, res, next);
+
+  } else {
+    next();
+  }
+
+});
+
 
 // REMAKE FRAMEWORK CORE
 initUserAccounts({ app });
