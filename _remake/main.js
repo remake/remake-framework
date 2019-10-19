@@ -68,6 +68,10 @@ if (RemakeStore.isMultiTenant()) {
 // express session
 app.use(function (req, res, next) {
 
+  if (req.originalUrl === "/") {
+    next();
+  }
+
   if (RemakeStore.isDevelopmentMode() && RemakeStore.isMultiTenant() && !(req.appName || req.appNameFromReferrer)) {
     showConsoleError("Couldn't find an app name, even though app is in multi-tenant mode");
     return;
