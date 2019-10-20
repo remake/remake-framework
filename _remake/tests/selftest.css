@@ -49,26 +49,32 @@ p {
 }
 
 /* Styling for the xmp elements that hold preview code and results */
-xmp {
-	white-space: normal;
-	word-wrap: break-word;
-	background-color: lightgrey;
-	padding: 10px;
-	margin: 5px;
-	border: 1px solid black;
+/* Overwrite word wrapping of prism css */
+pre code {
+	white-space: normal !important;
+	word-wrap: break-word !important;
+}
+
+pre {
+	margin-left: 5px !important;
+	margin-right: 5px !important;
 }
 
 /* Make the first (preview) and second (results) xmp tag have a width of 50% and all xmp tags afterwards a width of 0 */
-xmp:nth-of-type(1) {
+pre:nth-of-type(1) {
 	width: 50%;
 }
 
-xmp:nth-of-type(2) {
+pre:nth-of-type(2) {
 	width: 50%;
 }
 
-xmp:nth-of-type(n+3) {
+pre:nth-of-type(n+3) {
 	width: 0;
+}
+
+pre.preview-only {
+	width: 100%;
 }
 
 /* (See last comment) Same with the headers for the tests */
