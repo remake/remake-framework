@@ -67,37 +67,15 @@ if (RemakeStore.isMultiTenant()) {
 }
 
 // express session
-app.use(function (req, res, next) {
-
-  if (req.originalUrl === "/") {
-    next();
+app.use(  expressSession({ 
+  store: new FileStore({path: path.join(__dirname, './.sessions')}),
+  secret: process.env.SESSION_SECRET, 
+  resave: true, 
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 2628000, // one month
   }
-
-  if (RemakeStore.isDevelopmentMode() && RemakeStore.isMultiTenant() && !(req.appName || req.appNameFromReferrer)) {
-    showConsoleError("Couldn't find an app name, even though app is in multi-tenant mode");
-    return;
-  }
-
-  let shouldUseAppNameCookiePath = RemakeStore.isDevelopmentMode() && RemakeStore.isMultiTenant();
-  let cookiePathWithAppName = `/app_${req.appName || req.appNameFromReferrer}`;
-  let cookiePath = shouldUseAppNameCookiePath ? cookiePathWithAppName : "/";
-
-  let middlewareFunc = expressSession({ 
-    store: new FileStore({path: path.join(__dirname, './.sessions')}),
-    secret: process.env.SESSION_SECRET, 
-    resave: true, 
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 2628000, // one month
-      // in development mode, set session cookies only for the current 
-      // remake application by setting them on the first path segment
-      path: cookiePath
-    }
-  });
-
-  middlewareFunc(req, res, next);
-
-});
+}));
 
 // requires sessions
 app.use(flash());
