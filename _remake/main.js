@@ -29,6 +29,7 @@ app.use(express.json());
 
 // attach url data to the request
 app.use(function (req, res, next) {
+
   req.urlData = {};
   req.urlData.url = req.protocol + '://' + req.get('host') + req.originalUrl;
   req.urlData.referrerUrl = req.get('Referrer');

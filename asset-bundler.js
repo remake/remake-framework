@@ -90,6 +90,10 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
 function getValidDestinationPath ({filePath, isSassFile, isJsFile}) {
   let distFilePath = filePath.replace("./app/", "./_remake/dist/");
 
+  if (isMultiTenant) {
+    distFilePath = distFilePath + "app_";
+  }
+
   if (isSassFile) {
     distFilePath = distFilePath.replace(".sass", ".css").replace("/sass/", "/css/");
   }
