@@ -9,7 +9,9 @@
     "parcel": "parcel ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --no-hmr --log-level 2",
     "sass": "sass --watch project-files/assets/sass/main.sass _remake/dist/main.dist.css",
     "copy-assets": "copy-and-watch --watch project-files/assets/**/*.{ico,png,jpg,gif} _remake/dist",
-    "build": "parcel build ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --log-level 2 && sass --style=compressed project-files/assets/sass/main.sass _remake/dist/main.dist.css",
+		"build": "parcel build ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --log-level 2 && sass --style=compressed project-files/assets/sass/main.sass _remake/dist/main.dist.css",
+		"build-selftest": "parcel build ./_remake/tests/remake-init-gen.js -d ./_remake/tests/ -o remake-init.js",
+		"selftest": "npm run build-selftest && echo 'The self test page is ready. Go open the file at ./_remake/tests/selftest.html in your favorite browser.'",
     "start": "node server.js"
   },
   "keywords": [],
