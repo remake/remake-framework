@@ -10,7 +10,7 @@ import RemakeStore from "./remake-store";
 
 export function initApiSave ({app}) {
 
-  app.post('/save', async (req, res) => {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/save/, async (req, res) => {
 
     if (!req.isAuthenticated()) {
       res.json({success: false, reason: "notAuthorized"});
