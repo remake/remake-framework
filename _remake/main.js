@@ -34,9 +34,6 @@ app.use(function (req, res, next) {
 
   req.isAjax = isAjaxRequest();
 
-  // todo: test if this works
-  console.log("isAjax:", req.isAjax);
-
   next();
 });
 
@@ -87,7 +84,6 @@ if (RemakeStore.isMultiTenant()) {
     }
 
     req.appName = appName;
-    console.log("appName:", appName);
 
     next();
   });

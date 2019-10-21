@@ -28,8 +28,6 @@ import RemakeStore from "./remake-store";
 
 async function renderPage ({req, res, pageName, username, itemId}) {
 
-  console.log({pageName, username, itemId});
-
   let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName: req.appName}));
 
   if (!pageTemplate) {
