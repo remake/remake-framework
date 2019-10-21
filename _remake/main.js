@@ -59,6 +59,8 @@ app.use(function (req, res, next) {
   if (req.isAjax) {
     // since the path of ajax requests is different from the page's, we get params from its referrer instead
     pageParams = routeMatcher(req.urlData.referrerUrlPathname);
+  } else if (!RemakeStore.isMultiTenant()) {
+    pageParams = routeMatcher(req.urlData.urlPathname);
   } else {
     let pageParamsTemp = routeMatcher(req.urlData.urlPathname);
     let {firstParam, secondParam, thirdParam, fourthParam} = pageParamsTemp;
