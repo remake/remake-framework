@@ -34,15 +34,8 @@ async function renderPage ({req, res, appName, pageName, username, itemId, inval
   }
 
   if (invalidAppName) {
-    let [redirectPath, redirectPathError] = await capture(routeUtils.addAppNameToInvalidPath({req}));
-
-    if (redirectPath) {
-      res.redirect(redirectPath);
-      return;
-    } else {
-      res.status(404).send("404 Not Found");
-      return;
-    }
+    res.status(500).send("500 Server Error - Invalid App Name");
+    return;
   }
 
   let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName}));

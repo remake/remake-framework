@@ -56,10 +56,12 @@ if (RemakeStore.isMultiTenant()) {
       req.appName = appNameMatch && appNameMatch[1];
     }
 
-    let referrerPathname = req.urlData.referrerUrlPathname;
-    if (referrerPathname) {
-      let appNameMatchForReferrer = referrerPathname.match(appNameRegex);
-      req.appNameFromReferrer = appNameMatchForReferrer && appNameMatchForReferrer[1];
+    if (!req.appName) {
+      let referrerPathname = req.urlData.referrerUrlPathname;
+      if (referrerPathname) {
+        let appNameMatchForReferrer = referrerPathname.match(appNameRegex);
+        req.appName = appNameMatchForReferrer && appNameMatchForReferrer[1];
+      }
     }
 
     next();

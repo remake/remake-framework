@@ -49,6 +49,8 @@ async function getParamsFromPathname (pathname) {
   if (!RemakeStore.isMultiTenant()) {
     [username, pageName, itemId] = [firstParam, secondParam, thirdParam];
   } else {
+
+    // is multi-tenant:
     [appName, username, pageName, itemId] = [firstParam, secondParam, thirdParam, fourthParam];
 
     if (!appName) {

@@ -16,7 +16,7 @@ function initUserAccounts ({ app }) {
   passport.use(new LocalStrategy({
     passReqToCallback: true
   }, async function(req, username, password, cb) {
-    let appName = req.appName || req.appNameFromReferrer;
+    let appName = req.appName;
 
     try {
       let [currentUser] = await capture(getUserData({ username, appName }));
@@ -58,7 +58,7 @@ function initUserAccounts ({ app }) {
     }
   });
 
-  app.post('/signup', async function(req, res) {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/signup/, async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
     let appName = req.appName || req.appNameFromReferrer;
@@ -116,14 +116,14 @@ function initUserAccounts ({ app }) {
     });
   });
 
-  app.post('/login', passport.authenticate('local', { 
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, passport.authenticate('local', { 
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
     res.redirect('/' + req.user.details.username);
   });
 
-  app.get('/logout', function(req, res) {
+  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/logout/, function(req, res) {
     req.logout();
     res.redirect('/login');
   });
