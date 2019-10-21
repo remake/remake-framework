@@ -26,19 +26,11 @@ import RemakeStore from "./remake-store";
   • /username/pageName/id
 */
 
-async function renderPage ({req, res, appName, pageName, username, itemId, invalidAppName, multiTenantBaseRoute}) {
-  if (multiTenantBaseRoute) {
-    let html = await getRootAppsPageHtml();
-    res.send(html);
-    return;
-  }
+async function renderPage ({req, res, pageName, username, itemId}) {
 
-  if (invalidAppName) {
-    res.status(500).send("500 Server Error - Invalid App Name");
-    return;
-  }
+  console.log({pageName, username, itemId});
 
-  let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName}));
+  let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName: req.appName}));
 
   if (!pageTemplate) {
     res.status(404).send("404 Not Found");
@@ -47,7 +39,7 @@ async function renderPage ({req, res, appName, pageName, username, itemId, inval
 
   let pageAuthor;
   if (username) {
-    [pageAuthor] = await capture(getUserData({username, appName}));
+    [pageAuthor] = await capture(getUserData({username, appName: req.appName}));
 
     // if username is in the route, there should be a corresponding user
     if (!pageAuthor) {
@@ -57,7 +49,7 @@ async function renderPage ({req, res, appName, pageName, username, itemId, inval
   }
 
   // GET DATA
-  let [data, dataError] = await capture(getDataForPage({req, res, appName, pageAuthor, itemId}));
+  let [data, dataError] = await capture(getDataForPage({req, res, appName: req.appName, pageAuthor, itemId}));
 
   if (dataError) {
     res.status(500).send("500 Server Error");
@@ -69,7 +61,7 @@ async function renderPage ({req, res, appName, pageName, username, itemId, inval
     return;
   }
 
-  let html = getPageHtml({pageTemplate, data, appName, username, itemId});
+  let html = getPageHtml({pageTemplate, data, appName: req.appName, username, itemId});
   res.send(html);
 }
 

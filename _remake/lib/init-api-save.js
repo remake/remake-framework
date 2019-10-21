@@ -18,8 +18,7 @@ export function initApiSave ({app}) {
     }
 
     let [params, paramsError] = await capture(getParams({req, fromReferrer: true}));
-
-    let {appName, username, pageName, itemId} = params;
+    let {username, pageName, itemId} = params;
 
     // get incoming data
     let incomingData = req.body.data;
@@ -77,7 +76,7 @@ export function initApiSave ({app}) {
       existingData = incomingData;
     }
 
-    let [setUserDataResponse, setUserDataError] = await capture(setUserData({appName, username, data: existingData, type: "appData"}));
+    let [setUserDataResponse, setUserDataError] = await capture(setUserData({appName: req.appName, username, data: existingData, type: "appData"}));
 
     if (setUserDataError) {
       res.json({success: false, reason: "userData"});

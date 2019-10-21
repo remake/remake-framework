@@ -17,71 +17,39 @@ import { doesPageExist } from "./page-utils";
   • /username/pageName/
   • /username/pageName/id
 
-  Assumptions:
-  • If there's no first param, there are no params
+  Remake has two url formats
+  • Single tenant: domain/firstParam/secondParam/thirdParam
+  • Multi tenant: subdomain.domain/firstParam/secondParam/thirdParam
 */
 
-export async function getParams ({req, fromReferrer}) {
-  let pathname;
+export async function getParams ({req}) {
+  let {firstParam, secondParam, thirdParam} = req.urlData.pageParams;
+  let username, pageName, itemId;
 
-  if (!fromReferrer) {
-    pathname = parseUrl(req).pathname;
-  } else {
-    let url = new URL(req.get('Referrer'));
-    pathname = url.pathname;
-  }
-
-  let [params] = await capture(getParamsFromPathname(pathname));
-
-  return params;
-}
-
-// get params from a generic pathname
-
-async function getParamsFromPathname (pathname) {
-  let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
-  let params = routeMatcher(pathname) || [];
-  let invalidAppName = false;
-
-  let {firstParam, secondParam, thirdParam, fourthParam} = params;
-
-  let appName, username, pageName, itemId;
-  if (!RemakeStore.isMultiTenant()) {
-    [username, pageName, itemId] = [firstParam, secondParam, thirdParam];
-  } else {
-
-    // is multi-tenant:
-    [appName, username, pageName, itemId] = [firstParam, secondParam, thirdParam, fourthParam];
-
-    if (!appName) {
-      return {multiTenantBaseRoute: true};
-    } else {
-      if (!appName.startsWith("app_")) {
-        invalidAppName = true;
-        appName = undefined;
-      } else {
-        appName = appName.replace(/^app_/, "");
-      }
-    }
-  }
-
-  // route: /
-  if (!username) {
+  if (!firstParam) {
+    // route: /
     pageName = "index";
-  }
-
-  if (username && !pageName) {
-    let [pageExists] = await capture(doesPageExist({appName, pageName: username}));
+  } else if (!secondParam) {
+    let [pageExists] = await capture(doesPageExist({
+      appName: req.appName, 
+      pageName: firstParam
+    }));
     
     if (pageExists) {
       // route: /pageName 
-      pageName = username;
-      username = undefined;
+      pageName = firstParam;
     } else {
       // route: /username
+      username = firstParam;
       pageName = "index";
     }
+  } else {
+    // route: /username/pageName/
+    // and
+    // route: /username/pageName/id
+    [username, pageName, itemId] = [firstParam, secondParam, thirdParam];
   }
 
-  return {appName, username, pageName, itemId, invalidAppName};
+  return {username, pageName, itemId};
 }
+

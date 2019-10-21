@@ -61,7 +61,7 @@ function initUserAccounts ({ app }) {
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/signup/, async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
-    let appName = req.appName || req.appNameFromReferrer;
+    let appName = req.appName;
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
