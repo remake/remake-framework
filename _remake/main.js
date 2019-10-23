@@ -54,15 +54,19 @@ app.use(function (req, res, next) {
   let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
   let pageParams;
   if (req.isAjax) {
-    // since the path of ajax requests is different from the page's, we get params from its referrer instead
+    // for ajax requests:
+    // - we get the path segments from the referrer
+    // - there will always be a max of 3 path segments in the referrer
     pageParams = routeMatcher(req.urlData.referrerUrlPathname);
   } else if (!RemakeStore.isMultiTenant()) {
+    // when single-tenant is enabled, there will always be a max of 3 path segments
     pageParams = routeMatcher(req.urlData.urlPathname);
   } else {
-    let pageParamsTemp = routeMatcher(req.urlData.urlPathname);
-    let {firstParam, secondParam, thirdParam, fourthParam} = pageParamsTemp;
-    [firstParam, secondParam, thirdParam] = [secondParam, thirdParam, fourthParam];
-    pageParams = {firstParam, secondParam, thirdParam};
+    // this case is for a multi-tenant, non-ajax request (i.e. a page render)
+    // there will always be a max of 4 path segments in this case.
+    // the first segment is the app name and simply needs to be stripped out
+    let {firstParam, secondParam, thirdParam, fourthParam} = routeMatcher(req.urlData.urlPathname);
+    pageParams = {firstParam: secondParam, secondParam: thirdParam, thirdParam: fourthParam};
   }
   req.urlData.pageParams = pageParams || [];
 

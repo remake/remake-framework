@@ -88,10 +88,12 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
 }
 
 function getValidDestinationPath ({filePath, isSassFile, isJsFile}) {
-  let distFilePath = filePath.replace("./app/", "./_remake/dist/");
+  let distFilePath = filePath
+                        .replace("./app/", "./_remake/dist/")
+                        .replace("/assets/", "/");
 
   if (isMultiTenant) {
-    distFilePath = distFilePath + "app_";
+    distFilePath = distFilePath.replace("/dist/", "/dist/app_");
   }
 
   if (isSassFile) {
