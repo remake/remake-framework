@@ -22,18 +22,16 @@ if (!process.env.NODE_ENV) {
 
 
 const app = express();
+
+// static assets middleware comes before other routes, so they don't get asset requests
 app.use(express.static(path.join(__dirname, './dist')));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// detect ajax request
 app.use(function (req, res, next) {
-  let isAjaxRequest = function() {
-    return req.xhr || /json/i.test(req.headers.accept);
-  };
-
-  req.isAjax = isAjaxRequest();
-
+  req.isAjax = req.xhr || /json/i.test(req.headers.accept);
   next();
 });
 
@@ -75,6 +73,7 @@ app.use(function (req, res, next) {
 
 
 // extract appName from host and attach it to request object
+// important: show error if multi-tenant is enabled and there's no app name
 if (RemakeStore.isMultiTenant()) {
   app.use(function (req, res, next) {
     let splitString = req.get("host").split(".");

@@ -58,6 +58,7 @@ function initUserAccounts ({ app }) {
     }
   });
 
+  // route responds to both "/signup" and "/app_*/signup"
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/signup/, async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
@@ -116,6 +117,7 @@ function initUserAccounts ({ app }) {
     });
   });
 
+  // route responds to both "/login" and "/app_*/login"
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, passport.authenticate('local', { 
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
@@ -123,6 +125,7 @@ function initUserAccounts ({ app }) {
     res.redirect('/' + req.user.details.username);
   });
 
+  // route responds to both "/logout" and "/app_*/logout"
   app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/logout/, function(req, res) {
     req.logout();
     res.redirect('/login');
