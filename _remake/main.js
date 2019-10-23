@@ -50,7 +50,7 @@ app.use(function (req, res, next) {
   req.urlData.referrerUrlObj = (req.urlData.referrerUrl && new URL(req.urlData.referrerUrl)) || {};
   req.urlData.referrerUrlPathname = (req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname) || "";
 
-  // attach params
+  // attach params to urlData
   let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
   let pageParams;
   if (req.isAjax) {
@@ -68,13 +68,13 @@ app.use(function (req, res, next) {
     let {firstParam, secondParam, thirdParam, fourthParam} = routeMatcher(req.urlData.urlPathname);
     pageParams = {firstParam: secondParam, secondParam: thirdParam, thirdParam: fourthParam};
   }
-  req.urlData.pageParams = pageParams || [];
+  req.urlData.pageParams = pageParams || {};
 
   next();
 });
 
 
-// add appName to request object
+// extract appName from host and attach it to request object
 if (RemakeStore.isMultiTenant()) {
   app.use(function (req, res, next) {
     let splitString = req.get("host").split(".");
@@ -100,15 +100,16 @@ app.use(  expressSession({
   resave: true, 
   saveUninitialized: true,
   cookie: {
-    maxAge: 2628000, // one month
+    maxAge: 2628000 // one month
   }
 }));
 
-// requires sessions
+
+// flash message middleware
 app.use(flash());
 
 
-// REMAKE FRAMEWORK CORE
+// REMAKE CORE FRAMEWORK
 initUserAccounts({ app });
 initApiNew({ app });
 initApiSave({ app });
