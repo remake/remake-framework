@@ -15,6 +15,7 @@ import RemakeStore from "./remake-store";
 
 export function initApiNew ({app}) {
 
+  // route responds to both "/new" and "/app_*/new"
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/new/, async (req, res) => {
 
     if (!req.isAuthenticated()) {
