@@ -16,10 +16,8 @@ function createElementByHTMLString(htmlString) {
  * @desc My famous (not really) isEmpty function. It checks if a given variable is empty or not
  */
 function isEmpty(variable) {
-	if (variable == null || variable == undefined) return true
-	if (typeof variable == "string") {
-		if (variable == "") return true
-	} else if (typeof variable == "object") {
+	if (!variable) return true
+	if (typeof variable == "object") {
 		if (Array.isArray(variable)) {
 			if (variable.length == 0) return true
 		} else {

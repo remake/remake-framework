@@ -278,9 +278,9 @@ class selfTestFramework {
 /**
  * @desc When an HTMLElement with the ID "runTests" gets clicked we convert all "selftest" classes to tests
  */
-document.getElementById("runTests").onclick = function(event) {
+document.querySelector(".run-tests").addEventListener("click", function(event) {
 	// Hide the element
-	document.getElementById("runTests").style.display = "none"
+	document.querySelector(".run-tests").style.display = "none"
 	// Start converting all tests on page to actual tests
 	selfTestFramework.convertAllTestsBySelfTestObject()
-}
+})

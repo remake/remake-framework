@@ -16,7 +16,7 @@
 					<p>
 						This is the self test page where developers can test the function of the framework.<br>Mainly to see if they didn't break it again.
 					</p>
-					<button id="runTests">Run all tests</button>
+					<button class="run-tests">Run all tests</button>
 				</div>
 				<!-- Tests for getDataFromRootNode in this parent -->
 				<div class="selftest" data-selftest-test="getDataFromRootNode" data-selftest-arguments="(inner-content)">
@@ -68,9 +68,9 @@
 					}
 				}
 
-				window.onload = function(event) {
+				document.addEventListener("DOMContentLoaded", function(){
 					prepareSelfTestsForHighlighting()
-				}
+				});
 
 			</script>
 			<script src="./selftest_clientside.js"></script>
