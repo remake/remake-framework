@@ -1,5 +1,5 @@
 const chokidar = require("chokidar");
-const processFile = require("./process-file");
+const {processFile} = require("./process-file");
 const config = require("./config");
 const {globToSearch} = config;
 

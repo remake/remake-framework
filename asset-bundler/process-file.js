@@ -3,26 +3,28 @@ const path = require("upath");
 const mkdirp = require("mkdirp");
 const fs = require("fs");
 const glob = require("glob");
+const config = require("./config");
+const {globToSearch, isMultiTenant} = config;
 
 function processFile ({filePath, stats, shouldRecompute}) {
-  filePath = "../" + filePath;
+  filePath = "./" + filePath;
 
   let isJsFile = path.extname(filePath) === ".js";
-  let isSassFile = path.extname(filePath) === ".sass";
-  let {distDir, distFilePath, distFileName, distMinFileName} = getValidDestinationPath({filePath, isJsFile, isSassFile});
-  let isUnderscoreFile = distFileName.startsWith("_");
-  let isFileToBeCopied = !stats.isDirectory() && !isJsFile && !isSassFile;
+  let isSassFile = [".sass", ".scss"].includes(path.extname(filePath));
+  let isDirectory = stats.isDirectory();
+  let {distDir, distFilePath, distFileName, distMinFileName, fileStartsWithUnderscore} = getValidDestinationPath({filePath, isJsFile, isSassFile, isDirectory});
+  let isFileToBeCopied = !fileStartsWithUnderscore && !isDirectory && !isJsFile && !isSassFile;
 
   // DEBUG:  
   // console.log("bundle file path:", filePath);
-  // console.log({isJsFile, isSassFile, isUnderscoreFile, isFileToBeCopied, filePath, distFilePath, distFileName, distMinFileName});
+  // console.log({isJsFile, isSassFile, fileStartsWithUnderscore, isFileToBeCopied, filePath, distFilePath, distFileName, distMinFileName});
 
-  if (isJsFile && !isUnderscoreFile) {
+  if (isJsFile && !fileStartsWithUnderscore) {
     // using npx here to ensure babel is in our path
     shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
   }
 
-  if (isSassFile && !isUnderscoreFile) {
+  if (isSassFile && !fileStartsWithUnderscore) {
     shell.exec(`npx sass ${filePath} ${distFilePath} --no-source-map`);
   }
 
@@ -31,7 +33,7 @@ function processFile ({filePath, stats, shouldRecompute}) {
   }
 
   // recompile all files of the same type if file starts with an underscore
-  if ((isJsFile || isSassFile) && isUnderscoreFile && shouldRecompute) {
+  if ((isJsFile || isSassFile) && fileStartsWithUnderscore && shouldRecompute) {
     recompileFilesForApp({filePath, isJsFile, isSassFile});
   }
 }
@@ -63,9 +65,9 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
   });
 }
 
-function getValidDestinationPath ({filePath, isSassFile, isJsFile}) {
+function getValidDestinationPath ({filePath, isSassFile, isJsFile, isDirectory}) {
   let distFilePath = filePath
-                        .replace("../app/", "../_remake/dist/")
+                        .replace("./app/", "./_remake/dist/")
                         .replace("/assets/", "/");
 
   if (isMultiTenant) {
@@ -76,15 +78,19 @@ function getValidDestinationPath ({filePath, isSassFile, isJsFile}) {
     distFilePath = distFilePath.replace(".sass", ".css").replace("/sass/", "/css/");
   }
 
+  let distFileName = path.basename(distFilePath);
+  let distMinFileName = distFileName.replace(/\.([^\.]*)$/, ".min.$1");
+  let fileStartsWithUnderscore = distFileName.startsWith("_");
+
   let distDir = path.dirname(distFilePath);
 
   // make the directory if it doesn't exist yet
-  mkdirp.sync(distDir);
+  if (!fileStartsWithUnderscore && !isDirectory) {
+    mkdirp.sync(distDir);
+  }
 
-  let distFileName = path.basename(distFilePath);
-  let distMinFileName = distFileName.replace(/\.([^\.]*)$/, ".min.$1");
 
-  return {distDir, distFilePath, distFileName, distMinFileName};
+  return {distDir, distFilePath, distFileName, distMinFileName, fileStartsWithUnderscore};
 }
 
 module.exports = {
