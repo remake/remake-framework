@@ -5,14 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently --kill-others 'npm:nodemon' 'npm:asset-bundler'",
-    "asset-bundler": "node asset-bundler.js",
+    "asset-bundler": "node asset-bundler/",
     "nodemon": "nodemon server.js --watch ./",
     "TODO: remove the following three scripts": "",
-    "parcel": "parcel ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --no-hmr --log-level 2",
-    "sass": "sass --watch project-files/assets/sass/main.sass _remake/dist/main.dist.css",
-    "copy-assets": "copy-and-watch --watch project-files/assets/**/*.{ico,png,jpg,gif} _remake/dist",
-    "build": "parcel build ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --log-level 2 && sass --style=compressed project-files/assets/sass/main.sass _remake/dist/main.dist.css",
-    "start": "node server.js"
+    "build": "parcel build ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --log-level 2 && sass --style=compressed project-files/assets/sass/main.sass _remake/dist/main.dist.css"
   },
   "nodemonConfig": {
     "ignore": [

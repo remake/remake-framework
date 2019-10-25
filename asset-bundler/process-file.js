@@ -1,35 +1,11 @@
-const dotenv = require("dotenv");
-const chokidar = require("chokidar");
 const shell = require("shelljs");
 const path = require("upath");
 const mkdirp = require("mkdirp");
 const fs = require("fs");
-const glob = require("glob")
-
-dotenv.config({ path: "variables.env" });
-let isMultiTenant = process.env.REMAKE_MULTI_TENANT === "true";
-let globToSearch = isMultiTenant ? "app/*/assets/**" : "app/assets/**";
-
-
-// 1. INITIAL RUN 
-let initialFilePaths = glob.sync(globToSearch);
-initialFilePaths.forEach(function (filePath) {
-  let stats = fs.statSync(filePath);
-  processFile({filePath, stats});
-});
-
-// 2. WATCHER RUN
-const watcher = chokidar.watch(globToSearch, {
-  ignoreInitial: true,
-  alwaysStat: true
-});
-watcher.on("all", (event, filePath, stats) => {
-  processFile({filePath, stats, shouldRecompute: true});
-});
-
+const glob = require("glob");
 
 function processFile ({filePath, stats, shouldRecompute}) {
-  filePath = "./" + filePath;
+  filePath = "../" + filePath;
 
   let isJsFile = path.extname(filePath) === ".js";
   let isSassFile = path.extname(filePath) === ".sass";
@@ -89,7 +65,7 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
 
 function getValidDestinationPath ({filePath, isSassFile, isJsFile}) {
   let distFilePath = filePath
-                        .replace("./app/", "./_remake/dist/")
+                        .replace("../app/", "../_remake/dist/")
                         .replace("/assets/", "/");
 
   if (isMultiTenant) {
@@ -111,7 +87,6 @@ function getValidDestinationPath ({filePath, isSassFile, isJsFile}) {
   return {distDir, distFilePath, distFileName, distMinFileName};
 }
 
-
-
-
-
+module.exports = {
+  processFile
+}
