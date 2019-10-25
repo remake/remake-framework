@@ -8,5 +8,7 @@ const {globToSearch} = config;
 let initialFilePaths = glob.sync(globToSearch);
 initialFilePaths.forEach(function (filePath) {
   let stats = fs.statSync(filePath);
-  processFile({filePath, stats});
+  let isProduction = process.argv.includes("production");
+
+  processFile({filePath, stats, isProduction});
 });

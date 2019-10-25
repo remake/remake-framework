@@ -6,7 +6,7 @@ const glob = require("glob");
 const config = require("./config");
 const {globToSearch, isMultiTenant} = config;
 
-function processFile ({filePath, stats, shouldRecompute}) {
+function processFile ({filePath, stats, shouldRecompute, isProduction}) {
   filePath = "./" + filePath;
 
   let isJsFile = path.extname(filePath) === ".js";
@@ -21,11 +21,19 @@ function processFile ({filePath, stats, shouldRecompute}) {
 
   if (isJsFile && !fileStartsWithUnderscore) {
     // using npx here to ensure babel is in our path
-    shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
+    if (isProduction) {
+      shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --out-file ${distFileName} --no-source-maps --no-content-hash`);
+    } else {
+      shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
+    }
   }
 
   if (isSassFile && !fileStartsWithUnderscore) {
-    shell.exec(`npx sass ${filePath} ${distFilePath} --no-source-map`);
+    if (isProduction) {
+      shell.exec(`npx sass ${filePath} ${distFilePath} --no-source-map --style compressed`);
+    } else {
+      shell.exec(`npx sass ${filePath} ${distFilePath} --no-source-map`);
+    }
   }
 
   if (isFileToBeCopied) {
@@ -34,7 +42,7 @@ function processFile ({filePath, stats, shouldRecompute}) {
 
   // recompile all files of the same type if file starts with an underscore
   if ((isJsFile || isSassFile) && fileStartsWithUnderscore && shouldRecompute) {
-    recompileFilesForApp({filePath, isJsFile, isSassFile});
+    recompileFilesForApp({filePath, isJsFile, isSassFile, isProduction});
   }
 }
 
@@ -58,9 +66,17 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
     // console.log("Recompile file:", {fp, distDir, distFilePath, distFileName, distMinFileName});
 
     if (isJsFile) {
-      shell.exec(`npx parcel build ${fp} --out-dir ${distDir} --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
+      if (isProduction) {
+        shell.exec(`npx parcel build ${fp} --out-dir ${distDir} --out-file ${distFileName} --no-source-maps --no-content-hash`);
+      } else {
+        shell.exec(`npx parcel build ${fp} --out-dir ${distDir} --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
+      }
     } else {
-      shell.exec(`npx sass ${fp} ${distFilePath} --no-source-map`);
+      if (isProduction) {
+        shell.exec(`npx sass ${fp} ${distFilePath} --no-source-map`);
+      } else {
+        shell.exec(`npx sass ${fp} ${distFilePath} --no-source-map --style compressed`);
+      }
     }
   });
 }
@@ -88,7 +104,6 @@ function getValidDestinationPath ({filePath, isSassFile, isJsFile, isDirectory})
   if (!fileStartsWithUnderscore && !isDirectory) {
     mkdirp.sync(distDir);
   }
-
 
   return {distDir, distFilePath, distFileName, distMinFileName, fileStartsWithUnderscore};
 }

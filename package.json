@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently --kill-others 'npm:nodemon' 'npm:asset-bundler'",
-    "asset-bundler": "node asset-bundler/",
+    "dev": "npm run asset-bundler-initial && concurrently --kill-others 'npm:nodemon' 'npm:asset-bundler-watch'",
+    "build": "npm run asset-bundler-production",
     "nodemon": "nodemon server.js --watch ./",
-    "TODO: remove the following three scripts": "",
-    "build": "parcel build ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --log-level 2 && sass --style=compressed project-files/assets/sass/main.sass _remake/dist/main.dist.css"
+    "asset-bundler-initial": "node asset-bundler/initial-build.js",
+    "asset-bundler-production": "node asset-bundler/initial-build.js production",
+    "asset-bundler-watch": "node asset-bundler/"
   },
   "nodemonConfig": {
     "ignore": [
