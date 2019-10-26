@@ -23,7 +23,7 @@ import { doesPageExist } from "./page-utils";
 */
 
 export async function getParams ({req}) {
-  let {firstParam, secondParam, thirdParam} = req.urlData.pageParams;
+  let {firstParam, secondParam, thirdParam} = req.urlData.pageParamsGeneric;
   let username, pageName, itemId;
 
   if (!firstParam) {

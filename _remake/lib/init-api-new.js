@@ -24,7 +24,7 @@ export function initApiNew ({app}) {
     }
 
     let partialName = req.body.templateName;
-    let [params, paramsError] = await capture(getParams({req, fromReferrer: true}));
+    let params = req.urlData.pageParams;
     let {username, pageName, itemId} = params;
     
     // default to using inline named partials as opposed to partial files

@@ -65,12 +65,12 @@ async function renderPage ({req, res, pageName, username, itemId}) {
 
 export async function initRenderedRoutes ({ app }) {
 
-  app.get("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?", async function (req, res) {
+  app.get("*", async function (req, res) {
 
     // don't cache html from these routes
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-    let [params, paramsError] = await capture(getParams({req}));
+    let params = req.urlData.pageParams;
 
     await renderPage({req, res, ...params});
 

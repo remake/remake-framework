@@ -17,7 +17,7 @@ export function initApiSave ({app}) {
       return;
     }
 
-    let [params, paramsError] = await capture(getParams({req, fromReferrer: true}));
+    let params = req.urlData.pageParams;
     let {username, pageName, itemId} = params;
 
     // get incoming data
