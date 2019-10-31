@@ -88,7 +88,7 @@ class selfTestFramework {
 		htmlElement.innerHTML = `<h3>${(!isEmpty(htmlElement.getAttribute("data-selftest-test"))) ? htmlElement.getAttribute("data-selftest-test") : getDataFromRootNode} Tests</h3>`
 		// Creating headers for the preview and result boxes (which will come soon)
 		let headerDiv = document.createElement("div")
-		headerDiv.classList.add("header-tests", "leave-some-room-for-jesus")
+		headerDiv.classList.add("header-tests", "margin-5")
 		headerDiv.style.display = "flex"
 		headerDiv.style.textAlign = "center"
 		let previewH4 = document.createElement("h4")
@@ -196,7 +196,7 @@ class selfTestFramework {
 			}
 			// Create the passing element
 			let passingElem = document.createElement("p")
-			passingElem.classList.add("test-pass-message", "leave-some-room-for-jesus")
+			passingElem.classList.add("test-pass-message", "margin-5")
 			// Set the passing message from earlier
 			passingElem.innerText = passing.msg
 			// Set the passing color from earlier
