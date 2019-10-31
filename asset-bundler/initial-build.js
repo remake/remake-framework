@@ -1,3 +1,4 @@
 const {runInitialBuild} = require("./run-initial-build");
 
-runInitialBuild();
+let isProduction = process.argv.includes("production");
+runInitialBuild({isProduction});
