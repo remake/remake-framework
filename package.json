@@ -4,17 +4,31 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently --kill-others 'npm:nodemon' 'npm:parcel' 'npm:sass' 'npm:copy-assets'",
-    "nodemon": "nodemon server.js --watch ./ -e html,hbs,sass,css,js,png,gif,jpg,json --ignore node_modules/ --ignore .cache/ --ignore _remake/.sessions --ignore _remake-data",
-    "parcel": "parcel ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --no-hmr --log-level 2",
-    "sass": "sass --watch project-files/assets/sass/main.sass _remake/dist/main.dist.css",
-    "copy-assets": "copy-and-watch --watch project-files/assets/**/*.{ico,png,jpg,gif} _remake/dist",
-    "build": "parcel build ./project-files/assets/js/main.js --out-dir ./_remake/dist/ --out-file main.dist.js --log-level 2 && sass --style=compressed project-files/assets/sass/main.sass _remake/dist/main.dist.css",
-    "start": "node server.js"
+    "dev": "npm run asset-bundler-initial && concurrently --kill-others 'npm:nodemon' 'npm:asset-bundler-watch'",
+    "build": "npm run asset-bundler-production",
+    "nodemon": "nodemon server.js --watch ./",
+    "asset-bundler-initial": "node asset-bundler/initial-build.js",
+    "asset-bundler-production": "node asset-bundler/initial-build.js production",
+    "asset-bundler-watch": "node asset-bundler/"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      ".cache/",
+      "_remake/.sessions",
+      "_remake/client-side",
+      "_remake/dist",
+      "_remake-data",
+      "node_modules/",
+      "app"
+    ],
+    "ext": "html,hbs,sass,css,js,png,gif,jpg,json"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "alias": {
+    "remake-framework": "./_remake/client-side/index.js"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "camelcase": "^5.3.1",
@@ -29,10 +43,12 @@
     "esm": "^3.2.25",
     "express": "^4.17.0",
     "express-session": "^1.16.2",
+    "glob": "^7.1.4",
     "handlebars": "^4.3.3",
     "handlebars-helpers": "^0.10.0",
     "jsonfile": "^5.0.0",
     "lodash": "^4.17.15",
+    "mkdirp": "^0.5.1",
     "nanoid": "^2.0.3",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
@@ -41,10 +57,13 @@
     "upath": "^1.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "chokidar": "^3.2.1",
     "concurrently": "^4.1.0",
     "copy-and-watch": "^0.1.4",
     "nodemon": "^1.19.1",
-    "parcel": "^1.12.3",
-    "sass": "^1.22.9"
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.23.0",
+    "shelljs": "^0.8.3"
   }
 }

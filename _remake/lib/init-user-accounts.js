@@ -6,16 +6,20 @@ const jsonfile = require("jsonfile");
 import { createUserData, getUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
-import { getReservedWordInfo } from "./get-reserved-word-info";
+import { getReservedWordInfo } from "../utils/get-reserved-word-info";
 
 function initUserAccounts ({ app }) {
   app.use(passport.initialize());
   app.use(passport.session());
 
   // The local strategy require a `verify` function which receives the credentials
-  passport.use(new LocalStrategy(async function(username, password, cb) {
+  passport.use(new LocalStrategy({
+    passReqToCallback: true
+  }, async function(req, username, password, cb) {
+    let appName = req.appName;
+
     try {
-      let [currentUser] = await capture(getUserData({ username }));
+      let [currentUser] = await capture(getUserData({ username, appName }));
 
       if (!currentUser) { 
         cb(null, false);
@@ -37,20 +41,28 @@ function initUserAccounts ({ app }) {
   }));
 
   passport.serializeUser(function(currentUser, cb) {
-    cb(null, currentUser.details.username);
+    cb(null, {
+      username: currentUser.details.username, 
+      appName: currentUser.details.appName
+    });
   });
 
-  passport.deserializeUser(async function(username, cb) {
-    let [currentUser] = await capture(getUserData({ username }));
+  passport.deserializeUser(async function(currentUserData, cb) {
+    let [currentUser] = await capture(getUserData({
+      username: currentUserData.username,
+      appName: currentUserData.appName
+    }));
 
     if (currentUser) {
       cb(null, currentUser);
     }
   });
 
-  app.post('/signup', async function(req, res) {
+  // route responds to both "/signup" and "/app_*/signup"
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/signup/, async function(req, res) {
     let username = req.body.username || "";
     let password = req.body.password || "";
+    let appName = req.appName;
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
@@ -93,25 +105,28 @@ function initUserAccounts ({ app }) {
     }
 
     let [hash] = await capture(bcrypt.hash(password, 14));
-    let [newUser] = await capture(createUserData({ username, hash }));
+    let [newUser, newUserError] = await capture(createUserData({ appName, username, hash }));
 
     req.login(newUser, function (err) {
       if (!err){
         res.redirect('/' + newUser.details.username);
       } else {
+        req.flash("error", "Error creating user account");
         res.redirect('/login');
       }
     });
   });
 
-  app.post('/login', passport.authenticate('local', { 
+  // route responds to both "/login" and "/app_*/login"
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, passport.authenticate('local', { 
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
     res.redirect('/' + req.user.details.username);
   });
 
-  app.get('/logout', function(req, res) {
+  // route responds to both "/logout" and "/app_*/logout"
+  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/logout/, function(req, res) {
     req.logout();
     res.redirect('/login');
   });

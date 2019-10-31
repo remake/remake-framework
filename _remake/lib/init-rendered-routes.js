@@ -1,100 +1,79 @@
-const Handlebars = require('handlebars');
-const parseUrl = require('parseurl');
-import { getRoutes, getPartials } from "./get-project-info";
 const path = require('upath');
-const jsonfile = require("jsonfile");
-import { preProcessData } from "./pre-process-data";
+import { capture, readdirAsync } from "../utils/async-utils";
+import { 
+  getPageTemplate, 
+  getDataForPage, 
+  getPageHtml, 
+  getRootAppsPageHtml 
+} from "../utils/page-utils";
 import { getUserData } from "./user-data";
-import { initCustomHandlebarsHelpers } from "./init-custom-handlebars-helpers";
-import { capture } from "../utils/async-utils";
-import { addRemakeAppStatusToPage } from "./add-remake-app-status";
+import parseUrl from "parseurl";
+import { getParams } from "../utils/get-params";
+import routeUtils from "../utils/route-utils";
+import RemakeStore from "./remake-store";
 
-// USER-DEFINED PARTIALS
-let partials = getPartials();
-partials.forEach(partial => Handlebars.registerPartial(partial.name, partial.templateString));
+/*
+  Remake has 3 types of routes
+  • BaseRoute
+  • UsernameRoute
+  • ItemRoute
 
-// CUSTOM HELPERS
-initCustomHandlebarsHelpers({Handlebars, });
+  Combined, these routes can render these patterns:
+  • /
+  • /pageName
+  • /username
+  • /username/pageName/
+  • /username/pageName/id
+*/
 
+async function renderPage ({req, res, pageName, username, itemId}) {
+
+  let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName: req.appName}));
+
+  if (!pageTemplate) {
+    res.status(404).send("404 Not Found");
+    return;
+  }
+
+  let pageAuthor;
+  if (username) {
+    [pageAuthor] = await capture(getUserData({username, appName: req.appName}));
+
+    // if username is in the route, there should be a corresponding user
+    if (!pageAuthor) {
+      res.status(404).send("404 Not Found");
+      return;
+    }
+  }
+
+  // GET DATA
+  let [data, dataError] = await capture(getDataForPage({req, res, appName: req.appName, pageAuthor, itemId}));
+
+  if (dataError) {
+    res.status(500).send("500 Server Error");
+    return;
+  }
+
+  if (itemId && !data.currentItem) {
+    res.status(404).send("404 Not Found");
+    return;
+  }
+
+  let html = getPageHtml({pageTemplate, data, appName: req.appName, username, itemId});
+  res.send(html);
+}
 
 export async function initRenderedRoutes ({ app }) {
 
-  let routes = getRoutes();
+  app.get("*", async function (req, res) {
 
-  routes.forEach(({route, templateString}) => {
+    // don't cache html from these routes
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-    app.get(route, async (req, res) => { // route === "/:username/page-name-route/:id?"
+    let params = req.urlData.pageParams;
 
-      let params = req.params;
-      let usernameFromParams = params.username;
-      let query = req.query;
-      let pathname = parseUrl(req).pathname;
-      let currentUser = req.user;
-
-      let [pageAuthor, pageAuthorError] = await capture(getUserData({username: usernameFromParams}));
-      if (pageAuthorError) {
-        res.status(500).send("500 Server Error");
-        return;
-      }
-
-      let data = pageAuthor && pageAuthor.appData;
-      let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
-      let flashErrors = req.flash("error");
-
-      let currentItem;
-      let parentItem; 
-      if (pageAuthor) {
-        // add unique ids to data
-        let [processResponse, processResponseError] = await capture(preProcessData({data, user: pageAuthor, params, addUniqueIdsToData: true}));
-        if (processResponseError) {
-          res.status(500).send("500 Server Error");
-          return;
-        }
-
-        currentItem = processResponse.currentItem;
-        parentItem = processResponse.parentItem;
-      }
-
-      if (usernameFromParams && !pageAuthor) {
-        // could redirect from the current page, i.e. /:username/pageName to the static route, i.e. /pageName
-        res.status(404).send("404 Not Found");
-        return;
-      }
-
-      if (params.id && !currentItem) {
-        res.status(404).send("404 Not Found");
-        return;
-      }
-
-      let template = Handlebars.compile(templateString);
-      let html = template({
-        data,
-        params,
-        query,
-        pathname,
-        currentItem,
-        parentItem,
-        flashErrors,
-        currentUser,
-        pageAuthor,
-        isPageAuthor,
-        pageHasAppData: !!pageAuthor
-      });
-
-      html = addRemakeAppStatusToPage({html, currentUser, params});
-
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.send(html);
-
-    });
+    await renderPage({req, res, ...params});
 
   });
 
 }
-
-
-
-
-
-
-
