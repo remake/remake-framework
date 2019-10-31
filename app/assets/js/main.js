@@ -6,7 +6,10 @@ import sortablejs from 'sortablejs';
 Remake.init({
   sortable: {
     sortablejs: sortablejs,
-    // assumption: each name is a selector AND a group name
+    // note:
+    // each selector is used as a list selector AND a *group name*,
+    // which means if the selectors of two elements match, 
+    // items can be dragged between those elements
     selectors: [".todo-lists"]
   },
   logDataOnSave: true, // to implement. should console.log data on page whenever it changes.
