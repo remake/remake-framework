@@ -1,14 +1,3 @@
-const fs = require("fs");
-const glob = require("glob");
-const {processFile} = require("./process-file");
-const config = require("./config");
-const {globToSearch} = config;
+const {runInitialBuild} = require("./run-initial-build");
 
-
-let initialFilePaths = glob.sync(globToSearch);
-initialFilePaths.forEach(function (filePath) {
-  let stats = fs.statSync(filePath);
-  let isProduction = process.argv.includes("production");
-
-  processFile({filePath, stats, isProduction});
-});
+runInitialBuild();

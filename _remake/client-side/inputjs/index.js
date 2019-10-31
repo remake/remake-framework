@@ -10,6 +10,7 @@ import optionsData from './optionsData';
 import { enableSaveAttribute, initSaveFunctions, callSaveFunction } from './onSave';
 import initEditableAttribute from './editableAttribute';
 import initAddingItemEventListener from './addingItemEventListener';
+import initSortableElements from './sortableElements';
 const merge = require('lodash/merge');
 
 function initInputEventListeners (options) {
@@ -24,6 +25,10 @@ function initInputEventListeners (options) {
   initClickToSaveEventListener();
   initEditableAttribute();
   initAddingItemEventListener();
+
+  if (optionsData.sortable) {
+    initSortableElements();
+  }
 }
 
 export {
