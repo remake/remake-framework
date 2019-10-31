@@ -15,7 +15,7 @@ import RemakeStore from "./remake-store";
 
 export function initApiNew ({app}) {
 
-  // route responds to both "/new" and "/app_*/new"
+  // route for "/new" and "/app_*/new"
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/new/, async (req, res) => {
 
     if (!req.isAuthenticated()) {
@@ -23,16 +23,17 @@ export function initApiNew ({app}) {
       return;
     }
 
+    let appName = req.appName;
     let partialName = req.body.templateName;
     let params = req.urlData.pageParams;
     let {username, pageName, itemId} = params;
     
-    // default to using inline named partials as opposed to partial files
-    let partialRenderFunc = RemakeStore.getNewItemRenderFunction({appName: req.appName, name: partialName});
+    // default to using a template named in a handlebars #for loop
+    let partialRenderFunc = RemakeStore.getNewItemRenderFunction({appName, name: partialName});
 
-    // use the user-defined partial files only if no render functions are found
+    // use a template from the /partials directory if no #for loop item is found
     if (!partialRenderFunc) {
-      let [partialFileString] = await capture(getPartial({appName: req.appName, partialName}));
+      let [partialFileString] = await capture(getPartial({appName, partialName}));
 
       if (partialFileString) {
         partialRenderFunc = Handlebars.compile(partialFileString);
@@ -41,10 +42,11 @@ export function initApiNew ({app}) {
 
     if (!partialRenderFunc) {
       showConsoleError(`Error: Couldn't find a template or partial named "${partialName}"`);
+      res.json({success: false, reason: "noItemTemplateFound"});
       return;
     }
 
-    let [partialBootstrapData] = await capture(getBootstrapData({appName: req.appName, fileName: partialName}));
+    let [partialBootstrapData] = await capture(getBootstrapData({appName, fileName: partialName}));
 
     // add a unique key to every plain object in the bootstrap data
     forEachDeep(partialBootstrapData, function (value, key, parentValue, context) {
@@ -56,7 +58,7 @@ export function initApiNew ({app}) {
     let query = getQueryParams({req, fromReferrer: true});
     let pathname = req.urlData.referrerUrlPathname;
     let currentUser = req.user;
-    let [pageAuthor, pageAuthorError] = await capture(getUserData({appName: req.appName, username}));
+    let [pageAuthor, pageAuthorError] = await capture(getUserData({appName, username}));
 
     if (pageAuthorError) {
       res.json({success: false, reason: "userData"});
@@ -77,7 +79,7 @@ export function initApiNew ({app}) {
     }
 
     // {res, appName, pageAuthor, data, itemId}
-    let [itemData] = await capture(processData({appName: req.appName, res, pageAuthor, data, params, requestType: "ajax"}));
+    let [itemData] = await capture(processData({appName, res, pageAuthor, data, params, requestType: "ajax"}));
     let {currentItem, parentItem} = itemData;
 
     let htmlString = partialRenderFunc({

@@ -3,13 +3,13 @@ import { get, set, isPlainObject } from 'lodash-es';
 import { getItemWithId } from "./get-item-with-id";
 import { specialDeepExtend } from "./special-deep-extend";
 import { setUserData } from "./user-data";
-import { getParams } from "../utils/get-params";
 import { capture } from "../utils/async-utils";
 import RemakeStore from "./remake-store";
 
 
 export function initApiSave ({app}) {
 
+  // route for "/save" and "/app_*/save"
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/save/, async (req, res) => {
 
     if (!req.isAuthenticated()) {
@@ -17,8 +17,7 @@ export function initApiSave ({app}) {
       return;
     }
 
-    let params = req.urlData.pageParams;
-    let {username, pageName, itemId} = params;
+    let {username, pageName, itemId} = req.urlData.pageParams;
 
     // get incoming data
     let incomingData = req.body.data;
