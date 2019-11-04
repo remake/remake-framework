@@ -7,7 +7,7 @@ import { getDirForUserFile, getAllDirsForUserData } from "../utils/directory-hel
 
 // create new user data files
 // returns: {details, appData}
-export async function createUserData ({ username, hash, appName }) {
+export async function createUserData ({ appName, username, hash, email }) {
 
   let [userAppDataBootstrap] = await capture(getBootstrapData({fileName: "_user-app-data", appName}));
   let [userDetailsBootstrap] = await capture(getBootstrapData({fileName: "_user-details", appName}));
@@ -16,7 +16,7 @@ export async function createUserData ({ username, hash, appName }) {
   let details = userDetailsBootstrap;
 
   // extend user details with args
-  Object.assign(details, { username, hash, appName });
+  Object.assign(details, { appName, username, hash, email });
 
   // make sure all the user data directories exist before writing to them
   await makeSureUserDataDirectoriesExist({appName});

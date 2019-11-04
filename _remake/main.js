@@ -61,7 +61,8 @@ app.use(function (req, res, next) {
 app.use(async function (req, res, next) {
 
   req.urlData = {};
-  req.urlData.url = req.protocol + '://' + req.get('host') + req.originalUrl;
+  req.urlData.host = req.get('host');
+  req.urlData.url = req.protocol + '://' + req.urlData.host + req.originalUrl;
   req.urlData.referrerUrl = req.get('Referrer') || "";
 
   req.urlData.urlObj = new URL(req.urlData.url) || {};
