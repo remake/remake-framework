@@ -47,7 +47,7 @@ function processFile ({filePath, stats, shouldRecompute, isProduction}) {
 }
 
 
-function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
+function recompileFilesForApp ({filePath, isJsFile, isSassFile, isProduction}) {
   let indexOfAssetsString = filePath.indexOf("/assets/");
   let dirToSearch = filePath.slice(0, indexOfAssetsString + 8);
 
@@ -57,6 +57,7 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
   } else {
     globToSearch = dirToSearch + "**/!(_)*.sass";
   }
+
 
   let recompileFilePaths = glob.sync(globToSearch);
   recompileFilePaths.forEach(fp => {
@@ -73,9 +74,9 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile}) {
       }
     } else {
       if (isProduction) {
-        shell.exec(`npx sass ${fp} ${distFilePath} --no-source-map`);
-      } else {
         shell.exec(`npx sass ${fp} ${distFilePath} --no-source-map --style compressed`);
+      } else {
+        shell.exec(`npx sass ${fp} ${distFilePath} --no-source-map`);
       }
     }
   });
