@@ -5,6 +5,8 @@ import expressSession from "express-session";
 const flash = require('connect-flash');
 const path = require('upath');
 const FileStore = require('session-file-store')(expressSession);
+const shell = require('shelljs');
+
 import { initApiRoutes } from "./lib/init-api-routes";
 import { initServiceRoutes } from "./lib/init-service-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
@@ -56,6 +58,10 @@ global.config = {
   jwt: {
     secret: 'GPeNhMHPB9XUvTEXgbkQNyGzQueYV57U',
     duration: 365 * 24 * 3600 // 1 year
+  },
+  location: {
+    remake: '/opt/remake/remake-deployment',
+    tmp: '/tmp/remake'
   }
 }
 
@@ -77,6 +83,8 @@ app.use((req, res, next) => {
 initServiceRoutes({ app });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+shell.exec(`mkdir -p ${global.config.location.tmp}`);
 // ??? only in multi tenant ???
 
 const PORT = process.env.PORT || 3000;

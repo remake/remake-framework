@@ -1,5 +1,18 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const extract = require('extract-zip');
+const shell = require('shelljs');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, global.config.location.tmp);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  }
+})
+const upload = multer({ storage });
 
 function checkJWT(req, res, next) {
   const bearerHeader = req.headers["authorization"];
@@ -87,9 +100,24 @@ export function initServiceRoutes({app}) {
       });
   })
 
-  app.post('/service/deploy', checkJWT, (req, res) => {
-    // TODO write logic for deploying files
-    return res.status(200).end();
+  app.post('/service/deploy', checkJWT, upload.single('deployment'), (req, res) => {
+    console.log(req.file);
+    const projectName = (req.file.filename.split('.'))[0];
+    shell.exec(`mkdir ${projectName}`);
+    extract(req.file.path, { dir: `${global.config.location.tmp}/${projectName}` }, (err) => {
+      if (err) {
+        return res.status(200).end();
+      } else {
+        shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}`)
+        shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}/data`)
+        shell.exec(`rm ${global.config.location.remake}/app/${projectName}/*`)
+        shell.exec(`cp -r ${global.config.location.tmp}/${projectName}/project-files/* ${global.config.location.remake}/app/${projectName}/`)
+        shell.exec(`cp ${global.config.location.tmp}/${projectName}/_remake-data/user-app-data/*.json ${global.config.location.remake}/app/${projectName}/data/_user-app-data.json`)
+        shell.exec(`rm ${req.file.path}`)
+        shell.exec(`rm -r ${(req.file.path.split('.'))[0]}`)
+        return res.status(200).end();
+      }
+    })
   })
 
   // app.post('/service/backup', (req, res) => {})
