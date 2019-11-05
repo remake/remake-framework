@@ -78,7 +78,6 @@ export function initServiceRoutes({app}) {
   app.get('/service/subdomain/availability', checkJWT, (req, res) => {
     if (!req.query.subdomain || !req.query.email)
       return res.status(400).json({ message: 'Bad request: subdomain or email params are missing' }).end();
-    // TODO write logic for checking subdomain availability
     const { subdomain, email } = req.query;
 
     connection.query('SELECT * FROM users WHERE email = ?',
@@ -101,23 +100,40 @@ export function initServiceRoutes({app}) {
   })
 
   app.post('/service/deploy', checkJWT, upload.single('deployment'), (req, res) => {
-    console.log(req.file);
     const projectName = (req.file.filename.split('.'))[0];
-    shell.exec(`mkdir ${projectName}`);
-    extract(req.file.path, { dir: `${global.config.location.tmp}/${projectName}` }, (err) => {
-      if (err) {
-        return res.status(200).end();
-      } else {
-        shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}`)
-        shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}/data`)
-        shell.exec(`rm ${global.config.location.remake}/app/${projectName}/*`)
-        shell.exec(`cp -r ${global.config.location.tmp}/${projectName}/project-files/* ${global.config.location.remake}/app/${projectName}/`)
-        shell.exec(`cp ${global.config.location.tmp}/${projectName}/_remake-data/user-app-data/*.json ${global.config.location.remake}/app/${projectName}/data/_user-app-data.json`)
-        shell.exec(`rm ${req.file.path}`)
-        shell.exec(`rm -r ${(req.file.path.split('.'))[0]}`)
-        return res.status(200).end();
+    if (!req.body.appName || !req.body.email)
+      return res.status(400).json({ m: 'appName or email missing' }).end();
+    connection.query('SELECT * FROM users WHERE email = ?',
+      [req.body.email],
+      (err, result, _) => {
+        if (err) return res.status(500).json(err).end();
+        const user = result[0];
+
+        connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
+          [user.id, req.body.appName],
+          (err, result, _) => {
+            if (err) return res.status(500).json(err).end();
+            if (result.length === 0) {
+              return res.status(403).json('Unauthorized to deploy').end();
+            }
+            extract(req.file.path, { dir: `${global.config.location.tmp}/${projectName}` }, (err) => {
+              if (err) {
+                return res.status(500).json(err).end();
+              } else {
+                shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}`)
+                shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}/data`)
+                shell.exec(`rm ${global.config.location.remake}/app/${projectName}/*`)
+                shell.exec(`cp -r ${global.config.location.tmp}/${projectName}/project-files/* ${global.config.location.remake}/app/${projectName}/`)
+                shell.exec(`cp ${global.config.location.tmp}/${projectName}/_remake-data/user-app-data/*.json ${global.config.location.remake}/app/${projectName}/data/_user-app-data.json`)
+                shell.exec(`rm ${req.file.path}`)
+                shell.exec(`rm -r ${(req.file.path.split('.'))[0]}`)
+                return res.status(200).end();
+              }
+            })
+          });
       }
-    })
+    );
+
   })
 
   // app.post('/service/backup', (req, res) => {})
