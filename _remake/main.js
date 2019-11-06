@@ -1,23 +1,22 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import expressSession from "express-session";
 const flash = require('connect-flash');
 const path = require('upath');
 const FileStore = require('session-file-store')(expressSession);
 const shell = require('shelljs');
+const mysql = require("mysql");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
 
 import { initApiRoutes } from "./lib/init-api-routes";
 import { initServiceRoutes } from "./lib/init-service-routes";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
+import { setEnvironmentVariables } from "./utils/setup-env";
 
-const mysql = require("mysql");
-const bodyParser = require("body-parser");
-const morgan = require("morgan");
-
-// set up vars
-dotenv.config({ path: "variables.env" });
+// set up env vars
+setEnvironmentVariables();
 
 const app = express();
 
