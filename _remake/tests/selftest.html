@@ -1,0 +1,79 @@
+<!DOCTYPE html5>
+<html>
+	<head>
+		<title>Remake - Self Test</title>
+		<link rel="stylesheet" href="./css/normalize-min.css">
+		<link rel="stylesheet" href="./css/style.css">
+		<link rel="stylesheet" href="./css/prism.css">
+		<link rel="stylesheet" href="./selftest.css">
+	</head>
+	<body>
+		<div class="page">
+			<div class="main">
+				<div>
+					<h1 class="logo">Remake Selftest Page</h1>
+					<h2>Oh, hello! Welcome to the self test page!</h2>
+					<p>
+						This is the self test page where developers can test the function of the framework.<br>Mainly to see if they didn't break it again.
+					</p>
+					<button class="run-tests">Run all tests</button>
+				</div>
+				<!-- Tests for getDataFromRootNode in this parent -->
+				<div class="selftest" data-selftest-test="getDataFromRootNode" data-selftest-arguments="(inner-content)">
+					<h3>getDataFromRootNode Tests</h3>
+					<script type="text/plain" class="preview-only language-html"><div data-o-type="object" data-o-key-id="zWIo5v3pSlSDs6" data-o-key-name="Tasks"></div></script>
+					<script type="text/plain" class="preview-only language-html"><div data-o-type="list" data-o-key="todoLists"></div></script>
+				</div>
+			</div>
+			<script src="./remake-init.js"></script>
+			<script src="./util.js"></script>
+			<script src="./css/prism.js" data-manual></script>
+			<script>
+				var selfTests = {
+					originalHTML: {},
+				}
+
+				function clearSelfTestObj() {
+					selfTests = {
+						originalHTML: {},
+					}
+				}
+
+				function prepareSelfTestsForHighlighting() {
+					let parents = document.getElementsByClassName("selftest")
+					for (let i = 0; i < parents.length; i++) {
+						const parent = parents[i];
+						if (isEmpty(parent.id)) parent.id = randomString(12)
+
+						selfTests[parent.id] = []
+						selfTests[parent.id]["function2Test"] = (!isEmpty(parent.getAttribute("data-selftest-test"))) ? parent.getAttribute("data-selftest-test") : "getDataFromRootNode"
+						selfTests[parent.id]["arguments"] = (!isEmpty(parent.getAttribute("data-selftest-arguments"))) ? parent.getAttribute("data-selftest-arguments") : ""
+
+						selfTests.originalHTML[parent.id] = []
+						selfTests.originalHTML[parent.id]['outerHTML'] = parent.outerHTML
+
+						let validChilds = []
+						for (let j = 0; j < parent.children.length; j++) {
+							const child = parent.children[j];
+							if (child.tagName == "SCRIPT" && child.type == "text/plain") {
+								validChilds.push(child)
+							}
+						}
+						for (let j = 0; j < validChilds.length; j++) {
+							const validChild = validChilds[j];
+							selfTests.originalHTML[parent.id][j] = validChild.outerHTML
+							selfTests[parent.id][j] = validChild.innerHTML
+							Prism.highlightElement(validChild)
+						}
+					}
+				}
+
+				document.addEventListener("DOMContentLoaded", function(){
+					prepareSelfTestsForHighlighting()
+				});
+
+			</script>
+			<script src="./selftest_clientside.js"></script>
+		</div>
+	</body>
+</html>

@@ -2,20 +2,26 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const validUsernameRegex = /^[a-zA-Z0-9_-]+$/;
 const bcrypt = require('bcryptjs');
+const crypto = require("crypto");
 const jsonfile = require("jsonfile");
-import { createUserData, getUserData } from "./user-data";
+import { createUserData, getUserData, setUserData } from "./user-data";
 import { showConsoleError } from "../utils/console-utils";
 import { capture } from "../utils/async-utils";
-import { getReservedWordInfo } from "./get-reserved-word-info";
+import { getReservedWordInfo } from "../utils/get-reserved-word-info";
+import { sendEmail } from "../utils/send-email";
 
 function initUserAccounts ({ app }) {
   app.use(passport.initialize());
   app.use(passport.session());
 
   // The local strategy require a `verify` function which receives the credentials
-  passport.use(new LocalStrategy(async function(username, password, cb) {
+  passport.use(new LocalStrategy({
+    passReqToCallback: true
+  }, async function(req, username, password, cb) {
+    let appName = req.appName;
+
     try {
-      let [currentUser] = await capture(getUserData({ username }));
+      let [currentUser] = await capture(getUserData({ username, appName }));
 
       if (!currentUser) { 
         cb(null, false);
@@ -37,20 +43,26 @@ function initUserAccounts ({ app }) {
   }));
 
   passport.serializeUser(function(currentUser, cb) {
-    cb(null, currentUser.details.username);
+    cb(null, {
+      username: currentUser.details.username, 
+      appName: currentUser.details.appName
+    });
   });
 
-  passport.deserializeUser(async function(username, cb) {
-    let [currentUser] = await capture(getUserData({ username }));
+  passport.deserializeUser(async function(currentUserData, cb) {
+    let [currentUser] = await capture(getUserData({
+      username: currentUserData.username,
+      appName: currentUserData.appName
+    }));
 
     if (currentUser) {
       cb(null, currentUser);
     }
   });
 
-  app.post('/signup', async function(req, res) {
-    let username = req.body.username || "";
-    let password = req.body.password || "";
+  app.post("/signup", async function(req, res) {
+    let appName = req.appName;
+    let {username = "", password = "", email = ""} = req.body;
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
@@ -93,27 +105,56 @@ function initUserAccounts ({ app }) {
     }
 
     let [hash] = await capture(bcrypt.hash(password, 14));
-    let [newUser] = await capture(createUserData({ username, hash }));
+    let [newUser, newUserError] = await capture(createUserData({ appName, username, hash, email }));
 
     req.login(newUser, function (err) {
       if (!err){
         res.redirect('/' + newUser.details.username);
       } else {
+        req.flash("error", "Error creating user account");
         res.redirect('/login');
       }
     });
   });
 
-  app.post('/login', passport.authenticate('local', { 
+  app.post("/login", passport.authenticate('local', { 
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
     res.redirect('/' + req.user.details.username);
   });
 
-  app.get('/logout', function(req, res) {
+  app.get("/logout", function(req, res) {
     req.logout();
     res.redirect('/login');
+  });
+
+  app.post("/forgot", async function(req, res) {
+    let appName = req.appName;
+    let {username} = req.body;
+    let [currentUser] = await capture(getUserData({ username, appName }));
+
+    if (!currentUser) {
+      req.flash("error", "Username not found");
+      res.redirect('/forgot');
+      return;
+    }
+
+    let token = crypto.randomBytes(32).toString('hex');
+    let details = currentUser.details;
+    details.resetPasswordToken = token;
+    details.resetPasswordExpires = `${Date.now() + 3600000}`;
+
+    setUserData({ appName, username, data: details, type: "details" });
+
+    sendEmail({
+      email: details.email, 
+      subject: `Reset your password for ${req.urlData.host}`,
+      body: `Hi ${username},<br>You can reset your password by following this link:<br>${req.protocol + '://' + req.urlData.host + "/reset/" + username + "/" + token}`
+    });
+
+    req.flash('success', 'An email with a link to change your password has been sent!');
+    res.redirect("/forgot");
   });
 }
 

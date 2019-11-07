@@ -1,0 +1,91 @@
+/*
+	Overwriting some User-Agent style sheets
+*/
+h1,
+h2,
+h3 {
+	margin-bottom: 10px;
+}
+
+h4 {
+	margin: 8px 0;
+}
+
+p {
+	margin-top: 16px;
+}
+
+/*
+	Styling on elements that are on page at body onload
+*/
+.page {
+	text-align: center;
+	max-width: 50%;
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.selftest {
+	text-align: initial;
+	margin-top: 20px;
+}
+
+#runTests {
+	margin-bottom: 16px;
+}
+
+/* 
+	Styling for elements that get created/added by JavaScript
+*/
+.margin-5 {
+	margin: 5px;
+}
+
+/* Styling for when the test message is generated */
+.test-pass-message {
+	font-weight: bold;
+	text-align: center;
+}
+
+/* Styling for the xmp elements that hold preview code and results */
+/* Overwrite word wrapping of prism css */
+pre code {
+	white-space: normal !important;
+	word-wrap: break-word !important;
+}
+
+pre {
+	margin-left: 5px !important;
+	margin-right: 5px !important;
+}
+
+/* Make the first (preview) and second (results) xmp tag have a width of 50% and all xmp tags afterwards a width of 0 */
+pre:nth-of-type(1) {
+	width: 50%;
+}
+
+pre:nth-of-type(2) {
+	width: 50%;
+}
+
+pre:nth-of-type(n+3) {
+	width: 0;
+}
+
+pre.preview-only {
+	width: 100%;
+}
+
+/* (See last comment) Same with the headers for the tests */
+.header-tests *:nth-of-type(1) {
+	width: 50%;
+}
+
+.header-tests *:nth-of-type(2) {
+	width: 50%;
+}
+
+.header-tests *:nth-of-type(n+3) {
+	width: 0;
+}
