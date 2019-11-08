@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // better loging
-app.use(morgan("dev"));
+app.use(morgan("common"));
 
 // extract appName from host and attach it to request object
 // important: show error if multi-tenant is enabled and there's no app name

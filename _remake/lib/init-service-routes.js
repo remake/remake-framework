@@ -32,13 +32,43 @@ function checkJWT(req, res, next) {
   }
 }
 
+function validEmail(req, res, next) {
+  // regex source: https://stackoverflow.com/a/46181
+  const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
+  const email = req.body.email || req.query.email;
+  if (!email)
+    return res.status(400).json({ message : 'Bad request: email is missing.' }).end();
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message : 'Bad request: email not valid.' }).end();
+  }
+  else next();
+}
+
+function validPass(req, res, next) {
+  // at least one digit and one letter + at least 8 chars long
+  const passRegex = /^(?=.*\d)(?=.*[a-z])[a-zA-Z0-9]{8,}$/
+  const password = req.body.password;
+  if (!password)
+    return res.status(400).json({ message : 'Bad request: password is missing.' }).end();
+  if (!passRegex.test(req.body.password))
+    return res.status(400).json({ message : 'Bad request: The password should be at least 8 characters long and it should contain at least one digit and a letter.' }).end();
+  else next();
+}
+
+const validSubdomain = (req, res, next) => {
+  const subdomainRegex = /^[a-z]+[a-z0-9\-]*$/
+  const subdomain = req.query.subdomain || req.body.appName;
+  if (!subdomain)
+    return res.status(400).json({ message: 'Bad request: subdomain is missing' }).end();
+  if (!subdomainRegex.test(subdomain)) 
+    return res.status(400).json({ message : 'Bad request: The app name / subdomain should start with a lowercase letter and should contain only lowercase letters, numbers and dashes.' }).end();
+  else next();
+}
+
 export function initServiceRoutes({app}) {
-  app.post('/service/signup', (req, res) => {
-    if (!req.body.email || !req.body.password)
-      return res.status(400).json({ message: 'Bad request: email or password is missing' }).end();
+  app.post('/service/signup', validEmail, validPass, (req, res) => {
     const { email, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 8);
-    
     connection.query('INSERT INTO users (email, pwd_hash) VALUES ( ?, ?)',
       [email, hashedPassword],
       (err, results, fields) => {
@@ -54,11 +84,8 @@ export function initServiceRoutes({app}) {
       });
   })
 
-  app.post('/service/login', (req, res) => {
-    if (!req.body.email || !req.body.password)
-      return res.status(400).json({ message: 'Bad request: email, password is missing' }).end();
+  app.post('/service/login', validEmail, validPass, (req, res) => {
     const { email, password } = req.body;
-
     connection.query('SELECT * FROM users WHERE email = ?',
       [email],
       (err, result, _) => {
@@ -76,11 +103,8 @@ export function initServiceRoutes({app}) {
       });
   })
 
-  app.get('/service/subdomain/availability', checkJWT, (req, res) => {
-    if (!req.query.subdomain || !req.query.email)
-      return res.status(400).json({ message: 'Bad request: subdomain or email params are missing' }).end();
+  app.get('/service/subdomain/register', checkJWT, validEmail, validSubdomain, (req, res) => {
     const { subdomain, email } = req.query;
-
     connection.query('SELECT * FROM users WHERE email = ?',
       [email],
       (err, result, _) => {
@@ -98,20 +122,19 @@ export function initServiceRoutes({app}) {
             return res.status(200).end();
           });
       });
-  })
+  });
 
-  app.post('/service/deploy', checkJWT, upload.single('deployment'), (req, res) => {
+  app.post('/service/deploy', checkJWT, upload.single('deployment'), validEmail, validSubdomain, (req, res) => {
     const projectName = (req.file.filename.split('.'))[0];
-    if (!req.body.appName || !req.body.email)
-      return res.status(400).json({ m: 'appName or email missing' }).end();
+    const { email, appName } = req.body;
     connection.query('SELECT * FROM users WHERE email = ?',
-      [req.body.email],
+      [email],
       (err, result, _) => {
         if (err) return res.status(500).json(err).end();
         const user = result[0];
 
         connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
-          [user.id, req.body.appName],
+          [user.id, appName],
           (err, result, _) => {
             if (err) return res.status(500).json(err).end();
             if (result.length === 0) {
@@ -134,7 +157,6 @@ export function initServiceRoutes({app}) {
           });
       }
     );
-
   })
 
   // app.post('/service/backup', (req, res) => {})
