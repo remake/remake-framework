@@ -144,13 +144,12 @@ export function initServiceRoutes({app}) {
               if (err) {
                 return res.status(500).json(err).end();
               } else {
-                shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}`)
-                shell.exec(`mkdir -p ${global.config.location.remake}/app/${projectName}/data`)
-                shell.exec(`rm ${global.config.location.remake}/app/${projectName}/*`)
-                shell.exec(`cp -r ${global.config.location.tmp}/${projectName}/project-files/* ${global.config.location.remake}/app/${projectName}/`)
-                shell.exec(`cp ${global.config.location.tmp}/${projectName}/_remake-data/user-app-data/*.json ${global.config.location.remake}/app/${projectName}/data/_user-app-data.json`)
-                shell.exec(`rm ${req.file.path}`)
-                shell.exec(`rm -r ${(req.file.path.split('.'))[0]}`)
+                shell.mkdir('-p', `${global.config.location.remake}/app/${projectName}`)
+                shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${projectName}`)
+                shell.cp('-r', `${global.config.location.tmp}/${projectName}/project-files/*`, `${global.config.location.remake}/app/${projectName}/`)
+                shell.cp('-r' `${global.config.location.tmp}/${projectName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${projectName}/`)
+                shell.rm(req.file.path)
+                shell.rm('-r', (req.file.path.split('.'))[0])
                 return res.status(200).end();
               }
             })

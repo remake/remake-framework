@@ -172,7 +172,7 @@ initRenderedRoutes({ app });
 // and create temporary location used for deployments
 if (RemakeStore.isMultiTenant()) {
   initServiceRoutes({ app });
-  shell.exec(`mkdir -p ${global.config.location.tmp}`);
+  shell.mkdir('-p', global.config.location.tmp);
 }
 
 const PORT = process.env.PORT || 3000;
