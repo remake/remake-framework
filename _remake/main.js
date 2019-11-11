@@ -38,19 +38,23 @@ app.use(morgan("common"));
 // important: show error if multi-tenant is enabled and there's no app name
 if (RemakeStore.isMultiTenant()) {
   app.use(function (req, res, next) {
-    let splitString = req.get("host").split(".");
-    let validSplit = splitString.length === 3;
-    let appName = splitString[0] || "";
-    let validAppName = /^[a-z]+[a-z0-9-]*$/.test(appName);
-
-    if (!validSplit || !validAppName) {
-      res.status(500).send("500 Server Error - No App Found");
-      return;
+    // handle service routes
+    if (/^\/service\/[a-z\/]*/.test(req.url)) {
+      next();
+    } else {
+      // handle api endpoints, rendered routes and resources
+      let splitString = req.get("host").split(".");
+      let validSplit = splitString.length === 3;
+      let appName = splitString[0] || "";
+      let validAppName = /^[a-z]+[a-z0-9-]*$/.test(appName);
+  
+      if (!validSplit || !validAppName) {
+        res.status(500).send("500 Server Error - No App Found");
+        return;
+      }
+      req.appName = appName;
+      next();
     }
-
-    req.appName = appName;
-
-    next();
   });
 }
 

@@ -125,7 +125,6 @@ export function initServiceRoutes({app}) {
   });
 
   app.post('/service/deploy', checkJWT, upload.single('deployment'), validEmail, validSubdomain, (req, res) => {
-    const projectName = (req.file.filename.split('.'))[0];
     const { email, appName } = req.body;
     connection.query('SELECT * FROM users WHERE email = ?',
       [email],
@@ -140,17 +139,23 @@ export function initServiceRoutes({app}) {
             if (result.length === 0) {
               return res.status(403).json('Unauthorized to deploy').end();
             }
-            extract(req.file.path, { dir: `${global.config.location.tmp}/${projectName}` }, (err) => {
+            extract(req.file.path, { dir: `${global.config.location.tmp}/${appName}` }, (err) => {
               if (err) {
                 return res.status(500).json(err).end();
               } else {
-                shell.mkdir('-p', `${global.config.location.remake}/app/${projectName}`)
-                shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${projectName}`)
-                shell.cp('-r', `${global.config.location.tmp}/${projectName}/project-files/*`, `${global.config.location.remake}/app/${projectName}/`)
-                shell.cp('-r' `${global.config.location.tmp}/${projectName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${projectName}/`)
-                shell.rm(req.file.path)
-                shell.rm('-r', (req.file.path.split('.'))[0])
-                return res.status(200).end();
+                try {
+                  shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
+                  shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}`);
+                  shell.cp('-R', `${global.config.location.tmp}/${appName}/project-files/*`, `${global.config.location.remake}/app/${appName}/`);
+                  // commented this out. do we want to deploy local development data?
+                  // shell.cp('-R', `${global.config.location.tmp}/${appName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${appName}/`);
+                  shell.rm(req.file.path);
+                  shell.rm('-R', (req.file.path.split('.'))[0]);
+                  return res.status(200).end();
+                } catch (err) {
+                  console.error(err);
+                  return res.status(500).end();
+                }
               }
             })
           });
