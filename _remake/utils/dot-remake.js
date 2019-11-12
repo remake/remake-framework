@@ -4,6 +4,7 @@ const process = require('process');
 
 const log = console.log;
 
+// write fields to .remake
 function writeDotRemake (content) {
   const cwd = process.cwd();
   const dotRemakePath = path.join(cwd, '.remake');
@@ -16,6 +17,7 @@ function writeDotRemake (content) {
   }
 }
 
+// read .remake in memory
 function readDotRemake () {
   const cwd = process.cwd();
   const dotRemakePath = path.join(cwd, '.remake');

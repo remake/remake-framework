@@ -4,6 +4,7 @@ const multer = require('multer');
 const extract = require('extract-zip');
 const shell = require('shelljs');
 
+// configure multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, global.config.location.tmp);
@@ -15,10 +16,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// check JWT token received in the header of protected requests
 function checkJWT(req, res, next) {
-  const bearerHeader = req.headers["authorization"];
+  const bearerHeader = req.headers["authorization"]; // get token
   if (typeof bearerHeader !== 'undefined') {
     const bearer = bearerHeader.split(" ")[1];
+    // verity received token against the JWT secret used for generating it
     jwt.verify(bearer, config.jwt.secret, (err, data) => {
       if (err) {
         return res.status(403).json({ message: 'Bad request: ' + err }).end();
@@ -32,6 +35,7 @@ function checkJWT(req, res, next) {
   }
 }
 
+// validate email
 function validEmail(req, res, next) {
   // regex source: https://stackoverflow.com/a/46181
   const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
@@ -44,6 +48,7 @@ function validEmail(req, res, next) {
   else next();
 }
 
+// validate password
 function validPass(req, res, next) {
   // at least one digit and one letter + at least 8 chars long
   const passRegex = /^(?=.*\d)(?=.*[a-z])[a-zA-Z0-9]{8,}$/
@@ -55,6 +60,7 @@ function validPass(req, res, next) {
   else next();
 }
 
+// validate subdomain
 const validSubdomain = (req, res, next) => {
   const subdomainRegex = /^[a-z]+[a-z0-9\-]*$/
   const subdomain = req.query.subdomain || req.body.subdomain || req.body.appName;
@@ -66,9 +72,11 @@ const validSubdomain = (req, res, next) => {
 }
 
 export function initServiceRoutes({app}) {
+  // signup endpoint
+  // validation callbacks: validEmail, validPass
   app.post('/service/signup', validEmail, validPass, (req, res) => {
     const { email, password } = req.body;
-    const hashedPassword = bcrypt.hashSync(password, 8);
+    const hashedPassword = bcrypt.hashSync(password, 8); // hash password
     connection.query('INSERT INTO users (email, pwd_hash) VALUES ( ?, ?)',
       [email, hashedPassword],
       (err, results, fields) => {
@@ -77,6 +85,7 @@ export function initServiceRoutes({app}) {
             delete err.sql;
           return res.status(500).json(err).end();
         }
+        // generate JWT token based on user id and JWT_SECRET
         const token = jwt.sign({ id: results.insertId }, config.jwt.secret, {
           expiresIn: config.jwt.duration
         });
@@ -84,6 +93,8 @@ export function initServiceRoutes({app}) {
       });
   })
 
+  // login endpoint
+  // validation callbacks: validEmail, validPass
   app.post('/service/login', validEmail, validPass, (req, res) => {
     const { email, password } = req.body;
     connection.query('SELECT * FROM users WHERE email = ?',
@@ -91,10 +102,12 @@ export function initServiceRoutes({app}) {
       (err, result, _) => {
         if (err) return res.status(500).json(err).end();
         const user = result[0];
+        // compare password with password hash
         bcrypt.compare(password, user.pwd_hash, (err, passwordIsCorrect) => {
           if (err) return res.status(500).json(err).end();
           if (!passwordIsCorrect)
             return res.status(403).json({ message: 'Wrong email or password' }).end();
+          // generate JWT token based on user id and JWT_SECRET
           const token = jwt.sign({ id: user.id }, config.jwt.secret, {
             expiresIn: config.jwt.duration
           });
@@ -103,6 +116,9 @@ export function initServiceRoutes({app}) {
       });
   })
 
+  // endpoint for checking if subdomain is available (not already in the DB)
+  // validation callbacks: checkJWT, validSubdomain
+  // user must be authenticated to access it
   app.get('/service/subdomain/check', checkJWT, validSubdomain, (req, res) => {
     const { subdomain } = req.query;
     connection.query('SELECT * FROM apps WHERE name = ?',
@@ -114,6 +130,9 @@ export function initServiceRoutes({app}) {
       });
   });
 
+  // endpoint for registering subdomain (save in DB)
+  // validation callbacks: checkJWT, validSubdomain
+  // user must be authenticated to access it
   app.post('/service/subdomain/register', checkJWT, validSubdomain, (req, res) => {
     const { subdomain } = req.body;
     connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
@@ -128,6 +147,10 @@ export function initServiceRoutes({app}) {
       });
   });
 
+  // endpoint for deploying app
+  // upload app files if the user owns the app
+  // validation callbacks: checkJWT, validSubdomain, upload.single(...)
+  // user must be authenticated to access it
   app.post('/service/deploy', checkJWT, upload.single('deployment'), validSubdomain, (req, res) => {
     const { appName } = req.body;
 
