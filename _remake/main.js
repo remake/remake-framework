@@ -165,12 +165,6 @@ if (RemakeStore.isMultiTenant()) {
   app.use(bodyParser.urlencoded({ extended: false }));
 }
 
-// REMAKE CORE FRAMEWORK
-initUserAccounts({ app });
-initApiNew({ app });
-initApiSave({ app });
-initRenderedRoutes({ app });
-
 // if app is multi tenant
 // init deploy service routes
 // and create temporary location used for deployments
@@ -178,6 +172,12 @@ if (RemakeStore.isMultiTenant()) {
   initServiceRoutes({ app });
   shell.mkdir('-p', global.config.location.tmp);
 }
+
+// REMAKE CORE FRAMEWORK
+initUserAccounts({ app });
+initApiNew({ app });
+initApiSave({ app });
+initRenderedRoutes({ app });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -57,7 +57,7 @@ function validPass(req, res, next) {
 
 const validSubdomain = (req, res, next) => {
   const subdomainRegex = /^[a-z]+[a-z0-9\-]*$/
-  const subdomain = req.query.subdomain || req.body.appName;
+  const subdomain = req.query.subdomain || req.body.subdomain || req.body.appName;
   if (!subdomain)
     return res.status(400).json({ message: 'Bad request: subdomain is missing' }).end();
   if (!subdomainRegex.test(subdomain)) 
@@ -103,64 +103,62 @@ export function initServiceRoutes({app}) {
       });
   })
 
-  app.get('/service/subdomain/register', checkJWT, validEmail, validSubdomain, (req, res) => {
-    const { subdomain, email } = req.query;
-    connection.query('SELECT * FROM users WHERE email = ?',
-      [email],
+  app.get('/service/subdomain/check', checkJWT, validSubdomain, (req, res) => {
+    const { subdomain } = req.query;
+    connection.query('SELECT * FROM apps WHERE name = ?',
+      [subdomain],
       (err, result, _) => {
         if (err) return res.status(500).json(err).end();
-        const user = result[0];
-
-        connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
-          [subdomain, user.id, `${subdomain}.remakeapps.com`],
-          (err, results, fields) => {
-            if (err) {
-              if (err.code === "ER_DUP_ENTRY")
-                return res.status(400).json({ m: "duplicate_app_name"}).end();
-              else return res.status(500).json(err).end();
-            }
-            return res.status(200).end();
-          });
+        console.log(result);
+        if (result.length !== 0) return res.status(403).end();
+        return res.status(200).end();
       });
   });
 
-  app.post('/service/deploy', checkJWT, upload.single('deployment'), validEmail, validSubdomain, (req, res) => {
-    const { email, appName } = req.body;
-    connection.query('SELECT * FROM users WHERE email = ?',
-      [email],
+  app.post('/service/subdomain/register', checkJWT, validSubdomain, (req, res) => {
+    const { subdomain } = req.body;
+    connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
+      [subdomain, req.user_id, `${subdomain}.remakeapps.com`],
+      (err, results, fields) => {
+        if (err) {
+          if (err.code === "ER_DUP_ENTRY")
+            return res.status(400).json({ m: "duplicate_app_name"}).end();
+          else return res.status(500).json(err).end();
+        }
+        return res.status(200).end();
+      });
+  });
+
+  app.post('/service/deploy', checkJWT, upload.single('deployment'), validSubdomain, (req, res) => {
+    const { appName } = req.body;
+
+    connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
+      [req.user_id, appName],
       (err, result, _) => {
         if (err) return res.status(500).json(err).end();
-        const user = result[0];
-
-        connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
-          [user.id, appName],
-          (err, result, _) => {
-            if (err) return res.status(500).json(err).end();
-            if (result.length === 0) {
-              return res.status(403).json('Unauthorized to deploy').end();
+        if (result.length === 0) {
+          return res.status(403).json('Unauthorized to deploy').end();
+        }
+        extract(req.file.path, { dir: `${global.config.location.tmp}/${appName}` }, (err) => {
+          if (err) {
+            return res.status(500).json(err).end();
+          } else {
+            try {
+              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
+              shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}`);
+              shell.cp('-R', `${global.config.location.tmp}/${appName}/project-files/*`, `${global.config.location.remake}/app/${appName}/`);
+              // commented this out. do we want to deploy local development data?
+              // shell.cp('-R', `${global.config.location.tmp}/${appName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${appName}/`);
+              shell.rm(req.file.path);
+              shell.rm('-R', (req.file.path.split('.'))[0]);
+              return res.status(200).end();
+            } catch (err) {
+              console.error(err);
+              return res.status(500).end();
             }
-            extract(req.file.path, { dir: `${global.config.location.tmp}/${appName}` }, (err) => {
-              if (err) {
-                return res.status(500).json(err).end();
-              } else {
-                try {
-                  shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
-                  shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}`);
-                  shell.cp('-R', `${global.config.location.tmp}/${appName}/project-files/*`, `${global.config.location.remake}/app/${appName}/`);
-                  // commented this out. do we want to deploy local development data?
-                  // shell.cp('-R', `${global.config.location.tmp}/${appName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${appName}/`);
-                  shell.rm(req.file.path);
-                  shell.rm('-R', (req.file.path.split('.'))[0]);
-                  return res.status(200).end();
-                } catch (err) {
-                  console.error(err);
-                  return res.status(500).end();
-                }
-              }
-            })
-          });
-      }
-    );
+          }
+        })
+      });
   })
 
   // app.post('/service/backup', (req, res) => {})
