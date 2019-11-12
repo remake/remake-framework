@@ -146,7 +146,7 @@ export function initServiceRoutes({app}) {
             try {
               shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}`);
-              shell.cp('-R', `${global.config.location.tmp}/${appName}/project-files/*`, `${global.config.location.remake}/app/${appName}/`);
+              shell.cp('-R', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
               // commented this out. do we want to deploy local development data?
               // shell.cp('-R', `${global.config.location.tmp}/${appName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${appName}/`);
               shell.rm(req.file.path);
