@@ -109,7 +109,6 @@ export function initServiceRoutes({app}) {
       [subdomain],
       (err, result, _) => {
         if (err) return res.status(500).json(err).end();
-        console.log(result);
         if (result.length !== 0) return res.status(403).end();
         return res.status(200).end();
       });
@@ -146,6 +145,8 @@ export function initServiceRoutes({app}) {
             try {
               shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}`);
+              shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-app-data`);
+              shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-details`);
               shell.cp('-R', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
               // commented this out. do we want to deploy local development data?
               // shell.cp('-R', `${global.config.location.tmp}/${appName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${appName}/`);
@@ -153,7 +154,6 @@ export function initServiceRoutes({app}) {
               shell.rm('-R', (req.file.path.split('.'))[0]);
               return res.status(200).end();
             } catch (err) {
-              console.error(err);
               return res.status(500).end();
             }
           }
