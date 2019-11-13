@@ -133,7 +133,7 @@ if (RemakeStore.isMultiTenant()) {
   global.config = {
     db: {
       name: "remake-service",
-      port: 3307,
+      port: 3306,
       host: "localhost",
       user: "remake",
       password: "ekamer"
@@ -146,9 +146,11 @@ if (RemakeStore.isMultiTenant()) {
       duration: 365 * 24 * 3600 // 1 year
     },
     location: {
-      // remake: "/opt/remake/remake-deployment",
-      remake: "/Users/Tao/Developer/outsourcing/cmx/remaketheweb/remake-framework",
+      remake: "/opt/remake/remake-deployment",
       tmp: "/tmp/remake"
+    },
+    limits: {
+      appPerUser: 10,
     }
   }
   

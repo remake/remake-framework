@@ -135,15 +135,25 @@ export function initServiceRoutes({app}) {
   // user must be authenticated to access it
   app.post('/service/subdomain/register', checkJWT, validSubdomain, (req, res) => {
     const { subdomain } = req.body;
-    connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
-      [subdomain, req.user_id, `${subdomain}.remakeapps.com`],
+
+    connection.query('SELECT * FROM apps WHERE user_id = ?',
+      [req.user_id],
       (err, results, fields) => {
-        if (err) {
-          if (err.code === "ER_DUP_ENTRY")
-            return res.status(400).json({ m: "duplicate_app_name"}).end();
-          else return res.status(500).json(err).end();
-        }
-        return res.status(200).end();
+        if (err)
+          return res.status(500).json(err).end();
+        if (results.length >= global.config.limits.appPerUser)
+          return res.status(403).json({ message: `Reached ${global.config.limits.appPerUser} apps limit.` }).end();
+
+        connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
+          [subdomain, req.user_id, `${subdomain}.remakeapps.com`],
+          (err, results, fields) => {
+            if (err) {
+              if (err.code === "ER_DUP_ENTRY")
+                return res.status(400).json({ message: "An app with the same name already exists."}).end();
+              else return res.status(500).json(err).end();
+            }
+            return res.status(200).end();
+          });
       });
   });
 
