@@ -191,9 +191,10 @@ export function initServiceRoutes({app}) {
               shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-app-data`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-details`);
-              shell.cp('-R', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
-              // shell.rm(req.file.path);
-              // shell.rm('-R', (req.file.path.split('.'))[0]);
+              shell.mv('-R', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
+              if (/[a-z0-9\/\-]\.zip$/.test(req.file.path)) {
+                shell.rm(req.file.path);
+              }
               return res.status(200).end();
             } catch (err) {
               return res.status(500).end();
