@@ -17,9 +17,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // check JWT token received in the header of protected requests
-function checkJWT(req, res, next) {
+function checkIfAuthenticated(req, res, next) {
   const bearerHeader = req.headers["authorization"]; // get token
-  if (typeof bearerHeader !== 'undefined') {
+  if (typeof bearerHeader === 'string') {
     const bearer = bearerHeader.split(" ")[1];
     // verity received token against the JWT secret used for generating it
     jwt.verify(bearer, config.jwt.secret, (err, data) => {
@@ -40,12 +40,14 @@ function validEmail(req, res, next) {
   // regex source: https://stackoverflow.com/a/46181
   const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/
   const email = req.body.email || req.query.email;
-  if (!email)
+  if (!email) {
     return res.status(400).json({ message : 'Bad request: email is missing.' }).end();
-  if (!emailRegex.test(email)) {
+  } else if (!emailRegex.test(email)) {
     return res.status(400).json({ message : 'Bad request: email not valid.' }).end();
   }
-  else next();
+  else {
+    next();
+  }
 }
 
 // validate password
@@ -53,22 +55,26 @@ function validPass(req, res, next) {
   // at least one digit and one letter + at least 8 chars long
   const passRegex = /^(?=.*\d)(?=.*[a-z])[a-zA-Z0-9]{8,}$/
   const password = req.body.password;
-  if (!password)
+  if (!password) {
     return res.status(400).json({ message : 'Bad request: password is missing.' }).end();
-  if (!passRegex.test(req.body.password))
+  } else if (!passRegex.test(req.body.password)) {
     return res.status(400).json({ message : 'Bad request: The password should be at least 8 characters long and it should contain at least one digit and a letter.' }).end();
-  else next();
+  } else {
+    next();
+  }
 }
 
 // validate subdomain
 const validSubdomain = (req, res, next) => {
   const subdomainRegex = /^[a-z]+[a-z0-9\-]*$/
   const subdomain = req.query.subdomain || req.body.subdomain || req.body.appName;
-  if (!subdomain)
+  if (!subdomain) {
     return res.status(400).json({ message: 'Bad request: subdomain is missing' }).end();
-  if (!subdomainRegex.test(subdomain)) 
+  } else if (!subdomainRegex.test(subdomain)) 
     return res.status(400).json({ message : 'Bad request: The app name / subdomain should start with a lowercase letter and should contain only lowercase letters, numbers and dashes.' }).end();
-  else next();
+  else {
+    next();
+  }
 }
 
 export function initServiceRoutes({app}) {
@@ -81,8 +87,9 @@ export function initServiceRoutes({app}) {
       [email, hashedPassword],
       (err, results, fields) => {
         if (err) {
-          if (err.code === "ER_DUP_ENTRY")
+          if (err.code === "ER_DUP_ENTRY"){
             delete err.sql;
+          }
           return res.status(500).json(err).end();
         }
         // generate JWT token based on user id and JWT_SECRET
@@ -105,8 +112,9 @@ export function initServiceRoutes({app}) {
         // compare password with password hash
         bcrypt.compare(password, user.pwd_hash, (err, passwordIsCorrect) => {
           if (err) return res.status(500).json(err).end();
-          if (!passwordIsCorrect)
+          if (!passwordIsCorrect) {
             return res.status(403).json({ message: 'Wrong email or password' }).end();
+          }
           // generate JWT token based on user id and JWT_SECRET
           const token = jwt.sign({ id: user.id }, config.jwt.secret, {
             expiresIn: config.jwt.duration
@@ -117,9 +125,9 @@ export function initServiceRoutes({app}) {
   })
 
   // endpoint for checking if subdomain is available (not already in the DB)
-  // validation callbacks: checkJWT, validSubdomain
+  // validation callbacks: checkIfAuthenticated, validSubdomain
   // user must be authenticated to access it
-  app.get('/service/subdomain/check', checkJWT, validSubdomain, (req, res) => {
+  app.get('/service/subdomain/check', checkIfAuthenticated, validSubdomain, (req, res) => {
     const { subdomain } = req.query;
     connection.query('SELECT * FROM apps WHERE name = ?',
       [subdomain],
@@ -131,25 +139,28 @@ export function initServiceRoutes({app}) {
   });
 
   // endpoint for registering subdomain (save in DB)
-  // validation callbacks: checkJWT, validSubdomain
+  // validation callbacks: checkIfAuthenticated, validSubdomain
   // user must be authenticated to access it
-  app.post('/service/subdomain/register', checkJWT, validSubdomain, (req, res) => {
+  app.post('/service/subdomain/register', checkIfAuthenticated, validSubdomain, (req, res) => {
     const { subdomain } = req.body;
 
     connection.query('SELECT * FROM apps WHERE user_id = ?',
       [req.user_id],
       (err, results, fields) => {
-        if (err)
+        if (err) {
           return res.status(500).json(err).end();
-        if (results.length >= global.config.limits.appPerUser)
+        }
+        if (results.length >= global.config.limits.appPerUser) {
           return res.status(403).json({ message: `Reached ${global.config.limits.appPerUser} apps limit.` }).end();
+        }
 
         connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
           [subdomain, req.user_id, `${subdomain}.remakeapps.com`],
           (err, results, fields) => {
             if (err) {
-              if (err.code === "ER_DUP_ENTRY")
+              if (err.code === "ER_DUP_ENTRY") {
                 return res.status(400).json({ message: "An app with the same name already exists."}).end();
+              }
               else return res.status(500).json(err).end();
             }
             return res.status(200).end();
@@ -159,10 +170,11 @@ export function initServiceRoutes({app}) {
 
   // endpoint for deploying app
   // upload app files if the user owns the app
-  // validation callbacks: checkJWT, validSubdomain, upload.single(...)
+  // validation callbacks: checkIfAuthenticated, validSubdomain, upload.single(...)
   // user must be authenticated to access it
-  app.post('/service/deploy', checkJWT, upload.single('deployment'), validSubdomain, (req, res) => {
+  app.post('/service/deploy', checkIfAuthenticated, upload.single('deployment'), validSubdomain, (req, res) => {
     const { appName } = req.body;
+    console.log('pepe')
 
     connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
       [req.user_id, appName],
@@ -177,14 +189,11 @@ export function initServiceRoutes({app}) {
           } else {
             try {
               shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
-              shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-app-data`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-details`);
               shell.cp('-R', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
-              // commented this out. do we want to deploy local development data?
-              // shell.cp('-R', `${global.config.location.tmp}/${appName}/_remake-data/*`, `${global.config.location.remake}/_remake-data/${appName}/`);
-              shell.rm(req.file.path);
-              shell.rm('-R', (req.file.path.split('.'))[0]);
+              // shell.rm(req.file.path);
+              // shell.rm('-R', (req.file.path.split('.'))[0]);
               return res.status(200).end();
             } catch (err) {
               return res.status(500).end();
