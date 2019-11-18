@@ -175,8 +175,6 @@ export function initServiceRoutes({app}) {
   // user must be authenticated to access it
   app.post('/service/deploy', checkIfAuthenticated, upload.single('deployment'), validSubdomain, (req, res) => {
     const { appName } = req.body;
-    console.log('pepe')
-
     connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
       [req.user_id, appName],
       (err, result, _) => {
