@@ -1,6 +1,7 @@
-const dotenv = require("dotenv");
+import { setEnvironmentVariables } from '../_remake/utils/setup-env';
 
-dotenv.config({ path: "variables.env" });
+setEnvironmentVariables();
+
 let isMultiTenant = process.env.REMAKE_MULTI_TENANT === "true";
 let globToSearch = isMultiTenant ? "app/*/assets/**" : "app/assets/**";
 let frameworkGlobToSearch = "_remake/client-side/**";

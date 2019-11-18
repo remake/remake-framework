@@ -27,6 +27,11 @@
       <div class="flash flash--error">{{ this }}</div>
     {{/each}}
   {{/if}}
+  {{#if flashSuccesses }}
+    {{#each flashSuccesses }}
+      <div class="flash flash--success">{{ this }}</div>
+    {{/each}}
+  {{/if}}
   {{> yield }}
   <script src="/js/main.js"></script>
 </body>
