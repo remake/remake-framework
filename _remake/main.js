@@ -23,6 +23,9 @@ import RemakeStore from "./lib/remake-store";
 setEnvironmentVariables();
 
 const app = express();
+// trust nginx and X-Forwarded-* headers
+// needed for logging the user's IP addresses
+app.enable("trust proxy", "127.0.0.1");
 
 // static assets middleware comes before other routes, so they don't get asset requests
 app.use(express.static(path.join(__dirname, "./dist")));
