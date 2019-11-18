@@ -106,9 +106,10 @@ export function initServiceRoutes({app}) {
     const { email, password } = req.body;
     connection.query('SELECT * FROM users WHERE email = ?',
       [email],
-      (err, result, _) => {
+      (err, results, _) => {
         if (err) return res.status(500).json(err).end();
-        const user = result[0];
+        if (results.length !== 1) return res.status(403).json({ message: "User not found" }).end();
+        const user = results[0];
         // compare password with password hash
         bcrypt.compare(password, user.pwd_hash, (err, passwordIsCorrect) => {
           if (err) return res.status(500).json(err).end();
@@ -191,7 +192,7 @@ export function initServiceRoutes({app}) {
               shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-app-data`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake-data/${appName}/user-details`);
-              shell.mv('-R', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
+              shell.mv(`${global.config.location.tmp}/${appName}/app/**/*`, `${global.config.location.remake}/app/${appName}/`);
               if (/[a-z0-9\/\-]\.zip$/.test(req.file.path)) {
                 shell.rm(req.file.path);
               }
