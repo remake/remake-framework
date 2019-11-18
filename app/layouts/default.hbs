@@ -33,6 +33,10 @@
     {{/each}}
   {{/if}}
   {{> yield }}
+  {{!-- Don't load Remake if the page isn't editable --}}
+  {{#if isPageAuthor}}
+    <script src="/js/remake-init.js"></script>
+  {{/if}}
   <script src="/js/main.js"></script>
 </body>
 </html>
