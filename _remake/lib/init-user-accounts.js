@@ -60,7 +60,7 @@ function initUserAccounts ({ app }) {
     }
   });
 
-  app.post("/signup", async function(req, res) {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/signup/, async function(req, res) {
     let appName = req.appName;
     let {username = "", password = "", email = ""} = req.body;
 
@@ -117,19 +117,19 @@ function initUserAccounts ({ app }) {
     });
   });
 
-  app.post("/login", passport.authenticate('local', { 
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, passport.authenticate('local', { 
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
     res.redirect('/' + req.user.details.username);
   });
 
-  app.get("/logout", function(req, res) {
+  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, function(req, res) {
     req.logout();
     res.redirect('/login');
   });
 
-  app.post("/forgot", async function(req, res) {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, async function(req, res) {
     let appName = req.appName;
     let {username} = req.body;
     let [currentUser] = await capture(getUserData({ username, appName }));
