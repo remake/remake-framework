@@ -124,12 +124,12 @@ function initUserAccounts ({ app }) {
     res.redirect('/' + req.user.details.username);
   });
 
-  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, function(req, res) {
+  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/logout/, function(req, res) {
     req.logout();
     res.redirect('/login');
   });
 
-  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/login/, async function(req, res) {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/forgot/, async function(req, res) {
     let appName = req.appName;
     let {username} = req.body;
     let [currentUser] = await capture(getUserData({ username, appName }));
