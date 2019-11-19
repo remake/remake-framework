@@ -146,8 +146,8 @@ export function callMultipleWatchFunctions (watchElems) {
   });
 }
 
-// Find all elements with watch functions attached to them on an element or on any of
-// its child elements.
+// Find all elements with watch functions attached to them on an element 
+// or on any of its child elements.
 //
 // IMPORTANT: this filters out any elements that are nested inside of a matching
 //            data-o-key- attribute. we do this to allow multiple matching data-o-key- 
@@ -155,7 +155,7 @@ export function callMultipleWatchFunctions (watchElems) {
 // TODO: this should also work with data-l-key- attributes, not just data-o-key- attributes
 export function getWatchElements ({elementWithData, dashCaseKeyName}) {
   let watchSelector = `[data-w-key-${dashCaseKeyName}]`;
-  let nestedWatchSelector = `:scope [data-o-key-${dashCaseKeyName}] [data-w-key-${dashCaseKeyName}]`;
+  let nestedWatchSelector = `:scope [data-o-key-${dashCaseKeyName}] [data-w-key-${dashCaseKeyName}], :scope [data-l-key-${dashCaseKeyName}] [data-w-key-${dashCaseKeyName}]`;
   let watchElements = [];
 
   if (elementWithData.matches(watchSelector)) {
