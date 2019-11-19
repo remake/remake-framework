@@ -123,13 +123,13 @@ function setLocationKeyValue (elem, dashCaseKeyName, locationString, value) {
   elemAttribute = elemAttribute || "innerText"; // default to innerText
 
   if (targetElem) {
-    let valueTrimmed = value.toString().trim();
+    let valueAsString = value.toString();
 
     if (elemAttribute.indexOf("attr:") === 0) {
       elemAttribute = elemAttribute.substring(5);
-      targetElem.setAttribute(elemAttribute, valueTrimmed);
+      targetElem.setAttribute(elemAttribute, valueAsString);
     } else {
-      targetElem[elemAttribute] = valueTrimmed;
+      targetElem[elemAttribute] = valueAsString;
     }
   }
 }
