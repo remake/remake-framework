@@ -27,6 +27,7 @@ export async function getParams ({req}) {
   let username, pageName, itemId;
 
   // special case
+  //   todo: all framework routes should be prepended with "/api/" and should get a free pass-through
   if (firstParam === "reset") {
     return {pageName: "reset"};
   }

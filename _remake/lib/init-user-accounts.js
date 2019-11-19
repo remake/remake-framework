@@ -196,6 +196,59 @@ function initUserAccounts ({ app }) {
     next();
   });
 
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/reset/, async function(req, res) {
+    let appName = req.appName;
+    let {password} = req.body;
+
+    // get username and token
+    let pathnameSplit = req.urlData.urlPathname.split("/");
+    let resetStringIndex = pathnameSplit.indexOf("reset");
+    let username = pathnameSplit[resetStringIndex + 1];
+    let token = pathnameSplit[resetStringIndex + 2];
+
+    let [currentUser] = await capture(getUserData({ username, appName }));
+
+    if (!currentUser) {
+      req.flash("error", "User not found");
+      res.redirect('/forgot');
+      return;
+    }
+
+    let expiresDate = currentUser.details.resetPasswordExpires;
+    if (typeof expiresDate !== "number" || Date.now() > expiresDate) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/forgot');
+      return;
+    }
+
+    if (!token || token !== currentUser.details.resetPasswordToken) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/forgot');
+      return;
+    }
+
+    if (!password || password.length < 8) {
+      req.flash("error", "Your password must be at least 8 characters");
+      res.redirect('/signup');
+      return;
+    }
+
+    let details = currentUser.details;
+    let [hash] = await capture(bcrypt.hash(password, 14));
+    details.hash = hash;
+    setUserData({ appName, username, data: details, type: "details" });
+
+    req.login(currentUser, function (err) {
+      if (!err){
+        res.redirect('/' + currentUser.details.username);
+      } else {
+        req.flash('success', 'Success! Please log in with your new password');
+        res.redirect('/login');
+      }
+    });
+
+  });
+
 }
 
 export {
