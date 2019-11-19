@@ -1,0 +1,9 @@
+// hide remake edit buttons from users that aren't logged in
+[data-user-not-logged-in], [data-i-editable-off]
+  [data-i-new], [data-i-editable]
+    display: none
+
+// useful for preserving newline characters in an element 
+// that are set with data-i-editable="someKey(multi-line-text)"
+.has-multi-line-text
+  white-space: pre-line
