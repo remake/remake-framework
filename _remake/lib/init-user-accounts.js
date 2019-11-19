@@ -135,7 +135,7 @@ function initUserAccounts ({ app }) {
     let [currentUser] = await capture(getUserData({ username, appName }));
 
     if (!currentUser) {
-      req.flash("error", "Username not found");
+      req.flash("error", "User not found");
       res.redirect('/forgot');
       return;
     }
@@ -150,11 +150,17 @@ function initUserAccounts ({ app }) {
     sendEmail({
       email: details.email, 
       subject: `Reset your password for ${req.urlData.host}`,
-      body: `Hi ${username},<br>You can reset your password by following this link:<br>${req.protocol + '://' + req.urlData.host + "/reset/" + username + "/" + token}`
-    });
+      body: `Hi ${username},<br><br>You can reset your password by following this link:<br><br>${req.protocol + '://' + req.urlData.host + "/reset/" + username + "/" + token}`
+    }, function (err) {
+      if (err) {
+        req.flash('error', `Error: Couldn't send password reset email`);
+      } else {
+        req.flash('success', 'An email with a link to change your password has been sent!');
+      }
 
-    req.flash('success', 'An email with a link to change your password has been sent!');
-    res.redirect("/forgot");
+      res.redirect("/forgot");
+
+    });
   });
 }
 

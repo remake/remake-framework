@@ -1,6 +1,6 @@
 const Mailgun = require('mailgun-js');
 
-export function sendEmail ({email, subject, body}) {
+export function sendEmail ({email, subject, body}, callback) {
 
   const apiKey = process.env.MAILGUN_API_KEY;
   const domain = process.env.MAILGUN_DOMAIN;
@@ -17,6 +17,9 @@ export function sendEmail ({email, subject, body}) {
     console.log(body);
     console.log(``);
     console.log("------------------------------------------------");
+
+    callback(null);
+
     return;
   }
 
@@ -27,11 +30,5 @@ export function sendEmail ({email, subject, body}) {
     to: email,
     subject: subject,
     html: body
-  }, function (err, body) {
-    if (err) {
-      console.log("ERROR: COULDN'T SEND EMAIL");
-    } else {
-      console.log("SUCCESS! EMAIL SENT!");
-    }
-  });
+  }, callback);
 }
