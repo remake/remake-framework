@@ -143,7 +143,7 @@ function initUserAccounts ({ app }) {
     let token = crypto.randomBytes(32).toString('hex');
     let details = currentUser.details;
     details.resetPasswordToken = token;
-    details.resetPasswordExpires = `${Date.now() + 3600000}`;
+    details.resetPasswordExpires = Date.now() + 7200000; // plus two hours
 
     setUserData({ appName, username, data: details, type: "details" });
 
@@ -153,15 +153,49 @@ function initUserAccounts ({ app }) {
       body: `Hi ${username},<br><br>You can reset your password by following this link:<br><br>${req.protocol + '://' + req.urlData.host + "/reset/" + username + "/" + token}`
     }, function (err) {
       if (err) {
-        req.flash('error', `Error: Couldn't send password reset email`);
+        req.flash('error', `Couldn't send password reset email. Please try again.`);
+        res.redirect("/forgot");
       } else {
         req.flash('success', 'An email with a link to change your password has been sent!');
+        res.redirect("/login");
       }
-
-      res.redirect("/forgot");
 
     });
   });
+
+  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/reset/, async function(req, res, next) {
+    let appName = req.appName;
+
+    // get username and token
+    let pathnameSplit = req.urlData.urlPathname.split("/");
+    let resetStringIndex = pathnameSplit.indexOf("reset");
+    let username = pathnameSplit[resetStringIndex + 1];
+    let token = pathnameSplit[resetStringIndex + 2];
+
+    let [currentUser] = await capture(getUserData({ username, appName }));
+
+    if (!currentUser) {
+      req.flash("error", "User not found");
+      res.redirect('/forgot');
+      return;
+    }
+
+    let expiresDate = currentUser.details.resetPasswordExpires;
+    if (typeof expiresDate !== "number" || Date.now() > expiresDate) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/forgot');
+      return;
+    }
+
+    if (!token || token !== currentUser.details.resetPasswordToken) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/forgot');
+      return;
+    }
+
+    next();
+  });
+
 }
 
 export {

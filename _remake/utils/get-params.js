@@ -26,6 +26,11 @@ export async function getParams ({req}) {
   let {firstParam, secondParam, thirdParam} = req.urlData.pageParamsGeneric;
   let username, pageName, itemId;
 
+  // special case
+  if (firstParam === "reset") {
+    return {pageName: "reset"};
+  }
+
   if (!firstParam) {
     // route: /
     pageName = "index";
