@@ -236,6 +236,8 @@ function initUserAccounts ({ app }) {
     let details = currentUser.details;
     let [hash] = await capture(bcrypt.hash(password, 14));
     details.hash = hash;
+    details.resetPasswordToken = null;
+    details.resetPasswordExpires = null;
     setUserData({ appName, username, data: details, type: "details" });
 
     req.login(currentUser, function (err) {
