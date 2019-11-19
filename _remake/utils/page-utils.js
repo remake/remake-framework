@@ -77,7 +77,7 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
 export function getPageHtml ({pageTemplate, data, appName, username, itemId}) {
   let html = pageTemplate(data);
   let currentUser = data.currentUser;
-  let htmlWithAppStatus = addRemakeAppStatusToPage({html, currentUser, username, itemId});
+  let htmlWithAppStatus = addRemakeAppStatusToPage({html, data, currentUser, username, itemId});
   return htmlWithAppStatus;
 }
 

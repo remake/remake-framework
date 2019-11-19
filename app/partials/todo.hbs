@@ -5,7 +5,7 @@
   data-o-key-is-complete="{{todo.isComplete}}"
   data-o-key-text="{{todo.text}}"
 >
-  <div class="todos__todo-checkbox-area">
+  <div class="todos__todo-checkbox-area hide-if-not-page-author">
     <input data-i="triggerSaveOnChange" type="checkbox" name="isComplete" value="true" {{#if todo.isComplete}}checked{{/if}}>
   </div>
 <div 
