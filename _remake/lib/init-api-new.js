@@ -83,7 +83,8 @@ export function initApiNew ({app}) {
     let {currentItem, parentItem} = itemData;
 
     let htmlString = partialRenderFunc({
-      data,
+      ...data,
+      ...partialBootstrapData,
       params,
       query,
       pathname,
@@ -92,8 +93,7 @@ export function initApiNew ({app}) {
       currentUser,
       pageAuthor,
       isPageAuthor,
-      pageHasAppData: !!pageAuthor,
-      ...partialBootstrapData
+      pageHasAppData: !!pageAuthor
     });
 
     res.json({success: true, htmlString: htmlString});

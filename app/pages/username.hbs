@@ -9,7 +9,7 @@
     data-o-key="todoLists"
     data-o-type="list"
   >
-    {{#each data.todoLists}}
+    {{#each todoLists}}
       {{> todoList todoList=this pageAuthor=@root.pageAuthor}}
     {{/each}}
   </div>
