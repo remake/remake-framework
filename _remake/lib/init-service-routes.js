@@ -53,7 +53,7 @@ function validEmail(req, res, next) {
 // validate password
 function validPass(req, res, next) {
   // at least one digit and one letter + at least 8 chars long
-  const passRegex = /^(?=.*\d)(?=.*[a-z])[a-zA-Z0-9]{8,}$/
+  const passRegex = /.{8,}/
   const password = req.body.password;
   if (!password) {
     return res.status(400).json({ message : 'Bad request: password is missing.' }).end();
