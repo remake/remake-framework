@@ -55,8 +55,8 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let {currentItem, parentItem} = itemData;
 
   let allData = {
+    ...data,
     appName,
-    data,
     params,
     query,
     pathname,
