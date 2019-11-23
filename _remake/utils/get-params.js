@@ -22,14 +22,18 @@ import { doesPageExist } from "./page-utils";
   • Multi tenant: subdomain.domain/firstParam/secondParam/thirdParam
 */
 
+let pageNamesForUserRoutes = ["login", "signup", "reset", "forgot"];
 export async function getParams ({req}) {
   let {firstParam, secondParam, thirdParam} = req.urlData.pageParamsGeneric;
   let username, pageName, itemId;
 
-  // special case
-  //   todo: all framework routes should be prepended with "/api/" and should get a free pass-through
-  if (firstParam === "reset") {
-    return {pageName: "reset"};
+  // special case: /user/* routes like /user/login and /user/signup
+  if (firstParam === "user") {
+    return {pageName: secondParam};
+  }
+
+  if (pageNamesForUserRoutes.includes(firstParam)) {
+    return {pageName: firstParam, redirectToUserRoute: true};
   }
 
   if (!firstParam) {

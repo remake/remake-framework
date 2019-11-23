@@ -16,10 +16,10 @@
     <div class="site-nav__right">
       {{#if currentUser}}
         <span class="text--white m-r-16">Hi {{currentUser.details.username}}!</span>
-        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/logout">Logout</a>
+        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/user/logout">Logout</a>
       {{else}}
-        <a class="site-nav__signup-button button button--elevated button--pink" href="/signup">Sign up</a>
-        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/login">Log in</a>
+        <a class="site-nav__signup-button button button--elevated button--pink" href="/user/signup">Sign up</a>
+        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/user/login">Log in</a>
       {{/if}}
     </div>
   </nav>
