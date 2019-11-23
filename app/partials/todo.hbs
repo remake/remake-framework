@@ -3,7 +3,7 @@
   data-o-type="object"
   data-o-key-id="{{todo.id}}"
   data-o-key-is-complete="{{todo.isComplete}}"
-  data-o-key-text="{{todo.text}}"
+  data-l-key-text
 >
   <div class="todos__todo-checkbox-area hide-if-not-page-author">
     <input data-i="triggerSaveOnChange" type="checkbox" name="isComplete" value="true" {{#if todo.isComplete}}checked{{/if}}>
@@ -11,6 +11,6 @@
 <div 
   class="todos__todo-text has-multi-line-text"
   data-i-editable="text(text-multi-line)"
-  data-w-key-text="innerText"
+  data-l-target-text
 >{{todo.text}}</div>
 </div>

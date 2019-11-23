@@ -85,17 +85,21 @@ function getDataFromLocationString (elem, dashCaseKeyName, locationString) {
   let [selector, elemAttribute] = locationString.split(" "); // e.g. [".selector", "attr:data-x-text"]
   let targetElem;
 
-  if (!selector || selector === "." || elem.matches(selector)) {
-    targetElem = elem;
-  } else if (selector === "target") {
+  if (!selector) {
     let defaultTargetSelector = `[data-l-target-${dashCaseKeyName}]`;
     if (elem.matches(defaultTargetSelector)) {
       targetElem = elem;
     } else {
       targetElem = elem.querySelector(defaultTargetSelector); // e.g. dashCaseKeyName = "page-title"
     }
-  } else {
-    targetElem = elem.querySelector(selector);
+  }
+
+  if (!targetElem) {
+    if (!selector || selector === "." || elem.matches(selector)) {
+      targetElem = elem;
+    } else {
+      targetElem = elem.querySelector(selector);
+    }
   }
 
   return {elemAttribute, targetElem};
