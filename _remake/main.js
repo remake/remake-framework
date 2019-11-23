@@ -115,13 +115,18 @@ app.use(async function (req, res, next) {
 
 
 // express session
+let thirtyDaysInMs = 2592000000;
+let thirtyDaysInSec = 2592000000 / 1000;
 app.use(expressSession({ 
-  store: new FileStore({path: path.join(__dirname, "./.sessions")}),
+  store: new FileStore({
+    path: path.join(__dirname, "./.sessions"),
+    ttl: thirtyDaysInSec
+  }),
   secret: process.env.SESSION_SECRET, 
   resave: true, 
   saveUninitialized: true,
   cookie: {
-    maxAge: 2628000 // one month
+    maxAge: thirtyDaysInMs
   }
 }));
 
