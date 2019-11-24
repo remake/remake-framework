@@ -1,27 +1,73 @@
-<div
-  class="page"
-  data-o-type="object"
->
-  <h2 
-    class="page__heading"
-    data-i-editable
-    data-o-type="object"
-    data-l-key-heading
-  >{{ default heading "Todo Lists" }}</h2>
+<div class="header">
   <div 
-    class="todo-lists"
-    data-i-sortable="todo-lists"
-    data-o-key="todoLists"
+    class="header__text"
+    data-o-type="object"
+    data-l-key-board-heading
+    data-o-default-board-heading="My Projects"
+    data-i-editable-without-remove
+  >{{boardHeading}}</div>
+  <button 
+    class="button button--add-stack"
+    data-i-new="stack"
+  >Add stack</button>
+</div>
+<div class="board-container">
+  <div 
+    class="board"
+    data-o-key="stacks"
     data-o-type="list"
+    data-i-sortable="stacks"
   >
-    {{#each todoLists}}
-      {{> todoList todoList=this pageAuthor=@root.pageAuthor}}
-    {{/each}}
-  </div>
-  <div class="flex justify-content--flex-end">
-    <button 
-      class="button"
-      data-i-new="todoList .todo-lists"
-    >Add Todo List</button>
+    {{#for stack in stacks}}
+      <div 
+        class="stack"
+        data-o-type="object"
+        data-l-key-stack-heading
+        data-o-default-stack-heading="A Project"
+      >
+        <div class="stack__top">
+          <p 
+            class="stack__text"
+            data-l-target-stack-heading
+            data-i-editable
+          >{{default stack.stackHeading "New stack item"}}</p>
+          <button 
+            class="button button--plus-square"
+            data-i-new="card"
+          >
+            <img class="stack__new-icon" src="/images/new.svg">
+          </button>
+        </div>
+        <div 
+          class="stack__list"
+          data-o-key="cards"
+          data-o-type="list"
+          data-i-sortable="cards"
+        >
+          {{#for card in stack.cards}}
+            <div 
+              class="card"
+              data-o-type="object"
+              data-l-key-card-text
+              data-i-editable
+            >
+              <p 
+                class="card__text"
+                data-l-target-card-text
+              >{{default card.cardText "New card item"}}</p>
+              <img class="card__drag" src="/images/drag.svg">
+            </div>
+          {{/for}}
+        </div>
+        <div class="stack__add-card-container">
+          <button 
+            class="stack__add-card"
+            data-i-new="card"
+          >
+            <img class="stack__add-card-icon" src="/images/plus.svg"><p>Add card</p>
+          </button>
+        </div>
+      </div>
+    {{/for}}
   </div>
 </div>

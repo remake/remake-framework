@@ -2,40 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Todos App</title>
-  <link rel="stylesheet" href="/css/remake.css">
-  <link rel="stylesheet" href="/css/main.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban App</title>
+  <link href="https://fonts.googleapis.com/css?family=Work+Sans:400,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/remake.css">
+  <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
-  <nav class="site-nav" role="navigation" aria-label="main navigation">
-    {{#if currentUser}}
-      <a class="site-nav__home" href="/{{currentUser.details.username}}">Todos</a>
-    {{else}}
-      <a class="site-nav__home" href="/">Todos</a>
-    {{/if}}
-    <div class="site-nav__right">
+  <div class="container">
+    <div class="nav">
+      <a class="logo" href="{{#if currentUser}}/{{currentUser.details.username}}{{else}}/{{/if}}">
+        <img class="logo__image" src="/images/logo.svg">
+        <span class="logo__text">TaskFellow <span class="logo__version">v1.0</span></span>
+      </a>
       {{#if currentUser}}
-        <span class="text--white m-r-16">Hi {{currentUser.details.username}}!</span>
-        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/user/logout">Logout</a>
+        <div class="nav__user">
+          <div>{{currentUser.details.username}}</div>
+          <a class="nav__button" href="/user/logout">Logout</a>
+        </div>
       {{else}}
-        <a class="site-nav__signup-button button button--elevated button--pink" href="/user/signup">Sign up</a>
-        <a class="site-nav__login-button button button--elevated button--white-with-violet-text" href="/user/login">Log in</a>
+        <div class="nav__user">
+          <a class="nav__button" href="/user/signup">Sign up</a>
+          <a class="nav__button" href="/user/login">Log in</a>
+        </div>
       {{/if}}
     </div>
-  </nav>
-  {{#if flashErrors }}
-    {{#each flashErrors }}
-      <div class="flash flash--error">{{ this }}</div>
-    {{/each}}
-  {{/if}}
-  {{#if flashSuccesses }}
-    {{#each flashSuccesses }}
-      <div class="flash flash--success">{{ this }}</div>
-    {{/each}}
-  {{/if}}
-  {{> yield }}
-  {{!-- Don't load Remake if the page isn't editable --}}
+    {{#if flashErrors }}
+      {{#each flashErrors }}
+        <div class="flash flash--error">{{ this }}</div>
+      {{/each}}
+    {{/if}}
+    {{#if flashSuccesses }}
+      {{#each flashSuccesses }}
+        <div class="flash flash--success">{{ this }}</div>
+      {{/each}}
+    {{/if}}
+    {{> yield }}
+  </div>
   {{#if isPageAuthor}}
+    {{!-- Prevent loading the Remake framework if the page isn't editable --}}
     <script src="/js/remake-init.js"></script>
   {{/if}}
   <script src="/js/main.js"></script>

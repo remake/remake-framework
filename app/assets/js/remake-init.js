@@ -21,5 +21,13 @@ Remake.init({
   }
 });
 
-// for debugging
+
+// for debugging & development
 window.getDataFromRootNode = Remake.getDataFromRootNode;
+
+// todo: remove this
+// Remake.callSaveFunction({targetElement: document.body});
+
+
+
+

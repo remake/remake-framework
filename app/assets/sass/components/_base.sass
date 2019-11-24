@@ -1,0 +1,65 @@
+// resets
+*
+  box-sizing: border-box
+  margin: 0
+  padding: 0
+
+a
+  text-decoration: none
+  color: inherit
+
+button
+  display: inline-block
+  border: none
+  margin: 0
+  padding: 0
+  width: auto
+  overflow: visible
+  background: transparent
+  color: inherit
+  font: inherit
+  line-height: normal
+  -webkit-font-smoothing: inherit
+  -moz-osx-font-smoothing: inherit
+  -webkit-appearance: none
+
+button::-moz-focus-inner
+  border: 0
+  padding: 0
+
+.button
+  display: inline-block
+  height: 36px
+  padding: 0 12px
+  line-height: 36px
+  color: #FFF
+  font-size: 14px
+  text-align: center
+  background-color: #536988
+  border-radius: 5px
+  &--large
+    height: 42px
+    padding: 0 16px
+    font-size: 16px
+    line-height: 42px
+  &--account
+    margin-top: 1rem
+  &--plus-square
+    display: flex
+    align-items: center
+    justify-content: center
+    height: 25px
+    width: 25px
+    margin-left: auto
+    line-height: normal
+    padding: 0
+  &--add-stack
+    margin-left: 1.25rem
+  &:hover
+    cursor: pointer
+    opacity: .5
+
+body
+  overflow-x: hidden
+  height: 100vh
+  font-family: 'Work Sans', sans-serif

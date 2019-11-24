@@ -1,8 +1,8 @@
-<div class="page">
-  <h2 class="page__heading">Welcome to Todos!</h2>
+<div class="front-page">
+  <h2 class="front-page__heading">Welcome to TaskFellow</h2>
   {{#if currentUser}}
-    <a class="button" href="/{{currentUser.details.username}}">Go to your todo lists</a>
+    <a class="button button--large" href="/{{currentUser.details.username}}">Go to your board</a>
   {{else}}
-    <a class="button" href="/user/signup">Sign up!</a>
+    <a class="button button--large" href="/user/signup">Sign up!</a>
   {{/if}}
 </div>
