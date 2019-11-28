@@ -181,7 +181,7 @@ function insertRemakeEditPopoverHtml () {
   let htmlString = `
   <style>
     [data-i-editable-off] #remake__auto-generated, 
-    [data-user-not-logged-in] #remake__auto-generated {
+    [data-user-is-not-page-author] #remake__auto-generated {
       display: none;
     }
 

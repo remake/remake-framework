@@ -1,4 +1,4 @@
-import { setEnvironmentVariables } from '../_remake/utils/setup-env';
+const {setEnvironmentVariables} = require("../_remake/utils/setup-env");
 
 setEnvironmentVariables();
 

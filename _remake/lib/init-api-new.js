@@ -10,6 +10,7 @@ import { processData } from "../utils/process-data";
 import { showConsoleError } from "../utils/console-utils";
 import { getBootstrapData } from "../utils/get-bootstrap-data";
 import { getQueryParams } from "../utils/get-query-params";
+import { getHtmlWithUniqueIds } from "../utils/get-html-with-unique-ids";
 import RemakeStore from "./remake-store";
 
 
@@ -83,7 +84,8 @@ export function initApiNew ({app}) {
     let {currentItem, parentItem} = itemData;
 
     let htmlString = partialRenderFunc({
-      data,
+      ...data,
+      ...partialBootstrapData,
       params,
       query,
       pathname,
@@ -92,11 +94,12 @@ export function initApiNew ({app}) {
       currentUser,
       pageAuthor,
       isPageAuthor,
-      pageHasAppData: !!pageAuthor,
-      ...partialBootstrapData
+      pageHasAppData: !!pageAuthor
     });
 
-    res.json({success: true, htmlString: htmlString});
+    let htmlStringWithUniqueIds = getHtmlWithUniqueIds({htmlString});
+
+    res.json({success: true, htmlString: htmlStringWithUniqueIds});
   })
 
 }

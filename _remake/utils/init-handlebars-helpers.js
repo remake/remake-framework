@@ -8,6 +8,10 @@ export function initHandlebarsHelpers ({Handlebars}) {
 
   Handlebars.registerHelper(handlebarsHelpers);
 
+  Handlebars.registerHelper('generateIdIfNone', function(options) {
+    return options || "_remake_random_id_";
+  });
+
   // #for 
   // a custom helper that loops over some items
   //
@@ -68,17 +72,6 @@ export function initHandlebarsHelpers ({Handlebars}) {
     }
   });
 
-
-  // regular asset route: /assets/js/main.js
-  // multi-tenant asset route: /appName/assets/js/main.js
-  Handlebars.registerHelper('asset', function(assetPath) {
-    if (!RemakeStore.isMultiTenant()) {
-      return path.join("/assets/", assetPath);
-    } else {
-      let appName = this.appName;
-      return path.join("/" + appName + "/assets/", assetPath);
-    }
-  });
 
 }
 

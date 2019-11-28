@@ -1,7 +1,6 @@
 const process = require('process');
 const changeCase = require('change-case');
-
-import { readDotRemake } from './dot-remake';
+const { readDotRemake } = require('./dot-remake');
 
 // parse .remake and sent its entries
 // as environment variables
@@ -18,4 +17,4 @@ function setEnvironmentVariables() {
   }
 }
 
-export { setEnvironmentVariables };
+module.exports = { setEnvironmentVariables };

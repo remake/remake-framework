@@ -37,4 +37,4 @@ function readDotRemake () {
   }
 }
 
-module.exports = { writeDotRemake, readDotRemake }
+module.exports = { writeDotRemake, readDotRemake };

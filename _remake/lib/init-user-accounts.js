@@ -60,32 +60,32 @@ function initUserAccounts ({ app }) {
     }
   });
 
-  app.post("/signup", async function(req, res) {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/signup/, async function(req, res) {
     let appName = req.appName;
     let {username = "", password = "", email = ""} = req.body;
 
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
         req.flash("error", "Your password must be at least 8 characters");
-        res.redirect('/signup');
+        res.redirect('/user/signup');
         return;
       }
 
       if (username.length < 1) {
         req.flash("error", "Please enter a username");
-        res.redirect('/signup');
+        res.redirect('/user/signup');
         return;
       }
 
       if (username.startsWith("_") || username.startsWith("-")) {
         req.flash("error", `Your username needs to start with a letter or number`);
-        res.redirect('/signup');
+        res.redirect('/user/signup');
         return;
       }
 
       if (!validUsernameRegex.test(username)) {
         req.flash("error", `Your username can only contain letters, numbers, and certain symbols ("_" or "-")`);
-        res.redirect('/signup');
+        res.redirect('/user/signup');
         return;
       }
     }
@@ -93,14 +93,14 @@ function initUserAccounts ({ app }) {
     let reservedWordInfo = getReservedWordInfo(username);
     if (reservedWordInfo.isReserved) {
       req.flash("error", `Your username can't contain the reserved word: "${reservedWordInfo.reservedWord}"`);
-      res.redirect('/signup');
+      res.redirect('/user/signup');
       return;
     }
 
     let [usernameTaken] = await capture(getUserData({ username }));
     if (usernameTaken) {
       req.flash("error", "That username is taken, please try another one!");
-      res.redirect('/signup');
+      res.redirect('/user/signup');
       return;
     }
 
@@ -112,50 +112,145 @@ function initUserAccounts ({ app }) {
         res.redirect('/' + newUser.details.username);
       } else {
         req.flash("error", "Error creating user account");
-        res.redirect('/login');
+        res.redirect('/user/login');
       }
     });
   });
 
-  app.post("/login", passport.authenticate('local', { 
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/login/, passport.authenticate('local', { 
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
     res.redirect('/' + req.user.details.username);
   });
 
-  app.get("/logout", function(req, res) {
+  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/logout/, function(req, res) {
     req.logout();
-    res.redirect('/login');
+    res.redirect('/user/login');
   });
 
-  app.post("/forgot", async function(req, res) {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/forgot/, async function(req, res) {
     let appName = req.appName;
     let {username} = req.body;
     let [currentUser] = await capture(getUserData({ username, appName }));
 
     if (!currentUser) {
-      req.flash("error", "Username not found");
-      res.redirect('/forgot');
+      req.flash("error", "User not found");
+      res.redirect('/user/forgot');
       return;
     }
 
     let token = crypto.randomBytes(32).toString('hex');
     let details = currentUser.details;
     details.resetPasswordToken = token;
-    details.resetPasswordExpires = `${Date.now() + 3600000}`;
+    details.resetPasswordExpires = Date.now() + 7200000; // plus two hours
 
     setUserData({ appName, username, data: details, type: "details" });
 
     sendEmail({
       email: details.email, 
       subject: `Reset your password for ${req.urlData.host}`,
-      body: `Hi ${username},<br>You can reset your password by following this link:<br>${req.protocol + '://' + req.urlData.host + "/reset/" + username + "/" + token}`
+      body: `Hi ${username},<br><br>You can reset your password by following this link:<br><br>${req.protocol + '://' + req.urlData.host + "/user/reset/" + username + "/" + token}`
+    }, function (err) {
+      if (err) {
+        req.flash('error', `Couldn't send password reset email. Please try again.`);
+        res.redirect("/user/forgot");
+      } else {
+        req.flash('success', 'An email with a link to change your password has been sent!');
+        res.redirect("/user/login");
+      }
+
+    });
+  });
+
+  app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/reset/, async function(req, res, next) {
+    let appName = req.appName;
+
+    // get username and token
+    let pathnameSplit = req.urlData.urlPathname.split("/");
+    let resetStringIndex = pathnameSplit.indexOf("reset");
+    let username = pathnameSplit[resetStringIndex + 1];
+    let token = pathnameSplit[resetStringIndex + 2];
+
+    let [currentUser] = await capture(getUserData({ username, appName }));
+
+    if (!currentUser) {
+      req.flash("error", "User not found");
+      res.redirect('/user/forgot');
+      return;
+    }
+
+    let expiresDate = currentUser.details.resetPasswordExpires;
+    if (typeof expiresDate !== "number" || Date.now() > expiresDate) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/user/forgot');
+      return;
+    }
+
+    if (!token || token !== currentUser.details.resetPasswordToken) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/user/forgot');
+      return;
+    }
+
+    next();
+  });
+
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/reset/, async function(req, res) {
+    let appName = req.appName;
+    let {password} = req.body;
+
+    // get username and token
+    let pathnameSplit = req.urlData.urlPathname.split("/");
+    let resetStringIndex = pathnameSplit.indexOf("reset");
+    let username = pathnameSplit[resetStringIndex + 1];
+    let token = pathnameSplit[resetStringIndex + 2];
+
+    let [currentUser] = await capture(getUserData({ username, appName }));
+
+    if (!currentUser) {
+      req.flash("error", "User not found");
+      res.redirect('/user/forgot');
+      return;
+    }
+
+    let expiresDate = currentUser.details.resetPasswordExpires;
+    if (typeof expiresDate !== "number" || Date.now() > expiresDate) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/user/forgot');
+      return;
+    }
+
+    if (!token || token !== currentUser.details.resetPasswordToken) {
+      req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
+      res.redirect('/user/forgot');
+      return;
+    }
+
+    if (!password || password.length < 8) {
+      req.flash("error", "Your password must be at least 8 characters");
+      res.redirect('/user/signup');
+      return;
+    }
+
+    let details = currentUser.details;
+    let [hash] = await capture(bcrypt.hash(password, 14));
+    details.hash = hash;
+    details.resetPasswordToken = null;
+    details.resetPasswordExpires = null;
+    setUserData({ appName, username, data: details, type: "details" });
+
+    req.login(currentUser, function (err) {
+      if (!err){
+        res.redirect('/' + currentUser.details.username);
+      } else {
+        req.flash('success', 'Success! Please log in with your new password');
+        res.redirect('/user/login');
+      }
     });
 
-    req.flash('success', 'An email with a link to change your password has been sent!');
-    res.redirect("/forgot");
   });
+
 }
 
 export {

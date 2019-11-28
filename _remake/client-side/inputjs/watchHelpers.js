@@ -10,6 +10,9 @@ import optionsData from './optionsData';
 //   key that matches their own key 
 //     (e.g. a sync to `data-o-key-name` will trigger => `data-w-key-name`)
 
+// SYNTAX
+// data-w-key-text="doSomething(arg1, arg2) doSomethingElse(arg1, arg2, arg3)"
+
 // TIPS
 // - if you want a watch function to run every time data in synced, but not on page load, give
 //   it a watch attribute, but not a `data-w` attribute.
@@ -64,12 +67,18 @@ export function callWatchFunctionsOnElem ({watchElem, watchAttrName, value, data
   // get the string to be parsed
   let watchAttributeString = watchElem.getAttribute(watchAttrName);
 
+  if (!watchAttributeString) {
+    // default to setting innerText
+    watchAttributeString = "innerText";
+  }
+
   // parses the watch attribute into a series of function/argument pairs
   //   e.g. [{funcName: "func1", args: ["1", "2"]}, {funcName: "func2", args: []}]
   let listOfFunctionsWithTheirArguments = parseStringWithIndefiniteNumberOfParams(watchAttributeString);
 
   // call each watch function
   listOfFunctionsWithTheirArguments.forEach(function ({funcName, args}) {
+    // the default, catch-all "*" watch function is defined in optionsData.js
     let watchFunc = optionsData.watchFunctions && (optionsData.watchFunctions[funcName] || optionsData.watchFunctions["*"]);
     
     watchFunc({
@@ -137,8 +146,8 @@ export function callMultipleWatchFunctions (watchElems) {
   });
 }
 
-// Find all elements with watch functions attached to them on an element or on any of
-// its child elements.
+// Find all elements with watch functions attached to them on an element 
+// or on any of its child elements.
 //
 // IMPORTANT: this filters out any elements that are nested inside of a matching
 //            data-o-key- attribute. we do this to allow multiple matching data-o-key- 
@@ -146,7 +155,7 @@ export function callMultipleWatchFunctions (watchElems) {
 // TODO: this should also work with data-l-key- attributes, not just data-o-key- attributes
 export function getWatchElements ({elementWithData, dashCaseKeyName}) {
   let watchSelector = `[data-w-key-${dashCaseKeyName}]`;
-  let nestedWatchSelector = `:scope [data-o-key-${dashCaseKeyName}] [data-w-key-${dashCaseKeyName}]`;
+  let nestedWatchSelector = `:scope [data-o-key-${dashCaseKeyName}] [data-w-key-${dashCaseKeyName}], :scope [data-l-key-${dashCaseKeyName}] [data-w-key-${dashCaseKeyName}]`;
   let watchElements = [];
 
   if (elementWithData.matches(watchSelector)) {

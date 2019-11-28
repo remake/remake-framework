@@ -5,7 +5,6 @@ const flash = require("connect-flash");
 const path = require("upath");
 const FileStore = require("session-file-store")(expressSession);
 const shell = require("shelljs");
-const mysql = require("mysql");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
@@ -24,6 +23,9 @@ import RemakeStore from "./lib/remake-store";
 setEnvironmentVariables();
 
 const app = express();
+// trust nginx and X-Forwarded-* headers
+// needed for logging the user's IP addresses
+app.enable("trust proxy", "127.0.0.1");
 
 // static assets middleware comes before other routes, so they don't get asset requests
 app.use(express.static(path.join(__dirname, "./dist")));
@@ -31,7 +33,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// add better loging
+// add better logging
 app.use(morgan("common"));
 
 // extract appName from host and attach it to request object
@@ -113,13 +115,18 @@ app.use(async function (req, res, next) {
 
 
 // express session
+let thirtyDaysInMs = 2592000000;
+let thirtyDaysInSec = 2592000000 / 1000;
 app.use(expressSession({ 
-  store: new FileStore({path: path.join(__dirname, "./.sessions")}),
+  store: new FileStore({
+    path: path.join(__dirname, "./.sessions"),
+    ttl: thirtyDaysInSec
+  }),
   secret: process.env.SESSION_SECRET, 
   resave: true, 
   saveUninitialized: true,
   cookie: {
-    maxAge: 2628000 // one month
+    maxAge: thirtyDaysInMs
   }
 }));
 
@@ -130,6 +137,7 @@ app.use(flash());
 // open MySQL connection
 // and use bodyParser (needed for post requests in lib/init-service-routes.js)
 if (RemakeStore.isMultiTenant()) {
+  const mysql = require("mysql");
   global.config = {
     db: {
       name: "remake-service",
@@ -155,22 +163,17 @@ if (RemakeStore.isMultiTenant()) {
   }
   
   // open MySQL connection
-  app.use((req, res, next) => {
-    global.connection = mysql.createConnection({
-      host : config.db.host,
-      user : config.db.user,
-      password : config.db.password,
-      database : config.db.name,
-      port: config.db.port
-    });
-  
-    connection.connect((err) => {
-      if (err) throw err;
-      else next();
-    });
+  global.connection = mysql.createConnection({
+    host : config.db.host,
+    user : config.db.user,
+    password : config.db.password,
+    database : config.db.name,
+    port: config.db.port
   });
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: false }));
+
+  connection.connect((err) => {
+    if (err) throw err;
+  });
 }
 
 // if app is multi tenant

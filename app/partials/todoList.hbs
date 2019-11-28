@@ -1,16 +1,16 @@
 <a
   class="todo-lists__item"
   data-o-type="object"
-  data-o-key-id="{{todoList.id}}"
-  data-o-key-name="{{todoList.name}}"
-  href="{{pageAuthor.details.username}}/todo-list/{{todoList.id}}"
+  data-o-key-id="{{generateIdIfNone todoList.id}}"
+  data-l-key-name
+  href="{{pageAuthor.details.username}}/todo-list/{{generateIdIfNone todoList.id}}"
 >
   <span
-    data-w-key-name="innerText"
-  >{{todoList.name}}</span>
+    data-l-target-name
+  >{{default todoList.name "New todo list"}}</span>
   <span 
-    class="todo-lists__edit js-pd" 
+    class="todo-lists__edit js-pd hide-if-not-page-author" 
     href="#"
-    data-i-editable=""
+    data-i-editable
   >Edit</span>
 </a>

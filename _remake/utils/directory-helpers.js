@@ -33,9 +33,11 @@ export function getDirForUserFile ({type, appName, username}) {
   return path.join(__dirname, pathString);
 }
 
+let pageNamesForUserRoutes = ["login", "signup", "reset", "forgot"];
 export function getDirForPageTemplate ({pageName, appName}) {
   let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
-  let pathString = `../../app/${innerAppPath}pages/${pageName}.hbs`;
+  let innerPagePath = pageNamesForUserRoutes.includes(pageName) ? "user/" : "";
+  let pathString = `../../app/${innerAppPath}pages/${innerPagePath}${pageName}.hbs`;
   return path.join(__dirname, pathString);
 }
 
