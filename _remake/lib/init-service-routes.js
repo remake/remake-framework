@@ -237,30 +237,26 @@ export function initServiceRoutes({app}) {
         const outputLocation = path.join(global.config.location.tmp, app.name + ".zip");
         const output = fs.createWriteStream(outputLocation, { encoding: 'base64' });
         const archive = archiver('zip', { zlib: { level: 9 } });
-    
+ 
         output.on('warning', (err) => {
           return res.status(500).json(err).end();
         });
-    
         output.on('error', (err) => {
           return res.status(500).json(err).end();
         });
-    
         output.on('close', () => {
           return res.download(outputLocation, `${app.name}-${Date.now()}.zip`, (err) => {
             if (err) {
-              console.log(err)
+              console.error(err)
             } else {
-              // shell.rm(outputLocation);
+              shell.rm(outputLocation);
             }
           });
         })
-    
-        console.log(path.join(deploymentLocation ,'/[a-z]*/**/*'))
+ 
         archive.pipe(output);
         archive.glob(path.join(deploymentLocation ,'/[a-z]*/**/*'));
         archive.finalize();
-
       });
   })
 }
