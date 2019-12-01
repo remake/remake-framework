@@ -73,20 +73,23 @@ const validSubdomain = (req, res, next) => {
   const subdomain = req.query.subdomain || req.body.subdomain || req.body.appName;
   if (!subdomain) {
     return res.status(400).json({ message: 'Bad request: subdomain is missing' }).end();
-  } else if (!subdomainRegex.test(subdomain)) 
+  } else if (!subdomainRegex.test(subdomain)) {
     return res.status(400).json({ message : 'Bad request: The app name / subdomain should start with a lowercase letter and should contain only lowercase letters, numbers and dashes.' }).end();
-  else {
+  } else {
     next();
   }
 }
 
 const validAppId = (req, res, next) => {
   const appId = req.query.appId;
-  if (!appId)
+  if (!appId) {
     return res.status(400).json({ message: 'Bad request: appId is missing' }).end();
-  if (!/^[0-9]*$/.test(appId))
+  }
+  if (!/^[0-9]*$/.test(appId)) {
     return res.status(400).json({ message: 'Bad request: appId should be a number' }).end();
-  else next();
+  } else {
+    next();
+  }
 }
 
 export function initServiceRoutes({app}) {
@@ -119,12 +122,18 @@ export function initServiceRoutes({app}) {
     connection.query('SELECT * FROM users WHERE email = ?',
       [email],
       (err, results, _) => {
-        if (err) return res.status(500).json(err).end();
-        if (results.length !== 1) return res.status(403).json({ message: "User not found" }).end();
+        if (err) {
+          return res.status(500).json(err).end();
+        }
+        if (results.length !== 1) {
+          return res.status(403).json({ message: "User not found" }).end();
+        }
         const user = results[0];
         // compare password with password hash
         bcrypt.compare(password, user.pwd_hash, (err, passwordIsCorrect) => {
-          if (err) return res.status(500).json(err).end();
+          if (err) {
+            return res.status(500).json(err).end();
+          }
           if (!passwordIsCorrect) {
             return res.status(403).json({ message: 'Wrong email or password' }).end();
           }
@@ -145,8 +154,12 @@ export function initServiceRoutes({app}) {
     connection.query('SELECT * FROM apps WHERE name = ?',
       [subdomain],
       (err, result, _) => {
-        if (err) return res.status(500).json(err).end();
-        if (result.length !== 0) return res.status(403).end();
+        if (err) {
+          return res.status(500).json(err).end();
+        }
+        if (result.length !== 0) {
+          return res.status(403).end();
+        }
         return res.status(200).end();
       });
   });
@@ -173,8 +186,9 @@ export function initServiceRoutes({app}) {
             if (err) {
               if (err.code === "ER_DUP_ENTRY") {
                 return res.status(400).json({ message: "An app with the same name already exists."}).end();
+              } else {
+                return res.status(500).json(err).end();
               }
-              else return res.status(500).json(err).end();
             }
             return res.status(200).end();
           });
@@ -190,7 +204,9 @@ export function initServiceRoutes({app}) {
     connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
       [req.user_id, appName],
       (err, result, _) => {
-        if (err) return res.status(500).json(err).end();
+        if (err) {
+          return res.status(500).json(err).end();
+        }
         if (result.length === 0) {
           return res.status(403).json('Unauthorized to deploy').end();
         }
@@ -221,8 +237,9 @@ export function initServiceRoutes({app}) {
     connection.query('SELECT * FROM apps WHERE user_id = ?',
       [req.user_id],
       (err, results, fields) => {
-        if (err)
+        if (err) {
           return res.status(500).json(err).end();
+        }
         res.status(200).json(results.map(a => ({name: a.name, id: a.id}))).end();
       });
   });
@@ -233,17 +250,20 @@ export function initServiceRoutes({app}) {
     connection.query('SELECT * FROM apps WHERE id = ? and user_id = ?',
       [appId, req.user_id],
       (err, results, fields) => {
-        if (err)
+        if (err) {
           return res.status(500).json(err).end();
-        if (results.length !== 1)
+        }
+        if (results.length !== 1) {
           return res.status(400).json({ message: "No apps found."}).end();
+        }
         const app = results[0];
         const deploymentLocation = path.join(global.config.location.remake, "app", app.name);
         
         const deploymentContent = shell.ls(deploymentLocation);
 
-        if (deploymentContent.length === 0)
+        if (deploymentContent.length === 0) {
           return res.status(400).json({ message: "Nothing deployed yet."}).end();
+        }
         
         const outputLocation = path.join(global.config.location.tmp, app.name + ".zip");
         const output = fs.createWriteStream(outputLocation, { encoding: 'base64' });
