@@ -81,8 +81,8 @@ app.use(async function (req, res, next) {
   req.urlData.referrerUrlObj = (req.urlData.referrerUrl && new URL(req.urlData.referrerUrl)) || {};
   req.urlData.referrerUrlPathname = (req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname) || "";
 
-  // attach params to urlData (e.g. firstParam, secondParam, thirdParam)
-  let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?");
+  // attach params to urlData (e.g. firstParam, secondParam, thirdParam, fourthParam)
+  let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?/:fifthParam?");
   let pageParamsGeneric, pageParams, pageParamsError;
   if (req.isAjax) {
     // for ajax requests:
@@ -98,8 +98,8 @@ app.use(async function (req, res, next) {
     // this case is for a multi-tenant, non-ajax request (i.e. a page render)
     // there will always be a max of 4 path segments in this case.
     // the first segment is the app name and simply needs to be stripped out
-    let {firstParam, secondParam, thirdParam, fourthParam} = routeMatcher(req.urlData.urlPathname);
-    req.urlData.pageParamsGeneric = {firstParam: secondParam, secondParam: thirdParam, thirdParam: fourthParam} || {};
+    let {firstParam, secondParam, thirdParam, fourthParam, fifthParam} = routeMatcher(req.urlData.urlPathname);
+    req.urlData.pageParamsGeneric = {firstParam: secondParam, secondParam: thirdParam, thirdParam: fourthParam, fourthParam: fifthParam} || {};
     [pageParams, pageParamsError] = await capture(getParams({req}));
   }
 
