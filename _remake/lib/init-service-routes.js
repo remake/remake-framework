@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const extract = require('extract-zip');
 const shell = require('shelljs');
+const path = require('path');
+const fs = require('fs');
+const archiver = require('archiver');
 
 // configure multer storage
 const storage = multer.diskStorage({
@@ -75,6 +78,15 @@ const validSubdomain = (req, res, next) => {
   else {
     next();
   }
+}
+
+const validAppId = (req, res, next) => {
+  const appId = req.query.appId;
+  if (!appId)
+    return res.status(400).json({ message: 'Bad request: appId is missing' }).end();
+  if (!/^[0-9]*$/.test(appId))
+    return res.status(400).json({ message: 'Bad request: appId should be a number' }).end();
+  else next();
 }
 
 export function initServiceRoutes({app}) {
@@ -205,5 +217,57 @@ export function initServiceRoutes({app}) {
       });
   })
 
-  // app.post('/service/backup', (req, res) => {})
+  app.get('/service/apps', checkIfAuthenticated, (req, res) => {
+    connection.query('SELECT * FROM apps WHERE user_id = ?',
+      [req.user_id],
+      (err, results, fields) => {
+        if (err)
+          return res.status(500).json(err).end();
+        res.status(200).json(results.map(a => ({name: a.name, id: a.id}))).end();
+      });
+  });
+
+  app.get('/service/backup', checkIfAuthenticated, validAppId, (req, res) => {
+    const { appId } = req.query;
+
+    connection.query('SELECT * FROM apps WHERE id = ? and user_id = ?',
+      [appId, req.user_id],
+      (err, results, fields) => {
+        if (err)
+          return res.status(500).json(err).end();
+        if (results.length !== 1)
+          return res.status(400).json({ message: "No apps found."}).end();
+        const app = results[0];
+        const deploymentLocation = path.join(global.config.location.remake, "app", app.name);
+        
+        const deploymentContent = shell.ls(deploymentLocation);
+
+        if (deploymentContent.length === 0)
+          return res.status(400).json({ message: "Nothing deployed yet."}).end();
+        
+        const outputLocation = path.join(global.config.location.tmp, app.name + ".zip");
+        const output = fs.createWriteStream(outputLocation, { encoding: 'base64' });
+        const archive = archiver('zip', { zlib: { level: 9 } });
+ 
+        output.on('warning', (err) => {
+          return res.status(500).json(err).end();
+        });
+        output.on('error', (err) => {
+          return res.status(500).json(err).end();
+        });
+        output.on('close', () => {
+          return res.download(outputLocation, `${app.name}-${Date.now()}.zip`, (err) => {
+            if (err) {
+              console.error(err)
+            } else {
+              shell.rm(outputLocation);
+            }
+          });
+        })
+ 
+        archive.pipe(output);
+        archive.glob(path.join(deploymentLocation ,'/[a-z]*/**/*'));
+        archive.finalize();
+      });
+  })
 }
