@@ -51,7 +51,7 @@
     "express-session": "^1.16.2",
     "extract-zip": "^1.6.7",
     "glob": "^7.1.4",
-    "handlebars": "^4.3.3",
+    "handlebars": "^4.5.3",
     "handlebars-helpers": "^0.10.0",
     "jsonfile": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
