@@ -1,4 +1,5 @@
 const parseUrl = require('parseurl');
+const jsonfile = require("jsonfile");
 import { 
   getDirForPageTemplate, 
   getDirForRootApp, 
@@ -14,6 +15,7 @@ import { getHandlebarsContext } from "./handlebars-context";
 import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
 import { getPartialsAsInlinePartials } from "./get-partials";
+import { getGlobalData } from "./get-global-data";
 
 
 export async function getRootAppsPageHtml () {
@@ -48,6 +50,7 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let pathname = parseUrl(req).pathname;
   let currentUser = req.user;
   let data = pageAuthor && pageAuthor.appData;
+  let [globalData] = await capture(getGlobalData({appName}));
   let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
   let flashErrors = req.flash("error");
   let flashSuccesses = req.flash("success");
@@ -56,6 +59,7 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
 
   let allData = {
     ...data,
+    globalData,
     appName,
     params,
     query,
@@ -91,8 +95,11 @@ export async function doesPageExist ({appName, pageName}) {
   }
 }
 
+/**********
+ * UTILS
+ **********/
 
-// UTILS
+// process template
 
 let layoutNameRegex = /\{\{\s+layout\s+["'](\w+)["']\s+\}\}/;
 let yieldCommandRegex = /\{\{>\s+yield\s+\}\}/;
