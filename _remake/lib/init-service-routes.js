@@ -286,7 +286,8 @@ export function initServiceRoutes({app}) {
         })
  
         archive.pipe(output);
-        archive.glob(path.join(deploymentLocation ,'/[a-z]*/**/*'));
+        archive.glob(path.join('app', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
+        archive.glob(path.join('_remake-data', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
         archive.finalize();
       });
   })
