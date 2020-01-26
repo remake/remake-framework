@@ -1,5 +1,5 @@
 const chokidar = require("chokidar");
-const {processFile} = require("./process-file");
+const {deleteFile, deleteDir, processFile} = require("./process-file");
 const {runInitialBuild} = require("./run-initial-build");
 const config = require("./config");
 const {globToSearch, frameworkGlobToSearch} = config;
@@ -13,7 +13,17 @@ const watcher = chokidar.watch(globToSearch, {
 });
 
 watcher.on("all", (event, filePath, stats) => {
-  processFile({filePath, stats, shouldRecompute: true});
+  const fileInfo = {filePath, stats, shouldRecompute: true};
+  switch (event) {
+    case 'unlink':
+      deleteFile(fileInfo);
+      break;
+    case 'unlinkDir':
+      deleteDir(fileInfo);
+      break;
+    default:
+      processFile(fileInfo);
+  }
 });
 
 
