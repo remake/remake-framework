@@ -38,7 +38,9 @@ function initUserAccounts ({ app }) {
       cb(null, currentUser);
       return;
     } catch (err) {
-      showConsoleError("Error: Passport db error", err);
+      let msg = "Error: Passport db error";
+      showConsoleError(msg + ':', err);
+      cb(msg, null);
     }
   }));
 
@@ -57,7 +59,11 @@ function initUserAccounts ({ app }) {
 
     if (currentUser) {
       cb(null, currentUser);
+      return;
     }
+    let msg = "Error: Passport deserialize error";
+    showConsoleError(msg);
+    cb(msg, null);
   });
 
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/signup/, async function(req, res) {
