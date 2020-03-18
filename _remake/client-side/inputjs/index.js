@@ -3,6 +3,7 @@ import { initSaveEventListener } from './saveEventListener';
 import { initRemoveAndHideEventListeners } from './removeAndHideEventListeners';
 import initChoiceAndToggleEventListeners from './choiceAndToggleEventListeners';
 import initInputElementEventListener from './inputElementEventListener';
+import initFileUploadEventListeners from './fileUpload';
 import initClickToSaveEventListener from './clickToSaveEventListener';
 import { callMultipleWatchFunctions, getValueAndDataSourceElemFromKeyName } from './watchHelpers';
 import { afterSync } from "./syncData";
@@ -11,6 +12,7 @@ import { enableSaveAttribute, initSaveFunctions, callSaveFunction } from './onSa
 import initEditableAttribute from './editableAttribute';
 import initAddingItemEventListener from './addingItemEventListener';
 import initSortableElements from './sortableElements';
+
 const merge = require('lodash/merge');
 
 function initInputEventListeners (options) {
@@ -22,6 +24,7 @@ function initInputEventListeners (options) {
   initRemoveAndHideEventListeners();
   initChoiceAndToggleEventListeners();
   initInputElementEventListener();
+  initFileUploadEventListeners();
   initClickToSaveEventListener();
   initEditableAttribute();
   initAddingItemEventListener();

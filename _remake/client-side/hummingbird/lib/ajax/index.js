@@ -24,3 +24,36 @@ export function ajaxPost (url, data, callback) {
 export function ajaxGet (url, data, callback) {
   ajaxSimple(url, "GET", data, callback);
 }
+
+// ajax file upload
+
+export function ajaxFileUpload ({fileInputElem, onProgress} = {}) {
+  let xhr = new XMLHttpRequest();
+  let file = fileInputElem.files[0];
+  let formData = new FormData();
+  formData.append(fileInputElem.name, file, fileInputElem.name);
+
+  xhr.open("POST", "/upload", true);
+  xhr.upload.onprogress = function (e) {
+    if (e.lengthComputable) {
+      if (onProgress) {
+        let progress = Math.floor((e.loaded / e.total) * 100); // number from 0 to 100
+        onProgress(progress);
+      }
+    }
+  }
+
+  xhr.upload.onloadstart = function (e) {
+    if (onProgress) {
+      onProgress(0);
+    }
+  }
+
+  xhr.upload.onloadend = function (e) {
+    if (onProgress) {
+      onProgress(100);
+    }
+  }
+
+  xhr.send(formData);
+}
