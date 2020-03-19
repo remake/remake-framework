@@ -8,9 +8,11 @@ const shell = require("shelljs");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
+const fileUpload = require("express-fileupload");
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
+import { initApiUpload } from "./lib/init-api-upload";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 import { initServiceRoutes } from "./lib/init-service-routes";
@@ -32,6 +34,11 @@ app.use(express.static(path.join(__dirname, "./dist")));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// uploading files
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 }
+}));
 
 // add better logging
 app.use(morgan("common"));
@@ -188,6 +195,7 @@ if (RemakeStore.isMultiTenant()) {
 initUserAccounts({ app });
 initApiNew({ app });
 initApiSave({ app });
+initApiUpload({ app });
 initRenderedRoutes({ app });
 
 const PORT = process.env.PORT || 3000;

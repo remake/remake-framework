@@ -1,20 +1,9 @@
-const Handlebars = require('handlebars');
-import { isPlainObject } from 'lodash-es';
-import forEachDeep from "deepdash-es/forEachDeep";
 import getUniqueId from "./get-unique-id";
 import { getUserData } from "./user-data";
-import { getParams } from "../utils/get-params";
-import { getPartial } from "../utils/get-partials";
 import { capture } from "../utils/async-utils";
-import { processData } from "../utils/process-data";
-import { showConsoleError } from "../utils/console-utils";
-import { getBootstrapData } from "../utils/get-bootstrap-data";
-import { getQueryParams } from "../utils/get-query-params";
-import { getHtmlWithUniqueIds } from "../utils/get-html-with-unique-ids";
-import RemakeStore from "./remake-store";
 
 
-export function initApiNew ({app}) {
+export function initApiUpload ({app}) {
 
   // route for "/upload" and "/app_*/upload"
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/upload/, async (req, res) => {
@@ -46,7 +35,20 @@ export function initApiNew ({app}) {
       return;
     }
 
-    res.json({success: true});
+    if (!req.files || Object.keys(req.files).length === 0) {
+      res.status(400).send("No files were uploaded.");
+      return;
+    }
+
+    let file = req.files.file;
+
+    file.mv(path.join(__dirname, "../../uploads", "asfasfasfasf" + path.extname(file.name)), function(err) {
+      if (err) {
+        return res.status(500).send(err);
+      }
+
+      res.json({success: true});
+    });
   })
 
 }

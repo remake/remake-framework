@@ -48,6 +48,7 @@
     "directory-tree": "^2.2.3",
     "esm": "^3.2.25",
     "express": "^4.17.0",
+    "express-fileupload": "^1.1.6",
     "express-session": "^1.16.2",
     "extract-zip": "^1.6.7",
     "glob": "^7.1.4",
