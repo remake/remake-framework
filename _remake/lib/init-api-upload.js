@@ -1,7 +1,8 @@
 const path = require("upath");
-import getUniqueId from "./get-unique-id";
+import { getLongUniqueId } from "./get-unique-id";
 import { getUserData } from "./user-data";
-import { capture } from "../utils/async-utils";
+import { capture, mkdirpAsync } from "../utils/async-utils";
+import { getDirForUpload } from "../utils/directory-helpers";
 
 
 export function initApiUpload ({app}) {
@@ -42,7 +43,17 @@ export function initApiUpload ({app}) {
     }
 
     let file = req.files.file;
-    let uploadPath = path.join(__dirname, "../../uploads", "asfasfasfasf" + path.extname(file.name));
+    let uploadPathDir = getDirForUpload({appName, username});
+    let [_, mkdirpError] = await capture(mkdirpAsync(uploadPathDir));
+
+    if (mkdirpError) {
+      res.status(400).json({success: false, reason: "invalidSavePath"});
+      return;
+    }
+
+    let uploadPath = path.join(uploadPathDir, "file_" + getLongUniqueId() + path.extname(file.name));
+
+    console.log("uploadPath", uploadPath, file.name);
 
     file.mv(uploadPath, function(err) {
       if (err) {

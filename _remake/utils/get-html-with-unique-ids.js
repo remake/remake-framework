@@ -1,4 +1,4 @@
-import getUniqueId from "../lib/get-unique-id";
+import { getUniqueId } from "../lib/get-unique-id";
 
 // after generating a new item using the /new api endpoint
 // this func will generate unique ids and put them into the template string

@@ -5,5 +5,7 @@ variables.env
 npm-debug.log
 _remake/.sessions/**/*.json
 _remake/dist
+_remake-uploads
+!_remake-uploads/.gitkeep
 _remake-data/**/*.json
 .remake

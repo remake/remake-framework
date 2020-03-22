@@ -1,7 +1,7 @@
 import { capture } from "./async-utils";
 import { set, isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
-import getUniqueId from "../lib/get-unique-id";
+import { getUniqueId } from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
 
 export async function processData ({appName, res, pageAuthor, data, itemId, requestType}) {
