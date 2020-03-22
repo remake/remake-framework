@@ -3,7 +3,8 @@ function ajax ({url, method, data, callback}) {
     method: method,
     headers: {
       "Accept": "application/json",
-      "Content-Type": "application/json; charset=utf-8"
+      "Content-Type": "application/json; charset=utf-8",
+      "X-Requested-With": "XMLHttpRequest"
     },
     body: JSON.stringify(data),
   })
@@ -31,9 +32,12 @@ export function ajaxFileUpload ({fileInputElem, onProgress} = {}) {
   let xhr = new XMLHttpRequest();
   let file = fileInputElem.files[0];
   let formData = new FormData();
-  formData.append(fileInputElem.name, file, fileInputElem.name);
+  formData.append("file", file, "file");
 
   xhr.open("POST", "/upload", true);
+  xhr.setRequestHeader("Accept", "application/json");
+  xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
   xhr.upload.onprogress = function (e) {
     if (e.lengthComputable) {
       if (onProgress) {

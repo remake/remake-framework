@@ -1,3 +1,4 @@
+const path = require("upath");
 import getUniqueId from "./get-unique-id";
 import { getUserData } from "./user-data";
 import { capture } from "../utils/async-utils";
@@ -35,15 +36,17 @@ export function initApiUpload ({app}) {
       return;
     }
 
-    if (!req.files || Object.keys(req.files).length === 0) {
+    if (!req.files || !req.files.file) {
       res.status(400).send("No files were uploaded.");
       return;
     }
 
     let file = req.files.file;
+    let uploadPath = path.join(__dirname, "../../uploads", "asfasfasfasf" + path.extname(file.name));
 
-    file.mv(path.join(__dirname, "../../uploads", "asfasfasfasf" + path.extname(file.name)), function(err) {
+    file.mv(uploadPath, function(err) {
       if (err) {
+        console.log("err", err);
         return res.status(500).send(err);
       }
 

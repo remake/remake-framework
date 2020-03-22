@@ -96,7 +96,7 @@ app.use(async function (req, res, next) {
     // - we get the path segments from the referrer
     // - there will always be a max of 3 path segments in the referrer
     req.urlData.pageParamsGeneric = routeMatcher(req.urlData.referrerUrlPathname) || {};
-    [pageParams, pageParamsError] = await capture(getParams({req, fromReferrer: true}));
+    [pageParams, pageParamsError] = await capture(getParams({req}));
   } else if (!RemakeStore.isMultiTenant()) {
     // when single-tenant is enabled, there will always be a max of 3 path segments
     req.urlData.pageParamsGeneric = routeMatcher(req.urlData.urlPathname) || {};
