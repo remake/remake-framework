@@ -32,7 +32,7 @@ export function ajaxFileUpload ({fileInputElem, onProgress, onError} = {}) {
   let xhr = new XMLHttpRequest();
   let file = fileInputElem.files[0];
   let formData = new FormData();
-  formData.append("file", file, "file");
+  formData.append("file", file, file.name);
 
   xhr.open("POST", "/upload", true);
   xhr.setRequestHeader("Accept", "application/json");
