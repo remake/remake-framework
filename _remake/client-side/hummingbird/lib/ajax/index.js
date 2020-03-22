@@ -28,7 +28,7 @@ export function ajaxGet (url, data, callback) {
 
 // ajax file upload
 
-export function ajaxFileUpload ({fileInputElem, onProgress} = {}) {
+export function ajaxFileUpload ({fileInputElem, onProgress, onError} = {}) {
   let xhr = new XMLHttpRequest();
   let file = fileInputElem.files[0];
   let formData = new FormData();
@@ -37,6 +37,16 @@ export function ajaxFileUpload ({fileInputElem, onProgress} = {}) {
   xhr.open("POST", "/upload", true);
   xhr.setRequestHeader("Accept", "application/json");
   xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+  xhr.onreadystatechange = function (e) {  
+    if (xhr.readyState === 4) {  
+      if (xhr.status !== 200) {  
+        if (onError) {
+          onError();
+        }
+      }
+    }  
+  }; 
 
   xhr.upload.onprogress = function (e) {
     if (e.lengthComputable) {

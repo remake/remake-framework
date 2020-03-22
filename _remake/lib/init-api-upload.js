@@ -37,7 +37,7 @@ export function initApiUpload ({app}) {
     }
 
     if (!req.files || !req.files.file) {
-      res.status(400).send("No files were uploaded.");
+      res.status(400).json({success: false, reason: "noDataProvided"});
       return;
     }
 
@@ -47,7 +47,7 @@ export function initApiUpload ({app}) {
     file.mv(uploadPath, function(err) {
       if (err) {
         console.log("err", err);
-        return res.status(500).send(err);
+        return res.status(500).json({success: false, reason: "processFailed"});
       }
 
       res.json({success: true});

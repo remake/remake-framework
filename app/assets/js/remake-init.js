@@ -9,11 +9,21 @@ import sortablejs from 'sortablejs';
 Remake.init({
   logDataOnSave: true,
   sortable: {sortablejs},
+  // called after data is saved
   defaultSaveCallback: function (res) {
     if (!res.success) {
       crostini("Error saving data", {type: "error"});
     }
   },
+  // called during entire file upload process 0-100% -- or error
+  fileUploadCallback: function (res) {
+    if (res.success) {
+      console.log("percentage", res.percentage);
+    } else {
+      crostini("Error uploading file", {type: "error"});
+    }
+  },
+  // called whenever a new item is rendered to the page
   addItemCallback: function ({templateName, ajaxResponse}) {
     if (!ajaxResponse.success) {
       crostini("Error adding new item", {type: "error"});
