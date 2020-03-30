@@ -13,9 +13,10 @@ export default function () {
       ajaxFileUpload({
         fileInputElem,
         onProgress: function (percentage) {
+          setPercentageOnUploadingNotice(percentage);
+
           if (percentage === 100) {
-            fileInputElem.disabled = false;
-            fileInputElem.value = "";
+            resetFileInput(fileInputElem);
           }
 
           if (optionsData.fileUploadCallback) {
@@ -23,8 +24,7 @@ export default function () {
           }
         },
         onError: function () {
-          fileInputElem.disabled = false;
-          fileInputElem.value = "";
+          resetFileInput(fileInputElem);
 
           if (optionsData.fileUploadCallback) {
             optionsData.fileUploadCallback({success: false});
@@ -32,8 +32,35 @@ export default function () {
         }
       });
     }
-
-
-    // fileInputElem.disabled = false;
   });
+
+  // uploading notice
+  let uploadingNotice = document.querySelector(".uploading-notice");
+  let progressCompleteElem = document.querySelector(".uploading-notice__progress-bar-complete");
+  let progressStatusElem = document.querySelector(".uploading-notice__status-percentage");
+  function setPercentageOnUploadingNotice (percentage) {
+    percentage = percentage || 0;
+
+    if (percentage > 0) {
+      uploadingNotice.classList.add("uploading-notice--visible");
+    } 
+
+    progressCompleteElem.style.transform = `scaleX(${percentage / 100})`;
+    progressStatusElem.innerText = parseInt(percentage, 10) + "%";
+
+    if (percentage === 100) {
+      setTimeout(function () {
+        uploadingNotice.classList.remove("uploading-notice--visible");
+      }, 750);
+    }
+  }
 }
+
+function resetFileInput (elem) {
+  elem.disabled = false;
+  elem.value = "";
+}
+
+
+
+

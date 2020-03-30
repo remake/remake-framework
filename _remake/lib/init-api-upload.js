@@ -53,11 +53,8 @@ export function initApiUpload ({app}) {
 
     let uploadPath = path.join(uploadPathDir, "file_" + getLongUniqueId() + path.extname(file.name));
 
-    console.log("uploadPath", uploadPath, file.name);
-
     file.mv(uploadPath, function(err) {
       if (err) {
-        console.log("err", err);
         return res.status(500).json({success: false, reason: "processFailed"});
       }
 

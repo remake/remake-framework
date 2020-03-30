@@ -17,9 +17,7 @@ Remake.init({
   },
   // called during entire file upload process 0-100% -- or error
   fileUploadCallback: function (res) {
-    if (res.success) {
-      console.log("percentage", res.percentage);
-    } else {
+    if (!res.success) {
       crostini("Error uploading file", {type: "error"});
     }
   },
