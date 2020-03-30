@@ -15,9 +15,11 @@ Remake.init({
       crostini("Error saving data", {type: "error"});
     }
   },
-  // called during entire file upload process 0-100% -- or error
+  // called when file upload completes or fails
   fileUploadCallback: function (res) {
-    if (!res.success) {
+    if (res.success) {
+      crostini("File upload successful");
+    } else {
       crostini("Error uploading file", {type: "error"});
     }
   },

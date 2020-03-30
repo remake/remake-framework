@@ -19,8 +19,12 @@ export default function () {
             resetFileInput(fileInputElem);
           }
 
-          if (optionsData.fileUploadCallback) {
-            optionsData.fileUploadCallback({success: true, percentage});
+          if (optionsData.fileUploadProgressCallback) {
+            optionsData.fileUploadProgressCallback({percentage});
+          }
+
+          if (percentage === 100 && optionsData.fileUploadCallback) {
+            optionsData.fileUploadCallback({success: true});
           }
         },
         onError: function () {
