@@ -140,22 +140,36 @@ function setLocationKeyValue (elem, dashCaseKeyName, locationString, value) {
 
 // utility function for setting a value on a data attribute
 // using a key name that could be EITHER a location key or an output key
-function setValueForKeyName (elem, keyName, value) {
+function setValueForKeyName (elem, camelCaseKeyName, value) {
   // convert the key name to output and location format
-  let dashCaseKeyName = camelCaseToDash(keyName)
+  let dashCaseKeyName = camelCaseToDash(camelCaseKeyName)
   let outputAttr = "data-o-key-" + dashCaseKeyName;
   let locationAttr = "data-l-key-" + dashCaseKeyName;
-  // if the output format is found, set the value of that attribute
+
   if (elem.hasAttribute(outputAttr)) {
     elem.setAttribute(outputAttr, value);
-  }
-  // if the location format is found, set the value using `setLocationKeyValue`
-  if (elem.hasAttribute(locationAttr)) {
+  } else if (elem.hasAttribute(locationAttr)) {
     let locationString = elem.getAttribute(locationAttr);
     setLocationKeyValue(elem, dashCaseKeyName, locationString, value);
   }
 }
 
+function getValueFromKeyName (elem, camelCaseKeyName) {
+  // convert the key name to output and location format
+  let dashCaseKeyName = camelCaseToDash(camelCaseKeyName)
+  let outputAttr = "data-o-key-" + dashCaseKeyName;
+  let locationAttr = "data-l-key-" + dashCaseKeyName;
+
+  if (elem.hasAttribute(outputAttr)) {
+    return elem.getAttribute(outputAttr);
+  } else if (elem.hasAttribute(locationAttr)) {
+    let locationString = elem.getAttribute(locationAttr);
+    return getLocationKeyValue(elem, dashCaseKeyName, locationString);
+  }
+}
+
+
+// used for the remove/hide editable component
 function setAllDataToEmptyStringsExceptIds (elem) {
   forEachAttr(elem, function (attrName, attrValue) {
     if (attrName !== "data-o-key-id" && (attrName.startsWith("data-o-key-") || attrName.startsWith("data-l-key-"))) {
@@ -173,6 +187,7 @@ export {
   getDataAndDataSourceElemFromNodeAndAncestors,
   getLocationKeyValue,
   setLocationKeyValue,
+  getValueFromKeyName,
   setValueForKeyName,
   setAllDataToEmptyStringsExceptIds
 };

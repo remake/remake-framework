@@ -5,6 +5,7 @@ import {
 import { 
   setLocationKeyValue, 
   getLocationKeyValue,
+  getValueFromKeyName,
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors,
@@ -77,6 +78,7 @@ export {
   getDataFromRootNode,
   setLocationKeyValue,
   getLocationKeyValue,
+  getValueFromKeyName,
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors,

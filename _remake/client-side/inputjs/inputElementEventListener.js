@@ -22,7 +22,7 @@ export default function () {
     outputElem.setAttribute(attrName, newValue);
     // 8. call watch functions
       // we want this so form validation is easier inside inline edit popovers
-      // todo: figure out how to NOT call this on every keypress, whether that's debouncing it or simply not calling it
+      // todo: figure out how to NOT call this on every keypress, probably with a debounce
     callWatchFunctions({
       dashCaseKeyName, 
       parentOfTargetElements: outputElem, 
