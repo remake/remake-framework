@@ -75,7 +75,7 @@ function setFileData (elem, value) {
 
   setValueOfClosestKey({elem, camelCaseKeyName, value});
 
-  if (elem.getAttribute("data-i") === "triggerSaveOnChange") {
+  if (elem.getAttribute("data-i") !== "dontTriggerSaveOnChange") {
     callSaveFunction({targetElement: elem});
   }
 }

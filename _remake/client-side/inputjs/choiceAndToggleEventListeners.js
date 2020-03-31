@@ -14,7 +14,7 @@ export default function () {
     // set value
     setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value});
 
-    if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
+    if (event.currentTarget.getAttribute("data-i") !== "dontTriggerSaveOnChange") {
       callSaveFunction({targetElement: event.currentTarget});
     }
   });
@@ -33,7 +33,7 @@ export default function () {
       setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value: "true"});
     }
 
-    if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
+    if (event.currentTarget.getAttribute("data-i") !== "dontTriggerSaveOnChange") {
       callSaveFunction({targetElement: event.currentTarget});
     }
   })
@@ -47,7 +47,7 @@ export default function () {
     // set value
     setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value});
 
-    if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
+    if (event.currentTarget.getAttribute("data-i") !== "dontTriggerSaveOnChange") {
       callSaveFunction({targetElement: event.currentTarget});
     }
   });
@@ -62,7 +62,7 @@ export default function () {
     // set value
     setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value});
 
-    if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
+    if (event.currentTarget.getAttribute("data-i") !== "dontTriggerSaveOnChange") {
       callSaveFunction({targetElement: event.currentTarget});
     }
   });

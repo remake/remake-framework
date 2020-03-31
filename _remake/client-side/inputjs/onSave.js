@@ -1,6 +1,7 @@
 import { $ } from '../queryjs';
 import { getDataFromRootNode, getDataFromNode } from "../data-utilities";
 import { ajaxPost } from '../hummingbird/lib/ajax';
+import { debounce } from '../hummingbird/lib/functions';
 import { getAttributeValueAsArray } from '../parse-data-attributes';
 import optionsData from './optionsData';
 
@@ -106,6 +107,8 @@ export function callSaveFunction ({elementDataWasSyncedInto, targetElement}) {
     }
   }
 }
+
+export let debouncedCallSaveFunction = debounce(callSaveFunction, 800);
 
 export function getSaveFuncInfo (saveElement, isDataInsideElem) {
   let dashCaseAttrName = isDataInsideElem ? "data-o-save-deep" : "data-o-save";

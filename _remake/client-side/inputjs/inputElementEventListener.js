@@ -1,7 +1,7 @@
 import { $ } from '../queryjs';
 import { camelCaseToDash } from '../hummingbird/lib/string';
 import { callWatchFunctions } from "./watchHelpers";
-import { callSaveFunction } from './onSave';
+import { debouncedCallSaveFunction } from './onSave';
 import { setValueOfClosestKey } from '../data-utilities';
 
 export default function () {
@@ -15,8 +15,8 @@ export default function () {
 
     setValueOfClosestKey({elem, camelCaseKeyName, value});
 
-    if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
-      callSaveFunction({targetElement: event.currentTarget});
+    if (event.currentTarget.getAttribute("data-i") !== "dontTriggerSaveOnChange") {
+      debouncedCallSaveFunction({targetElement: event.currentTarget});
     }
   });
 
