@@ -1,6 +1,5 @@
 import { $ } from '../queryjs';
 import { camelCaseToDash } from '../hummingbird/lib/string';
-import { callWatchFunctions } from './syncData';
 import { callSaveFunction } from './onSave';
 import { getValueFromClosestKey, setValueOfClosestKey } from '../data-utilities';
 

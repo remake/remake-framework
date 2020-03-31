@@ -1,5 +1,6 @@
 import { getDataAndDataSourceElemFromNodeAndAncestors, setValueForKeyName } from "../data-utilities";
 import { camelCaseToDash } from '../hummingbird/lib/string';
+import { callWatchFunctions } from './watchHelpers';
 
 // this is fed a save callback function when inputjs in initialized
 let afterSyncCallbacks = [];

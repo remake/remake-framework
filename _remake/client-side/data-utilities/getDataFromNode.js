@@ -1,6 +1,6 @@
 import { forEachAttr } from '../hummingbird/lib/dom';
 import { dashToCamelCase } from '../hummingbird/lib/string';
-import { getLocationKeyValue } from 'locationKeyData';
+import { getLocationKeyValue } from './locationKeyData';
 
 // Converts:
 // <div data-o-key-example-one="1" data-o-key-example-two="2"></div>

@@ -14,8 +14,8 @@ import {
 
 import { 
   getDataFromRootNode,
-  setLocationKeyValue,
   getLocationKeyValue,
+  setLocationKeyValue,
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors 
@@ -34,8 +34,8 @@ export default {
   callMultipleWatchFunctions,
   getValueAndDataSourceElemFromKeyName,
   getDataFromRootNode,
-  setLocationKeyValue,
   getLocationKeyValue,
+  setLocationKeyValue,
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors 

@@ -1,6 +1,6 @@
 import { $ } from '../queryjs';
 import { camelCaseToDash } from '../hummingbird/lib/string';
-import { callWatchFunctions } from "./syncData";
+import { callWatchFunctions } from "./watchHelpers";
 import { callSaveFunction } from './onSave';
 
 export default function () {
