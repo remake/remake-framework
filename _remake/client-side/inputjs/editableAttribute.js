@@ -144,11 +144,11 @@ function generateRemakeEditAreas ({config}) { // e.g. {name: "blogTitle", modifi
     let formFieldHtml;
 
     if (modifier === "text-single-line") {
-      formFieldHtml = `<input class="remake-edit__input" data-i="" name="${name}" type="text">`;
+      formFieldHtml = `<input class="remake-edit__input" data-i="dontTriggerSaveOnChange" name="${name}" type="text">`;
     }
 
     if (modifier === "text-multi-line") {
-      formFieldHtml = `<textarea class="remake-edit__textarea" data-i="" name="${name}"></textarea>`;
+      formFieldHtml = `<textarea class="remake-edit__textarea" data-i="dontTriggerSaveOnChange" name="${name}"></textarea>`;
     }
 
     outputHtml += `<div class="remake-edit__edit-area">${formFieldHtml}</div>`;
