@@ -97,10 +97,6 @@ function syncToLocationOrOutputKey ({targetElement, camelCaseKeyName, dashCaseKe
     actualValue = getValueOrDefaultValue(closestMatchingElem, originalValue, dashCaseKeyName);
 
     setValueForKeyName(closestMatchingElem, camelCaseKeyName, actualValue);
-
-    // 3. Call watch functions
-        // IMPORTANT: We use the element that each key is synced into as the element to search for matching watch attributes
-    callWatchFunctions({dashCaseKeyName, parentOfTargetElements: closestMatchingElem, value: actualValue, dataSourceElem});
   }
 
   return {actualValue, closestMatchingElem};

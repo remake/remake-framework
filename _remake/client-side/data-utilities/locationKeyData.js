@@ -1,7 +1,7 @@
 import { formatSpaces } from "../parse-data-attributes";
 
 // Used for attributes like: <div data-l-key-widget-code=".widget-code innerHTML"></div>
-// helper function, has repeated code from getLocationKeyValue() and setLocationKeyValue()
+// helper function for getLocationKeyValue() and setLocationKeyValue()
 export function getDataFromLocationString (elem, dashCaseKeyName, locationString) {
   locationString = formatSpaces(locationString);
   let [selector, elemAttribute] = locationString.split(" "); // e.g. [".selector", "attr:data-x-text"]

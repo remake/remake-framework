@@ -9,10 +9,10 @@ export default function () {
   $.on("click", "[data-i][data-i-key][data-i-value]", function (event) {
     // get key name and value we want to change
     let camelCaseKeyName = event.currentTarget.getAttribute("data-i-key");
-    let attributeValue = event.currentTarget.getAttribute("data-i-value");
+    let value = event.currentTarget.getAttribute("data-i-value");
 
     // set value
-    setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, attributeValue});
+    setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value});
 
     if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
       callSaveFunction({targetElement: event.currentTarget});
@@ -26,11 +26,11 @@ export default function () {
     let camelCaseKeyName = event.currentTarget.getAttribute("data-i-toggle");
 
     // set value
-    let value = getValueFromClosestKey({elem: event.currentTarget, camelCaseKeyName});
-    if (value) {
-      setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, attributeValue: ""});
+    let currentValue = getValueFromClosestKey({elem: event.currentTarget, camelCaseKeyName});
+    if (currentValue) {
+      setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value: ""});
     } else {
-      setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, attributeValue: "true"});
+      setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value: "true"});
     }
 
     if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
@@ -42,10 +42,10 @@ export default function () {
   $.on("change", "[type='radio'][data-i], select[data-i]", function (event) {
     // get key name and value we want to change
     let camelCaseKeyName = event.currentTarget.getAttribute("name");
-    let attributeValue = event.currentTarget.value;
+    let value = event.currentTarget.value;
 
     // set value
-    setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, attributeValue});
+    setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value});
 
     if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
       callSaveFunction({targetElement: event.currentTarget});
@@ -57,10 +57,10 @@ export default function () {
   $.on("change", "[data-i][type='checkbox']", function (event) {
     // get key name and value we want to change
     let camelCaseKeyName = event.currentTarget.getAttribute("name");
-    let attributeValue = event.currentTarget.checked ? event.currentTarget.value : "";
+    let value = event.currentTarget.checked ? event.currentTarget.value : "";
 
     // set value
-    setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, attributeValue});
+    setValueOfClosestKey({elem: event.currentTarget, camelCaseKeyName, value});
 
     if (event.currentTarget.getAttribute("data-i") === "triggerSaveOnChange") {
       callSaveFunction({targetElement: event.currentTarget});

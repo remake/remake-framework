@@ -16,6 +16,13 @@ export function setValueForKeyName (elem, camelCaseKeyName, value) {
     let locationString = elem.getAttribute(locationAttr);
     setLocationKeyValue(elem, dashCaseKeyName, locationString, value);
   }
+
+  callWatchFunctions({
+    dashCaseKeyName, 
+    value, 
+    parentOfTargetElements: elem, 
+    dataSourceElem: elem
+  });
 }
 
 export function getValueFromKeyName (elem, camelCaseKeyName) {
@@ -42,7 +49,7 @@ export function getValueFromClosestKey ({elem, camelCaseKeyName}) {
   return getValueFromKeyName(dataSourceElem, camelCaseKeyName);
 }
 
-export function setValueOfClosestKey ({elem, camelCaseKeyName, attributeValue}) {
+export function setValueOfClosestKey ({elem, camelCaseKeyName, value}) {
 
   // 1. form the output attribute key name
   let dashCaseKeyName = camelCaseToDash(camelCaseKeyName);
@@ -51,14 +58,6 @@ export function setValueOfClosestKey ({elem, camelCaseKeyName, attributeValue}) 
   let dataSourceElem = elem.closest(`[data-o-key-${dashCaseKeyName}], [data-l-key-${dashCaseKeyName}]`);
 
   // 3. set value on data source element
-  setValueForKeyName(dataSourceElem, camelCaseKeyName, attributeValue);
-
-  // 4. call watch functions since the data is changing
-  callWatchFunctions({
-    dashCaseKeyName: dashCaseKeyName, 
-    parentOfTargetElements: dataSourceElem, 
-    value: attributeValue, 
-    dataSourceElem: dataSourceElem
-  });
+  setValueForKeyName(dataSourceElem, camelCaseKeyName, value);
 
 }
