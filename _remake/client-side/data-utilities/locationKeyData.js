@@ -27,11 +27,28 @@ export function getDataFromLocationString (elem, dashCaseKeyName, locationString
   return {elemAttribute, targetElem};
 }
 
+let attributeLookupFromNodeName = {
+  IMG: "src",
+  AUDIO: "src",
+  VIDEO: "src",
+  IFRAME: "src",
+  SCRIPT: "src",
+  LINK: "href"
+};
 export function getLocationKeyValue (elem, dashCaseKeyName, locationString) {
   let {elemAttribute, targetElem} = getDataFromLocationString(elem, dashCaseKeyName, locationString);
-  elemAttribute = elemAttribute || "innerText"; // default to innerText
+
+  let nodeName = targetElem.nodeName.toUpperCase();
+
+  if (!elemAttribute) {
+    elemAttribute = attributeLookupFromNodeName[nodeName];
+
+    if (!elemAttribute) {
+      elemAttribute = "innerText";
+    }
+  }
+
   let elemValue;
-  
   if (elemAttribute.indexOf("attr:") === 0) {
     elemAttribute = elemAttribute.substring(5);
     elemValue = targetElem && targetElem.getAttribute(elemAttribute);
@@ -46,7 +63,16 @@ export function getLocationKeyValue (elem, dashCaseKeyName, locationString) {
                                               // ^ this will default to setting innerText if there's no 2nd argument
 export function setLocationKeyValue (elem, dashCaseKeyName, locationString, value) {
   let {elemAttribute, targetElem} = getDataFromLocationString(elem, dashCaseKeyName, locationString);
-  elemAttribute = elemAttribute || "innerText"; // default to innerText
+
+  let nodeName = targetElem.nodeName.toUpperCase();
+
+  if (!elemAttribute) {
+    elemAttribute = attributeLookupFromNodeName[nodeName];
+
+    if (!elemAttribute) {
+      elemAttribute = "innerText";
+    }
+  }
 
   if (targetElem) {
     let valueAsString = value.toString();
