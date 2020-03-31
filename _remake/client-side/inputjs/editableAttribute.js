@@ -4,7 +4,7 @@ import { forEachAttr } from '../hummingbird/lib/dom';
 import { processAttributeString } from '../parse-data-attributes';
 import { copyLayout } from '../copy-layout';
 import Switches from '../switchjs';
-import { getDataFromNode } from '../outputjs';
+import { getDataFromNode } from '../data-utilities';
 import autosize from '../vendor/autosize';
 
 // data-i-editable: trigger popover with three buttons (remove, cancel, and save)

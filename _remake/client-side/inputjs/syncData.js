@@ -1,7 +1,5 @@
 import { getDataAndDataSourceElemFromNodeAndAncestors, setValueForKeyName } from "../outputjs";
 import { camelCaseToDash } from '../hummingbird/lib/string';
-import { callWatchFunctionsOnElem, getWatchElements } from './watchHelpers';
-
 
 // this is fed a save callback function when inputjs in initialized
 let afterSyncCallbacks = [];
@@ -148,34 +146,6 @@ function syncToInputKeys ({targetElement, camelCaseKeyName, actualValue}) {
   } else if (nodeName === "select" || nodeName === "textarea") {
     matchingKeyElem.value = actualValue;
   }
-
-}
-
-// This is used by the main func: `syncDataBetweenElements()` to call all the nested 
-// watch functions. 
-//
-// Notes:
-// - `parentOfTargetElements` is the element data keys on it that's going to be synced into.
-//    It's expected to have all of the watch functions that will be called inside of it.
-// - `dataSourceElem` is the element where that data comes from. It's probably a parent object
-//    that contains other elements with data on them.
-export function callWatchFunctions ({dashCaseKeyName, parentOfTargetElements, value, dataSourceElem}) {
-  
-  // 1. Find ALL CHILD elements of the target element that match a `data-w-key` 
-  //    UNLESS they're children of another matching data-o-key element.
-  //    Watch functions don't activate to data changes that are outside their scope
-  let watchElems = getWatchElements({elementWithData: parentOfTargetElements, dashCaseKeyName});
-
-  watchElems.forEach((watchElem) => {
-    // 2. Call all the watch functions defined by this attribute
-    callWatchFunctionsOnElem({
-      watchElem, 
-      watchAttrName: `data-w-key-${dashCaseKeyName}`, 
-      value: value, 
-      dataSourceElem: dataSourceElem,
-      dataTargetElem: parentOfTargetElements
-    });      
-  });
 
 }
 

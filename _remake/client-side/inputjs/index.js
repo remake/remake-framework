@@ -5,7 +5,7 @@ import initChoiceAndToggleEventListeners from './choiceAndToggleEventListeners';
 import initInputElementEventListener from './inputElementEventListener';
 import initFileUploadEventListeners from './fileUpload';
 import initClickToSaveEventListener from './clickToSaveEventListener';
-import { callMultipleWatchFunctions, getValueAndDataSourceElemFromKeyName } from './watchHelpers';
+import { callWatchFunctions, callMultipleWatchFunctions, getValueAndDataSourceElemFromKeyName } from './watchHelpers';
 import { afterSync } from "./syncData";
 import optionsData from './optionsData';
 import { enableSaveAttribute, initSaveFunctions, callSaveFunction } from './onSave';
@@ -41,6 +41,7 @@ export {
   initInputEventListeners,
   initSaveFunctions,
   callSaveFunction,
+  callWatchFunctions,
   callMultipleWatchFunctions,
   getValueAndDataSourceElemFromKeyName
 }

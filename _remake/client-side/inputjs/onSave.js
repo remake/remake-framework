@@ -1,5 +1,5 @@
 import { $ } from '../queryjs';
-import { getDataFromRootNode, getDataFromNode } from "../outputjs";
+import { getDataFromRootNode, getDataFromNode } from "../data-utilities";
 import { ajaxPost } from '../hummingbird/lib/ajax';
 import { getAttributeValueAsArray } from '../parse-data-attributes';
 import optionsData from './optionsData';

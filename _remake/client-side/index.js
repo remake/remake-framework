@@ -19,7 +19,7 @@ import {
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors 
-} from './outputjs';
+} from './data-utilities';
 
 let init = initInputEventListeners;
 

@@ -2,7 +2,7 @@ import { $ } from '../queryjs';
 import { camelCaseToDash } from '../hummingbird/lib/string';
 import { callWatchFunctions } from './syncData';
 import { callSaveFunction } from './onSave';
-import { setValueForKeyName, getValueFromKeyName } from "../outputjs";
+import { getValueFromClosestKey, setValueOfClosestKey } from 'dataUtilities';
 
 export default function () {
 
@@ -70,36 +70,7 @@ export default function () {
 
 }
 
-function getValueFromClosestKey ({elem, camelCaseKeyName}) {
-  // 1. form the output attribute key name
-  let dashCaseKeyName = camelCaseToDash(camelCaseKeyName);
 
-  // 2. look for the closest element with that output attribute
-  let dataSourceElem = elem.closest(`[data-o-key-${dashCaseKeyName}], [data-l-key-${dashCaseKeyName}]`);
-
-  return getValueFromKeyName(dataSourceElem, camelCaseKeyName);
-}
-
-function setValueOfClosestKey ({elem, camelCaseKeyName, attributeValue}) {
-
-  // 1. form the output attribute key name
-  let dashCaseKeyName = camelCaseToDash(camelCaseKeyName);
-
-  // 2. look for the closest element with that output attribute
-  let dataSourceElem = elem.closest(`[data-o-key-${dashCaseKeyName}], [data-l-key-${dashCaseKeyName}]`);
-
-  // 3. set value on data source element
-  setValueForKeyName(dataSourceElem, camelCaseKeyName, attributeValue);
-
-  // 4. call watch functions since the data is changing
-  callWatchFunctions({
-    dashCaseKeyName: dashCaseKeyName, 
-    parentOfTargetElements: dataSourceElem, 
-    value: attributeValue, 
-    dataSourceElem: dataSourceElem
-  });
-
-}
 
 
 
