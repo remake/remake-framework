@@ -1,7 +1,7 @@
 import { parseStringWithIndefiniteNumberOfParams } from "../parse-data-attributes";
 import { dashToCamelCase } from '../hummingbird/lib/string';
 import { forEachAttr } from '../hummingbird/lib/dom';
-import { getLocationKeyValue, getDataFromNode } from "../outputjs";
+import { getLocationKeyValue } from "../outputjs";
 import optionsData from './optionsData';
 
 // README

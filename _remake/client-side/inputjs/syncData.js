@@ -1,4 +1,4 @@
-import { getDataAndDataSourceElemFromNodeAndAncestors, setValueForKeyName } from "../outputjs";
+import { getDataAndDataSourceElemFromNodeAndAncestors, setValueForKeyName } from "../data-utilities";
 import { camelCaseToDash } from '../hummingbird/lib/string';
 
 // this is fed a save callback function when inputjs in initialized
