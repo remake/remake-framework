@@ -16,6 +16,7 @@ import optionsData from './optionsData';
 // TIPS
 // - if you want a watch function to run every time data in synced, but not on page load, give
 //   it a watch attribute, but not a `data-w` attribute.
+     // note: this might be out of date. not sure we use data-w attributes any more.
 
 // WARNING
 // - watch attrs must be inside or on their data elements. they can't watch data inside themselves
@@ -81,6 +82,7 @@ export function callWatchFunctionsOnElem ({watchElem, watchAttrName, value, data
     // the default, catch-all "*" watch function is defined in optionsData.js
     let watchFunc = optionsData.watchFunctions && (optionsData.watchFunctions[funcName] || optionsData.watchFunctions["*"]);
     
+    // defaults for watchFunc() are defined in optionsData.js
     watchFunc({
       watchElem, 
       watchAttrName, 
