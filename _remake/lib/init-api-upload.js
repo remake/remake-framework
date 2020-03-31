@@ -52,13 +52,14 @@ export function initApiUpload ({app}) {
     }
 
     let uploadPath = path.join(uploadPathDir, "file_" + getLongUniqueId() + path.extname(file.name));
-
     file.mv(uploadPath, function(err) {
       if (err) {
         return res.status(500).json({success: false, reason: "processFailed"});
       }
 
-      res.json({success: true});
+      let filePathArr = uploadPath.split("/_remake-uploads/");
+      let filePath = "/" + filePathArr[filePathArr.length - 1];
+      res.json({success: true, filePath});
     });
   })
 

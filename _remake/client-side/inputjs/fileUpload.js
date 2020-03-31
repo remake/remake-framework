@@ -1,6 +1,8 @@
 import { $ } from '../queryjs';
 import { ajaxFileUpload } from '../hummingbird/lib/ajax';
 import optionsData from './optionsData';
+import { callSaveFunction } from './onSave';
+import { setValueOfClosestKey } from '../data-utilities';
 
 export default function () {
   $.on("change", "input[type='file'][data-i]", function (event) {
@@ -22,9 +24,12 @@ export default function () {
           if (optionsData.fileUploadProgressCallback) {
             optionsData.fileUploadProgressCallback({percentage});
           }
+        },
+        onSuccess: function (res) {
+          if (optionsData.fileUploadCallback) {
+            setFileData(fileInputElem, res.filePath);
 
-          if (percentage === 100 && optionsData.fileUploadCallback) {
-            optionsData.fileUploadCallback({success: true});
+            optionsData.fileUploadCallback({success: true, res});
           }
         },
         onError: function () {
@@ -63,6 +68,16 @@ export default function () {
 function resetFileInput (elem) {
   elem.disabled = false;
   elem.value = "";
+}
+
+function setFileData (elem, value) {
+  let camelCaseKeyName = elem.getAttribute("name");
+
+  setValueOfClosestKey({elem, camelCaseKeyName, value});
+
+  if (elem.getAttribute("data-i") === "triggerSaveOnChange") {
+    callSaveFunction({targetElement: elem});
+  }
 }
 
 
