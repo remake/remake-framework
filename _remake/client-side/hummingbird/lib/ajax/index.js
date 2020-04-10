@@ -39,8 +39,9 @@ export function ajaxFileUpload ({fileInputElem, onProgress, onSuccess, onError} 
   xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
   xhr.responseType = "json";
 
-  xhr.onreadystatechange = function (e) {  
-    if (xhr.readyState === 4) {  
+  xhr.onreadystatechange = function (e) {
+    // readyState === 4 means DONE
+    if (xhr.readyState === 4) {
       if (xhr.status === 200) {
         if (onSuccess) {
           onSuccess(xhr.response);
