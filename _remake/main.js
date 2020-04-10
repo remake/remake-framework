@@ -39,7 +39,7 @@ app.use(express.json());
 
 // uploading files
 app.use(fileUpload({
-  limits: { fileSize: 50 * 1024 * 1024 }
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB
 }));
 
 // add better logging
