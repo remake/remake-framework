@@ -5,6 +5,9 @@ import { callSaveFunction } from './onSave';
 import { setValueOfClosestKey } from '../data-utilities';
 
 export default function () {
+  let fileUploadStartTime;
+  let fileUploadFinishTime;
+
   $.on("change", "input[type='file'][data-i]", function (event) {
     let fileInputElem = event.target;
     let file = fileInputElem.files[0];
@@ -15,6 +18,10 @@ export default function () {
       ajaxFileUpload({
         fileInputElem,
         onProgress: function (percentage) {
+          if (percentage === 0) {
+            fileUploadStartTime = (new Date()).getTime();
+          }
+
           setPercentageOnUploadingNotice(percentage);
 
           if (percentage === 100) {
@@ -58,9 +65,16 @@ export default function () {
     progressStatusElem.innerText = parseInt(percentage, 10) + "%";
 
     if (percentage === 100) {
+      fileUploadFinishTime = (new Date()).getTime();
+
+      let timeoutMs = 1500;
+      if ((fileUploadFinishTime - fileUploadStartTime) < 2500) {
+        timeoutMs = 2300;
+      }
+
       setTimeout(function () {
         uploadingNotice.classList.remove("uploading-notice--visible");
-      }, 750);
+      }, timeoutMs);
     }
   }
 }
