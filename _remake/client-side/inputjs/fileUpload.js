@@ -87,7 +87,9 @@ function resetFileInput (elem) {
 function setFileData (elem, value) {
   let camelCaseKeyName = elem.getAttribute("name");
 
-  setValueOfClosestKey({elem, camelCaseKeyName, value});
+  if (camelCaseKeyName) {
+    setValueOfClosestKey({elem, camelCaseKeyName, value});
+  }
 
   if (elem.getAttribute("data-i") !== "dontTriggerSaveOnChange") {
     callSaveFunction({targetElement: elem});
