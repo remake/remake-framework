@@ -3,6 +3,7 @@ import { getLongUniqueId } from "./get-unique-id";
 import { getUserData } from "./user-data";
 import { capture, mkdirpAsync } from "../utils/async-utils";
 import { getDirForUpload } from "../utils/directory-helpers";
+import RemakeStore from "./remake-store";
 
 
 export function initApiUpload ({app}) {
@@ -57,8 +58,9 @@ export function initApiUpload ({app}) {
         return res.status(500).json({success: false, reason: "processFailed"});
       }
 
-      let filePathArr = uploadPath.split("/_remake-uploads/");
-      let filePath = "/" + filePathArr[filePathArr.length - 1];
+      let uploadPathParts = uploadPath.split("/");
+      let filePath = "/" + uploadPathParts[uploadPathParts.length - 2] + "/" + uploadPathParts[uploadPathParts.length - 1];
+
       res.json({success: true, filePath});
     });
   })
