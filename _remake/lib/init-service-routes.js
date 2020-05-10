@@ -71,7 +71,7 @@ function validPass(req, res, next) {
 const validSubdomain = (req, res, next) => {
   const subdomainRegex = /^[a-z]+[a-z0-9\-]*$/
   const subdomain = req.query.subdomain || req.body.subdomain || req.body.appName;
-  console.log("subdomain", req.body, Date.now());
+  console.log("req.body", req.body);
   if (!subdomain) {
     return res.status(400).json({ message: 'Bad request: subdomain is missing' }).end();
   } else if (!subdomainRegex.test(subdomain)) {
@@ -200,7 +200,7 @@ export function initServiceRoutes({app}) {
   // upload app files if the user owns the app
   // validation callbacks: checkIfAuthenticated, validSubdomain, upload.single(...)
   // user must be authenticated to access it
-  app.post('/service/deploy', checkIfAuthenticated, validSubdomain, (req, res) => {
+  app.post('/service/deploy', checkIfAuthenticated, upload.single('deployment'), validSubdomain, (req, res) => {
     const { appName } = req.body;
     connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
       [req.user_id, appName],
