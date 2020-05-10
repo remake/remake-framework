@@ -21,6 +21,7 @@ const upload = multer({ storage });
 
 // check JWT token received in the header of protected requests
 function checkIfAuthenticated(req, res, next) {
+  console.log(1, "req.body", req.body);
   const bearerHeader = req.headers["authorization"]; // get token
   if (typeof bearerHeader === 'string') {
     const bearer = bearerHeader.split(" ")[1];
@@ -235,7 +236,6 @@ export function initServiceRoutes({app}) {
   })
 
   app.get('/service/apps', checkIfAuthenticated, (req, res) => {
-    console.log(1, "req.body", req.body);
     connection.query('SELECT * FROM apps WHERE user_id = ?',
       [req.user_id],
       (err, results, fields) => {
