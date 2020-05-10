@@ -10,6 +10,7 @@ const archiver = require('archiver');
 // configure multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log("abc", req.body.appName);
     cb(null, global.config.location.tmp);
   },
   filename: (req, file, cb) => {
