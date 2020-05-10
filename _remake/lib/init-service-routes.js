@@ -71,7 +71,7 @@ function validPass(req, res, next) {
 const validSubdomain = (req, res, next) => {
   const subdomainRegex = /^[a-z]+[a-z0-9\-]*$/
   const subdomain = req.query.subdomain || req.body.subdomain || req.body.appName;
-  console.log("req.body", req.body);
+  console.log(2, "req.body", req.body);
   if (!subdomain) {
     return res.status(400).json({ message: 'Bad request: subdomain is missing' }).end();
   } else if (!subdomainRegex.test(subdomain)) {
@@ -235,6 +235,7 @@ export function initServiceRoutes({app}) {
   })
 
   app.get('/service/apps', checkIfAuthenticated, (req, res) => {
+    console.log(1, "req.body", req.body);
     connection.query('SELECT * FROM apps WHERE user_id = ?',
       [req.user_id],
       (err, results, fields) => {
