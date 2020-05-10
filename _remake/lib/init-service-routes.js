@@ -71,6 +71,7 @@ function validPass(req, res, next) {
 const validSubdomain = (req, res, next) => {
   const subdomainRegex = /^[a-z]+[a-z0-9\-]*$/
   const subdomain = req.query.subdomain || req.body.subdomain || req.body.appName;
+  console.log("subdomain", req.query.subdomain, req.body.subdomain, req.body.appName);
   if (!subdomain) {
     return res.status(400).json({ message: 'Bad request: subdomain is missing' }).end();
   } else if (!subdomainRegex.test(subdomain)) {
