@@ -200,7 +200,7 @@ export function initServiceRoutes({app}) {
   // upload app files if the user owns the app
   // validation callbacks: checkIfAuthenticated, validSubdomain, upload.single(...)
   // user must be authenticated to access it
-  app.post('/service/deploy', checkIfAuthenticated, upload.single('deployment'), validSubdomain, (req, res) => {
+  app.post('/service/deploy', checkIfAuthenticated, validSubdomain, (req, res) => {
     const { appName } = req.body;
     connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
       [req.user_id, appName],
