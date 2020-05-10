@@ -1,15 +1,19 @@
 const path = require("upath");
+const fileUpload = require("express-fileupload");
 import { getLongUniqueId } from "./get-unique-id";
 import { getUserData } from "./user-data";
 import { capture, mkdirpAsync } from "../utils/async-utils";
 import { getDirForUpload } from "../utils/directory-helpers";
 import RemakeStore from "./remake-store";
 
+const fileUploadMiddleware = fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 } // 50MB
+});
 
 export function initApiUpload ({app}) {
 
   // route for "/upload" and "/app_*/upload"
-  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/upload/, async (req, res) => {
+  app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/upload/, fileUploadMiddleware, async (req, res) => {
 
     if (!req.isAuthenticated()) {
       res.json({success: false, reason: "notAuthorized"});

@@ -37,7 +37,6 @@ function checkIfAuthenticated(req, res, next) {
         return res.status(403).json({ message: 'Bad request: ' + err }).end();
       } else {
         req.user_id = data.id;
-        req.body.appName = req.body.appName;
         next();
       }
     })
