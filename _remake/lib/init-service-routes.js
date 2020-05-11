@@ -17,7 +17,13 @@ const storage = multer.diskStorage({
   }
 })
 
-const upload = multer({ storage });
+const upload = multer({ 
+  storage, 
+  limits: {
+    fieldSize: 50 * 1024 * 1024,
+    fileSize: 50 * 1024 * 1024
+  } 
+});
 
 // check JWT token received in the header of protected requests
 function checkIfAuthenticated(req, res, next) {

@@ -8,7 +8,6 @@ const shell = require("shelljs");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
-const fileUpload = require("express-fileupload");
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
@@ -36,11 +35,6 @@ app.use(express.static(path.join(__dirname, "../_remake-uploads")));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
-// uploading files
-app.use(fileUpload({
-  limits: { fileSize: 50 * 1024 * 1024 } // 50MB
-}));
 
 // add better logging
 app.use(morgan("common"));
