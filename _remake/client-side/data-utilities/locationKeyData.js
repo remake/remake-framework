@@ -35,6 +35,7 @@ let attributeLookupFromNodeName = {
   SCRIPT: "src",
   LINK: "href"
 };
+let shouldGetAsAttributeInsteadOfAsProp = ["class", "src", "href", "style"];
 export function getLocationKeyValue (elem, dashCaseKeyName, locationString) {
   let {elemAttribute, targetElem} = getDataFromLocationString(elem, dashCaseKeyName, locationString);
 
@@ -53,7 +54,11 @@ export function getLocationKeyValue (elem, dashCaseKeyName, locationString) {
     elemAttribute = elemAttribute.substring(5);
     elemValue = targetElem && targetElem.getAttribute(elemAttribute);
   } else {
-    elemValue = targetElem && targetElem[elemAttribute]; // e.g. elem["innerText"]
+    if (shouldGetAsAttributeInsteadOfAsProp.includes(elemAttribute)) {
+      elemValue = targetElem && targetElem.getAttribute(elemAttribute); // e.g. elem["src"]
+    } else {
+      elemValue = targetElem && targetElem[elemAttribute]; // e.g. elem["innerText"]
+    }
   }
 
   return typeof elemValue === "string" ? elemValue.trim() : "";
