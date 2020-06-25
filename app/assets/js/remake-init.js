@@ -1,7 +1,5 @@
-// By default, this JS file is only loaded if the current user 
-// is also the page author. Remake isn't really necessary if the 
-// page isn't editable.
-
+// THIS FILE INITIALIZES REMAKE'S FRONT END CODE
+// It's only loaded if the current user is the page's owner.
 import Remake from 'remake-framework';
 import crostini from 'crostini';
 import sortablejs from 'sortablejs';
