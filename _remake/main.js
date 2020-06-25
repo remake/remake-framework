@@ -8,6 +8,7 @@ const shell = require("shelljs");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
+const terminalLink = require('terminal-link');
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
@@ -16,6 +17,7 @@ import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 import { initServiceRoutes } from "./lib/init-service-routes";
 import { getParams } from "./utils/get-params";
+import { showConsoleSuccess } from "./utils/console-utils";
 import { capture } from "./utils/async-utils";
 import { setEnvironmentVariables } from "./utils/setup-env";
 import RemakeStore from "./lib/remake-store";
@@ -196,7 +198,12 @@ initRenderedRoutes({ app });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
+  console.log("\n\n");
+  showConsoleSuccess(`#####################################################################`);
+  showConsoleSuccess(`#                                                                   #`);
+  showConsoleSuccess(`#           Visit your Remake app: http://localhost:${PORT}            #`);
+  showConsoleSuccess(`#                                                                   #`);
+  showConsoleSuccess(`#####################################################################`);
 
   if (process.send) {
     process.send("online");
