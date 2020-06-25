@@ -22,9 +22,9 @@ function processFile ({filePath, stats, shouldRecompute, isProduction}) {
   if (isJsFile && !fileStartsWithUnderscore) {
     // using npx here to ensure babel is in our path
     if (isProduction) {
-      shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --cache-dir ./asset-bundler/.cache --out-file ${distFileName} --no-source-maps --no-content-hash`);
+      shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --cache-dir ./_remake-asset-bundler/.cache --out-file ${distFileName} --no-source-maps --no-content-hash`);
     } else {
-      shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --cache-dir ./asset-bundler/.cache --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
+      shell.exec(`npx parcel build ${filePath} --out-dir ${distDir} --cache-dir ./_remake-asset-bundler/.cache --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
     }
   }
 
@@ -95,9 +95,9 @@ function recompileFilesForApp ({filePath, isJsFile, isSassFile, isProduction}) {
 
     if (isJsFile) {
       if (isProduction) {
-        shell.exec(`npx parcel build ${fp} --out-dir ${distDir} --cache-dir ./asset-bundler/.cache --out-file ${distFileName} --no-source-maps --no-content-hash`);
+        shell.exec(`npx parcel build ${fp} --out-dir ${distDir} --cache-dir ./_remake-asset-bundler/.cache --out-file ${distFileName} --no-source-maps --no-content-hash`);
       } else {
-        shell.exec(`npx parcel build ${fp} --out-dir ${distDir} --cache-dir ./asset-bundler/.cache --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
+        shell.exec(`npx parcel build ${fp} --out-dir ${distDir} --cache-dir ./_remake-asset-bundler/.cache --out-file ${distFileName} --no-minify --no-source-maps --no-content-hash`);
       }
     } else {
       if (isProduction) {
