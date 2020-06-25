@@ -8,7 +8,6 @@ const shell = require("shelljs");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
-const terminalLink = require('terminal-link');
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
