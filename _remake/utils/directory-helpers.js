@@ -70,6 +70,13 @@ export function getDirForBootstrapDataFile ({fileName, appName}) {
   return path.join(__dirname, pathString);
 }
 
+export function getDirForGlobalData ({fileName, appName}) {
+  let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
+  let pathString = `../../app/${innerAppPath}data/global-app-data.json`;
+  return path.join(__dirname, pathString);
+}
+
+
 
 
 

@@ -248,6 +248,9 @@ function insertRemakeEditPopoverHtml () {
       padding: 7px 14px 9px;
       border: 0;
       outline: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+ Helvetica, Arial, sans-serif,
+ "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
       font-size: 18px;
       color: #fff !important;
       background-color: #228be6;

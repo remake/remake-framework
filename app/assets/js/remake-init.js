@@ -25,7 +25,9 @@ Remake.init({
 // for debugging & development
 window.getDataFromRootNode = Remake.getDataFromRootNode;
 
-// todo: remove this
+// for debugging only. 
+//   calls the save function on every page load.
+//   not recommended for production. use data-i-* attributes to trigger a save instead
 // Remake.callSaveFunction({targetElement: document.body});
 
 
