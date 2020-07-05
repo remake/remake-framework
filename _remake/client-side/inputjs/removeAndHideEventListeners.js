@@ -2,7 +2,7 @@ import { $ } from '../queryjs';
 import { callSaveFunction } from './onSave';
 import { forEachAttr } from '../hummingbird/lib/dom';
 import { triggerSyncAndSave, syncDataBetweenElements } from "./syncData";
-import { setAllDataToEmptyStringsExceptIds } from "../outputjs";
+import { setAllDataToEmptyStringsExceptIds } from "../data-utilities";
 
 export function initRemoveAndHideEventListeners () {
 

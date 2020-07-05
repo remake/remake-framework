@@ -14,12 +14,12 @@ import {
 
 import { 
   getDataFromRootNode,
-  setLocationKeyValue,
   getLocationKeyValue,
+  setLocationKeyValue,
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors 
-} from './outputjs';
+} from './data-utilities';
 
 let init = initInputEventListeners;
 
@@ -34,8 +34,8 @@ export default {
   callMultipleWatchFunctions,
   getValueAndDataSourceElemFromKeyName,
   getDataFromRootNode,
-  setLocationKeyValue,
   getLocationKeyValue,
+  setLocationKeyValue,
   setValueForKeyName,
   getDataFromNode,
   getDataAndDataSourceElemFromNodeAndAncestors 

@@ -1,7 +1,7 @@
 import { parseStringWithIndefiniteNumberOfParams } from "../parse-data-attributes";
 import { dashToCamelCase } from '../hummingbird/lib/string';
 import { forEachAttr } from '../hummingbird/lib/dom';
-import { getLocationKeyValue, getDataFromNode } from "../outputjs";
+import { getLocationKeyValue } from "../data-utilities";
 import optionsData from './optionsData';
 
 // README
@@ -16,6 +16,7 @@ import optionsData from './optionsData';
 // TIPS
 // - if you want a watch function to run every time data in synced, but not on page load, give
 //   it a watch attribute, but not a `data-w` attribute.
+     // note: this might be out of date. not sure we use data-w attributes any more.
 
 // WARNING
 // - watch attrs must be inside or on their data elements. they can't watch data inside themselves
@@ -81,6 +82,7 @@ export function callWatchFunctionsOnElem ({watchElem, watchAttrName, value, data
     // the default, catch-all "*" watch function is defined in optionsData.js
     let watchFunc = optionsData.watchFunctions && (optionsData.watchFunctions[funcName] || optionsData.watchFunctions["*"]);
     
+    // defaults for watchFunc() are defined in optionsData.js
     watchFunc({
       watchElem, 
       watchAttrName, 
@@ -166,6 +168,32 @@ export function getWatchElements ({elementWithData, dashCaseKeyName}) {
   let nestedWatchElements = Array.from(elementWithData.querySelectorAll(nestedWatchSelector));
 
   return watchElements.concat(allWatchElements.filter(el => !nestedWatchElements.includes(el)));
+}
+
+// This is used by the main func: `syncDataBetweenElements()` to call all the nested 
+// watch functions. 
+//
+// Notes:
+// - `parentOfTargetElements` is the element data keys on it that's going to be synced into.
+//    It's expected to have all of the watch functions that will be called inside of it.
+// - `dataSourceElem` is the element where that data comes from. It's probably a parent object
+//    that contains other elements with data on them.
+export function callWatchFunctions ({dashCaseKeyName, parentOfTargetElements, value, dataSourceElem}) {
+  // 1. Find ALL CHILD elements of the target element that match a `data-w-key` 
+  //    UNLESS they're children of another matching data-o-key element.
+  //    Watch functions don't activate to data changes that are outside their scope
+  let watchElems = getWatchElements({elementWithData: parentOfTargetElements, dashCaseKeyName});
+
+  watchElems.forEach((watchElem) => {
+    // 2. Call all the watch functions defined by this attribute
+    callWatchFunctionsOnElem({
+      watchElem, 
+      watchAttrName: `data-w-key-${dashCaseKeyName}`, 
+      value: value, 
+      dataSourceElem: dataSourceElem,
+      dataTargetElem: parentOfTargetElements
+    });      
+  });
 }
 
 

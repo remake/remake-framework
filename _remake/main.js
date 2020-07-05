@@ -11,10 +11,12 @@ const pathMatch = require("path-match")({});
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
+import { initApiUpload } from "./lib/init-api-upload";
 import { initRenderedRoutes } from "./lib/init-rendered-routes";
 import { initUserAccounts } from "./lib/init-user-accounts";
 import { initServiceRoutes } from "./lib/init-service-routes";
 import { getParams } from "./utils/get-params";
+import { showConsoleSuccess } from "./utils/console-utils";
 import { capture } from "./utils/async-utils";
 import { setEnvironmentVariables } from "./utils/setup-env";
 import RemakeStore from "./lib/remake-store";
@@ -29,6 +31,8 @@ app.enable("trust proxy", "127.0.0.1");
 
 // static assets middleware comes before other routes, so they don't get asset requests
 app.use(express.static(path.join(__dirname, "./dist")));
+app.use(express.static(path.join(__dirname, "../_remake-uploads")));
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -89,7 +93,7 @@ app.use(async function (req, res, next) {
     // - we get the path segments from the referrer
     // - there will always be a max of 3 path segments in the referrer
     req.urlData.pageParamsGeneric = routeMatcher(req.urlData.referrerUrlPathname) || {};
-    [pageParams, pageParamsError] = await capture(getParams({req, fromReferrer: true}));
+    [pageParams, pageParamsError] = await capture(getParams({req}));
   } else if (!RemakeStore.isMultiTenant()) {
     // when single-tenant is enabled, there will always be a max of 3 path segments
     req.urlData.pageParamsGeneric = routeMatcher(req.urlData.urlPathname) || {};
@@ -119,7 +123,7 @@ let thirtyDaysInMs = 2592000000;
 let thirtyDaysInSec = 2592000000 / 1000;
 app.use(expressSession({ 
   store: new FileStore({
-    path: path.join(__dirname, "./.sessions"),
+    path: path.join(__dirname, "../.sessions"),
     ttl: thirtyDaysInSec
   }),
   secret: process.env.SESSION_SECRET, 
@@ -188,11 +192,17 @@ if (RemakeStore.isMultiTenant()) {
 initUserAccounts({ app });
 initApiNew({ app });
 initApiSave({ app });
+initApiUpload({ app });
 initRenderedRoutes({ app });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
+  console.log("\n\n");
+  showConsoleSuccess(`#####################################################################`);
+  showConsoleSuccess(`#                                                                   #`);
+  showConsoleSuccess(`#           Visit your Remake app: http://localhost:${PORT}            #`);
+  showConsoleSuccess(`#                                                                   #`);
+  showConsoleSuccess(`#####################################################################`);
 
   if (process.send) {
     process.send("online");

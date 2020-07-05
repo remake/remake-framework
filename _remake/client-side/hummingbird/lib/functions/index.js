@@ -1,4 +1,3 @@
-
 export function debounce (fn, time) {
   let timeout;
 

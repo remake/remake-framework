@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const extract = require('extract-zip');
@@ -17,7 +17,13 @@ const storage = multer.diskStorage({
   }
 })
 
-const upload = multer({ storage });
+const upload = multer({ 
+  storage, 
+  limits: {
+    fieldSize: 50 * 1024 * 1024,
+    fileSize: 50 * 1024 * 1024
+  } 
+});
 
 // check JWT token received in the header of protected requests
 function checkIfAuthenticated(req, res, next) {
@@ -288,6 +294,7 @@ export function initServiceRoutes({app}) {
         archive.pipe(output);
         archive.glob(path.join('app', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
         archive.glob(path.join('_remake-data', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
+        archive.glob(path.join('_remake-uploads', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
         archive.finalize();
       });
   })

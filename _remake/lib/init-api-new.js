@@ -1,7 +1,7 @@
 const Handlebars = require('handlebars');
 import { isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
-import getUniqueId from "./get-unique-id";
+import { getUniqueId } from "./get-unique-id";
 import { getUserData } from "./user-data";
 import { getParams } from "../utils/get-params";
 import { getPartial } from "../utils/get-partials";
