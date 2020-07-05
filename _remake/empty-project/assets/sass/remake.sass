@@ -1,0 +1,27 @@
+// hide remake edit buttons from users that aren't the page author
+[data-user-is-not-page-author], [data-i-editable-off]
+  [data-i-new]
+    display: none
+
+// useful for hiding edit controls
+[data-user-is-not-page-author]
+  .hide-if-not-page-author
+    display: none
+
+// give an indication that an editable element can be clicked to edit it
+[data-user-is-page-author]
+  [data-i-editable]
+    cursor: pointer
+
+// if an editable element has no inner content, 
+// it will still maintain a width and height
+[data-i-editable]:empty, [data-i-editable-without-remove]:empty
+  min-height: 24px
+  min-width: 48px
+  max-width: 160px
+  border: 2px dashed #dee2e6
+
+// useful for preserving newline characters in an element 
+// that are set with data-i-editable="someKey(multi-line-text)"
+.has-multi-line-text
+  white-space: pre-line
