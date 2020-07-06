@@ -26,12 +26,8 @@ export function initHandlebarsHelpers ({Handlebars}) {
       appName: RemakeStore.isMultiTenant() ? this.appName : undefined
     });
 
-    if (!context) {
-      return "";
-    }
-
     // render {{else}} block
-    if (context.length === 0) {
+    if (!context || context.length === 0) {
       return options.inverse(this);
     }
 
