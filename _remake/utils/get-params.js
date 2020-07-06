@@ -51,7 +51,7 @@ export async function getParams ({req}) {
     } else {
       // route: /username
       username = firstParam;
-      pageName = "username";
+      pageName = "app-index";
     }
   } else {
     // route: /username/pageName/

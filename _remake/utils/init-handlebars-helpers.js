@@ -30,6 +30,11 @@ export function initHandlebarsHelpers ({Handlebars}) {
       return "";
     }
 
+    // render {{else}} block
+    if (context.length === 0) {
+      return options.inverse(this);
+    }
+
     // contextItem has the data passed into the helper
     let overallRender = context.map(contextItem => {
       
