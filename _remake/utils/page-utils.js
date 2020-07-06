@@ -101,7 +101,7 @@ export async function doesPageExist ({appName, pageName}) {
 
 // process template
 
-let layoutNameRegex = /\{\{\s+layout\s+["'](\w+)["']\s+\}\}/;
+let layoutNameRegex = /\{\{\s*layout\s+["'](\w+)["']\s*\}\}/;
 let yieldCommandRegex = /\{\{>\s+yield\s+\}\}/;
 let forInLoopRegex = /\{\{#for\s+(\S+)\s+in\s+([^\}\s]+)/g;
 
