@@ -1,4 +1,4 @@
-# Hi, welcome to Remake! 😁
+# Hi, welcome to your Remake app! 😁
 
 This "app" directory is where all the code for your app will live.
 
