@@ -8,6 +8,25 @@
   <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
+  {{#if currentUser}}
+    <a href="/user/logout">Logout</a>
+  {{else}}
+    <a class="nav__button" href="/user/signup">Sign up</a>
+    &nbsp;
+    <a class="nav__button" href="/user/login">Log in</a>
+  {{/if}}
+  {{!-- Show errors --}}
+  {{#if flashErrors }}
+    {{#each flashErrors }}
+      <div>{{ this }}</div>
+    {{/each}}
+  {{/if}}
+  {{!-- Show success messages --}}
+  {{#if flashSuccesses }}
+    {{#each flashSuccesses }}
+      <div>{{ this }}</div>
+    {{/each}}
+  {{/if}}
   {{> yield }}
   {{#if isPageAuthor}}
     {{!-- Prevent loading the Remake framework if the page isn't editable --}}
