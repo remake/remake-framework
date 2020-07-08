@@ -21,6 +21,10 @@ import { capture } from "./utils/async-utils";
 import { setEnvironmentVariables } from "./utils/setup-env";
 import RemakeStore from "./lib/remake-store";
 
+console.log(123123123123123123123);
+console.log(123123123123123123123);
+console.log(123123123123123123123);
+
 // set up environment variables
 setEnvironmentVariables();
 
