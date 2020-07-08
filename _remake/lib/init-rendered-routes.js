@@ -73,7 +73,7 @@ export async function initRenderedRoutes ({ app }) {
     let params = req.urlData.pageParams;
 
     if (params.redirectToUserRoute) {
-      res.redirect("/user/" + params.pageName);
+      res.redirect("/user/" + params.pageName);;console.log(`res.redirect("/user/" + params.pageName);`);
       return;
     }
 

@@ -67,25 +67,25 @@ function initUserAccounts ({ app }) {
     if (password.length < 8 || username.length < 1 || !validUsernameRegex.test(username)) {
       if (password.length < 8) {
         req.flash("error", "Your password must be at least 8 characters");
-        res.redirect('/user/signup');
+        res.redirect('/user/signup');;console.log(`res.redirect('/user/signup');`);
         return;
       }
 
       if (username.length < 1) {
         req.flash("error", "Please enter a username");
-        res.redirect('/user/signup');
+        res.redirect('/user/signup');;console.log(`res.redirect('/user/signup');`);
         return;
       }
 
       if (username.startsWith("_") || username.startsWith("-")) {
         req.flash("error", `Your username needs to start with a letter or number`);
-        res.redirect('/user/signup');
+        res.redirect('/user/signup');;console.log(`res.redirect('/user/signup');`);
         return;
       }
 
       if (!validUsernameRegex.test(username)) {
         req.flash("error", `Your username can only contain letters, numbers, and certain symbols ("_" or "-")`);
-        res.redirect('/user/signup');
+        res.redirect('/user/signup');;console.log(`res.redirect('/user/signup');`);
         return;
       }
     }
@@ -93,14 +93,14 @@ function initUserAccounts ({ app }) {
     let reservedWordInfo = getReservedWordInfo(username);
     if (reservedWordInfo.isReserved) {
       req.flash("error", `Your username can't contain the reserved word: "${reservedWordInfo.reservedWord}"`);
-      res.redirect('/user/signup');
+      res.redirect('/user/signup');;console.log(`res.redirect('/user/signup');`);
       return;
     }
 
     let [usernameTaken] = await capture(getUserData({ username }));
     if (usernameTaken) {
       req.flash("error", "That username is taken, please try another one!");
-      res.redirect('/user/signup');
+      res.redirect('/user/signup');;console.log(`res.redirect('/user/signup');`);
       return;
     }
 
@@ -109,10 +109,10 @@ function initUserAccounts ({ app }) {
 
     req.login(newUser, function (err) {
       if (!err){
-        res.redirect('/' + newUser.details.username);
+        res.redirect('/' + newUser.details.username);;console.log(`res.redirect('/' + newUser.details.username);`);
       } else {
         req.flash("error", "Error creating user account");
-        res.redirect('/user/login');
+        res.redirect('/user/login');;console.log(`res.redirect('/user/login');`);
       }
     });
   });
@@ -121,12 +121,12 @@ function initUserAccounts ({ app }) {
     failureRedirect: '/login',
     failureFlash: "Invalid username or password"
   }), function(req, res) {
-    res.redirect('/' + req.user.details.username);
+    res.redirect('/' + req.user.details.username);;console.log(`res.redirect('/' + req.user.details.username);`);
   });
 
   app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/logout/, function(req, res) {
     req.logout();
-    res.redirect('/user/login');
+    res.redirect('/user/login');;console.log(`res.redirect('/user/login');`);
   });
 
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/forgot/, async function(req, res) {
@@ -136,7 +136,7 @@ function initUserAccounts ({ app }) {
 
     if (!currentUser) {
       req.flash("error", "User not found");
-      res.redirect('/user/forgot');
+      res.redirect('/user/forgot');;console.log(`res.redirect('/user/forgot');`);
       return;
     }
 
@@ -154,10 +154,10 @@ function initUserAccounts ({ app }) {
     }, function (err) {
       if (err) {
         req.flash('error', `Couldn't send password reset email. Please try again.`);
-        res.redirect("/user/forgot");
+        res.redirect("/user/forgot");;console.log(`res.redirect("/user/forgot");`);
       } else {
         req.flash('success', 'An email with a link to change your password has been sent!');
-        res.redirect("/user/login");
+        res.redirect("/user/login");;console.log(`res.redirect("/user/login");`);
       }
 
     });
@@ -176,20 +176,20 @@ function initUserAccounts ({ app }) {
 
     if (!currentUser) {
       req.flash("error", "User not found");
-      res.redirect('/user/forgot');
+      res.redirect('/user/forgot');;console.log(`res.redirect('/user/forgot');`);
       return;
     }
 
     let expiresDate = currentUser.details.resetPasswordExpires;
     if (typeof expiresDate !== "number" || Date.now() > expiresDate) {
       req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
-      res.redirect('/user/forgot');
+      res.redirect('/user/forgot');;console.log(`res.redirect('/user/forgot');`);
       return;
     }
 
     if (!token || token !== currentUser.details.resetPasswordToken) {
       req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
-      res.redirect('/user/forgot');
+      res.redirect('/user/forgot');;console.log(`res.redirect('/user/forgot');`);
       return;
     }
 
@@ -210,26 +210,26 @@ function initUserAccounts ({ app }) {
 
     if (!currentUser) {
       req.flash("error", "User not found");
-      res.redirect('/user/forgot');
+      res.redirect('/user/forgot');;console.log(`res.redirect('/user/forgot');`);
       return;
     }
 
     let expiresDate = currentUser.details.resetPasswordExpires;
     if (typeof expiresDate !== "number" || Date.now() > expiresDate) {
       req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
-      res.redirect('/user/forgot');
+      res.redirect('/user/forgot');;console.log(`res.redirect('/user/forgot');`);
       return;
     }
 
     if (!token || token !== currentUser.details.resetPasswordToken) {
       req.flash('error', 'Password reset token is invalid or has expired. Please try again.');
-      res.redirect('/user/forgot');
+      res.redirect('/user/forgot');;console.log(`res.redirect('/user/forgot');`);
       return;
     }
 
     if (!password || password.length < 8) {
       req.flash("error", "Your password must be at least 8 characters");
-      res.redirect('/user/signup');
+      res.redirect('/user/signup');;console.log(`res.redirect('/user/signup');`);
       return;
     }
 
@@ -242,10 +242,10 @@ function initUserAccounts ({ app }) {
 
     req.login(currentUser, function (err) {
       if (!err){
-        res.redirect('/' + currentUser.details.username);
+        res.redirect('/' + currentUser.details.username);;console.log(`res.redirect('/' + currentUser.details.username);`);
       } else {
         req.flash('success', 'Success! Please log in with your new password');
-        res.redirect('/user/login');
+        res.redirect('/user/login');;console.log(`res.redirect('/user/login');`);
       }
     });
 
