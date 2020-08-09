@@ -30,8 +30,12 @@ const app = express();
 app.enable("trust proxy", "127.0.0.1");
 
 // static assets middleware comes before other routes, so they don't get asset requests
-app.use(express.static(path.join(__dirname, "./dist")));
-app.use(express.static(path.join(__dirname, "../_remake-uploads")));
+app.use(express.static(path.join(__dirname, "./dist"), {
+  redirect: false
+}));
+app.use(express.static(path.join(__dirname, "../_remake-uploads"), {
+  redirect: false
+}));
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
