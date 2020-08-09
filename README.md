@@ -4,7 +4,7 @@ This is the latest version of the Remake framework, along with a Trello clone ap
 
 Instead of using this repository, use the official Remake CLI to generate this starter project.
 
-https://github.com/panphora/remake
+https://github.com/remake/remake
 
 However, if you want to set it up manually, feel free to follow the following instructions:
 
@@ -13,7 +13,7 @@ However, if you want to set it up manually, feel free to follow the following in
 1. Clone this repo
 
 ```
-git clone https://github.com/panphora/remake-framework.git
+git clone https://github.com/remake/remake-framework.git
 ```
 
 2. Install dependencies
