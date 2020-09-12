@@ -1,18 +1,21 @@
 import { formatSpaces } from "../parse-data-attributes";
 
+// TODOSYNTAX remove this file if possible
+
+
+
+
 // Used for attributes like: <div data-l-key-widget-code=".widget-code innerHTML"></div>
 // helper function for getLocationKeyValue() and setLocationKeyValue()
 export function getDataFromLocationString (elem, dashCaseKeyName, locationString) {
-  locationString = formatSpaces(locationString);
-  let [selector, elemAttribute] = locationString.split(" "); // e.g. [".selector", "attr:data-x-text"]
   let targetElem;
 
-  if (!selector) {
-    let defaultTargetSelector = `[data-l-target-${dashCaseKeyName}]`;
+  if (locationString.startsWith("@search")) {
+    let defaultTargetSelector = `[target\\:${dashCaseKeyName}]`;
     if (elem.matches(defaultTargetSelector)) {
       targetElem = elem;
     } else {
-      targetElem = elem.querySelector(defaultTargetSelector); // e.g. dashCaseKeyName = "page-title"
+      console.error(`Remake Error: No matching target found for @search directive on '${dashCaseKeyName}' key`)
     }
   }
 
@@ -50,7 +53,7 @@ export function getLocationKeyValue (elem, dashCaseKeyName, locationString) {
   }
 
   let elemValue;
-  if (elemAttribute.indexOf("attr:") === 0) {
+  if (elemAttribute.indexOf("@attr:") === 0) {
     elemAttribute = elemAttribute.substring(5);
     elemValue = targetElem && targetElem.getAttribute(elemAttribute);
   } else {
@@ -71,7 +74,9 @@ export function setLocationKeyValue (elem, dashCaseKeyName, locationString, valu
 
   let nodeName = targetElem.nodeName.toUpperCase();
 
-  if (!elemAttribute) {
+  if (elemAttribute) {
+    elemAttribute = elemAttribute.replace(/^@/, "");
+  } else {
     elemAttribute = attributeLookupFromNodeName[nodeName];
 
     if (!elemAttribute) {
@@ -82,8 +87,8 @@ export function setLocationKeyValue (elem, dashCaseKeyName, locationString, valu
   if (targetElem) {
     let valueAsString = value.toString();
 
-    if (elemAttribute.indexOf("attr:") === 0) {
-      elemAttribute = elemAttribute.substring(5);
+    if (elemAttribute.indexOf("@attr:") === 0) {
+      elemAttribute = elemAttribute.substring(6);
       targetElem.setAttribute(elemAttribute, valueAsString);
     } else {
       targetElem[elemAttribute] = valueAsString;
