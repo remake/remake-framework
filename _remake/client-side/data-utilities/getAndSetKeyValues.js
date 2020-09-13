@@ -3,7 +3,7 @@ import { getValidElementProperties } from '../common/get-valid-element-propertie
 const dashCase = require('lodash/kebabCase');
 const validPropertyCommands = getValidElementProperties().map(p => "@" + p);
 
-function valueForKeyName (method, elem, keyName, value) {
+function _valueForKeyName ({method, elem, keyName, value}) {
   let dashCaseKeyName = dashCase(keyName)
   let attrName = "key:" + dashCaseKeyName;
   let currentAttrValue = elem.getAttribute(attrName);
@@ -72,38 +72,37 @@ function valueForKeyName (method, elem, keyName, value) {
 // set a value for a key 
 // called on single element
 // can affet multiple child elements
-export function setValueForKeyName (elem, keyName, value) {
-  valueForKeyName("set", elem, keyName, value);
+export function setValueForKeyName ({elem, keyName, value}) {
+  _valueForKeyName({method: "set", elem, keyName, value});
 }
 
 // get a value for a key 
 // called on single element
 // gets value from a single child element (the first one it finds)
-export function getValueForKeyName (elem, keyName) {
-  return valueForKeyName("get", elem, keyName);
+export function getValueForKeyName ({elem, keyName}) {
+  return _valueForKeyName({method: "get", elem, keyName});
+}
+
+
+function _valueForClosestKey ({method, elem, keyName, value}) {
+  let dashCaseKeyName = dashCase(keyName);
+  let closestElem = elem.closest(`[key\\:${dashCaseKeyName}]`);
+
+  if (method === "set") {
+    setValueForKeyName({elem: closestElem, keyName, value});
+  } else {
+    return getValueForKeyName({elem: closestElem, keyName});
+  }
+}
+
+export function getValueForClosestKey ({elem, keyName}) {
+  return _valueForClosestKey({method: "get", elem, keyName});
+}
+
+export function setValueForClosestKey ({elem, keyName}) {
+  _valueForClosestKey({method: "set", elem, keyName});
 }
 
 
 
-export function getValueFromClosestKey ({elem, camelCaseKeyName}) {
-  // 1. form the output attribute key name
-  let dashCaseKeyName = camelCaseToDash(camelCaseKeyName);
 
-  // 2. look for the closest element with that output attribute
-  let dataSourceElem = elem.closest(`[data-o-key-${dashCaseKeyName}], [data-l-key-${dashCaseKeyName}]`);
-
-  return getValueFromKeyName(dataSourceElem, camelCaseKeyName);
-}
-
-export function setValueOfClosestKey ({elem, camelCaseKeyName, value}) {
-
-  // 1. form the output attribute key name
-  let dashCaseKeyName = camelCaseToDash(camelCaseKeyName);
-
-  // 2. look for the closest element with that output attribute
-  let dataSourceElem = elem.closest(`[data-o-key-${dashCaseKeyName}], [data-l-key-${dashCaseKeyName}]`);
-
-  // 3. set value on data source element
-  setValueForKeyName(dataSourceElem, camelCaseKeyName, value);
-
-}

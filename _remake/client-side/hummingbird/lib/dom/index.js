@@ -1,5 +1,6 @@
 // TRAVERSING & ASSEMBLING DOM UTILS
 
+// searches elem and all its ancestors to see if they match a selector
 export function forEachAncestorMatch ({elem, selector, callback}) {
   let matchingElem = elem.closest(selector);
 
@@ -13,6 +14,8 @@ export function forEachAncestorMatch ({elem, selector, callback}) {
   }
 }
 
+
+// searches parent element and all children to see if they match a selector
 export function forEachMatchingElem (parentElem, selector, callback) {
   if (parentElem.matches(selector)) {
     callback(parentElem);
