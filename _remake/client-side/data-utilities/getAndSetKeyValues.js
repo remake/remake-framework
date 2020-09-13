@@ -1,17 +1,20 @@
-import { getLocationKeyValue, setLocationKeyValue } from './locationKeyData';
 import { callWatchFunctions } from '../inputjs';
 import { getValidElementProperties } from '../common/get-valid-element-properties';
 const dashCase = require('lodash/kebabCase');
 const validPropertyCommands = getValidElementProperties().map(p => "@" + p);
 
 function valueForKeyName (method, elem, keyName, value) {
-  let dashCaseKeyName = dashCase(camelCaseKeyName)
+  let dashCaseKeyName = dashCase(keyName)
   let attrName = "key:" + dashCaseKeyName;
   let currentAttrValue = elem.getAttribute(attrName);
   let hasValidCommand = validPropertyCommands.includes(currentAttrValue) || currentAttrValue === "@search" || currentAttrValue.startsWith("@attr:");
 
   if (!hasValidCommand) {
-    elem.setAttribute(attrName, value);
+    if (method === "set") {
+      elem.setAttribute(attrName, value);
+    } else {
+      return elem.getAttribute(attrName);
+    }
   } else {
     // possible commands: @search, @attr:, or a native property
 
@@ -37,8 +40,7 @@ function valueForKeyName (method, elem, keyName, value) {
       if (targetHasValidCommand) {
         if (targetCommand.startsWith("@attr:")) {
           // CUSTOM ATTRIBUTES
-          let targetCommandAttrName = targetAttrValue.substring("@attr:".length);
-          let referencedAttr = targetAttrValue.substring("@attr:".length);
+          let referencedAttr = targetCommand.substring("@attr:".length);
           if (method === "set") {
             targetElem.setAttribute(referencedAttr, value);
           } else {
@@ -71,14 +73,14 @@ function valueForKeyName (method, elem, keyName, value) {
 // called on single element
 // can affet multiple child elements
 export function setValueForKeyName (elem, keyName, value) {
-  return valueForKeyName("set", elem, keyName, value);
+  valueForKeyName("set", elem, keyName, value);
 }
 
 // get a value for a key 
 // called on single element
 // gets value from a single child element (the first one it finds)
-export function getValueForKeyName (elem, keyName, value) {
-  valueForKeyName("get", elem, keyName, value);
+export function getValueForKeyName (elem, keyName) {
+  return valueForKeyName("get", elem, keyName);
 }
 
 
