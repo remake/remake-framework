@@ -1,4 +1,4 @@
-let elemProps = ["id", "className", "type", "src", "href", "value", "checked", "innerText", "innerHTML", "style", "title", "alt", "for", "placeholder"];
+import { getValidElementProperties } from '../common/get-valid-element-properties';
 
 export default {
 
@@ -10,7 +10,7 @@ export default {
       let listOfProps = watchFuncName.split(".");
 
       // check to make sure it's a valid elem property
-      if (elemProps.includes(listOfProps[0])) {
+      if (getValidElementProperties().includes(listOfProps[0])) {
         let currentObj = watchElem;
         listOfProps.forEach((propName, index) => {
           if (index + 1 < listOfProps.length) {

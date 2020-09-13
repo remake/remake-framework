@@ -1,69 +1,87 @@
 import { getLocationKeyValue, setLocationKeyValue } from './locationKeyData';
 import { callWatchFunctions } from '../inputjs';
+import { getValidElementProperties } from '../common/get-valid-element-properties';
 const dashCase = require('lodash/kebabCase');
+const validPropertyCommands = getValidElementProperties().map(p => "@" + p);
 
-// set a value for a key
-// single element
-export function setValueForKeyName (elem, keyName, value) {
+function valueForKeyName (method, elem, keyName, value) {
   let dashCaseKeyName = dashCase(camelCaseKeyName)
   let attrName = "key:" + dashCaseKeyName;
   let currentAttrValue = elem.getAttribute(attrName);
-  let hasCommand = currentAttrValue.startsWith("@");
+  let hasValidCommand = validPropertyCommands.includes(currentAttrValue) || currentAttrValue === "@search" || currentAttrValue.startsWith("@attr:");
 
-  // commands start with @
-  if (hasCommand) {
+  if (!hasValidCommand) {
+    elem.setAttribute(attrName, value);
+  } else {
+    // possible commands: @search, @attr:, or a native property
+
+    let targetAttr;
     let targetElems;
-    let targetDirectiveSelector;
 
-    // @search is a special command that finds a target element (or several target elements)
-    // inside the current element to modify
-    if (currentAttrValue.startsWith("@search")) {
-      targetDirectiveAttrName = `target:${dashCaseKeyName}`;
+    // @search is a special command that gets/sets the value on a matching target elem
+    if (currentAttrValue === "@search") {
+      targetAttr = `target:${dashCaseKeyName}`;
       targetElems = Array.from(elem.querySelectorAll(`[target\\:${dashCaseKeyName}]`));
     } else {
-      targetDirectiveAttrName = attrName;
+      targetAttr = attrName;
       targetElems = [elem];
     }
 
-    targetElems.forEach(el => {
-      let targetDirective = el.getAttribute(targetDirectiveAttrName);
-      if (targetDirective.startsWith("@attr:")) {
-        // set a custom attribute, like "data-example" to a value
-        let targetDirectiveAttribute = targetDirective.substring("@attr:".length);
-        elem.setAttribute(targetDirectiveAttribute, value);
-      } else if (targetDirective.startsWith("@")) {
-        // set a native DOM property to a value
-        elem[targetDirective.substring("@".length)] = value;
+    for (let i = 0; i < targetElems.length; i++) {
+      let targetElem = targetElems[i];
+      // the target's command e.g. @innerText or @attr:data-example
+      // every target needs a command as its value
+      let targetCommand = targetElem.getAttribute(targetAttr);
+      let targetHasValidCommand = validPropertyCommands.includes(targetCommand) || targetCommand.startsWith("@attr:");
+
+      if (targetHasValidCommand) {
+        if (targetCommand.startsWith("@attr:")) {
+          // CUSTOM ATTRIBUTES
+          let targetCommandAttrName = targetAttrValue.substring("@attr:".length);
+          let referencedAttr = targetAttrValue.substring("@attr:".length);
+          if (method === "set") {
+            targetElem.setAttribute(referencedAttr, value);
+          } else {
+            return targetElem.getAttribute(referencedAttr);
+          }
+        } else {
+          // NATIVE DOM PROPERTIES
+          let referencedProp = targetCommand.substring("@".length);
+          if (method === "set") {
+            targetElem[referencedProp] = value;
+          } else {
+            return targetElem[referencedProp];
+          }
+        }
       }
+    }
+  }
+
+  if (method === "set") {
+    callWatchFunctions({
+      dashCaseKeyName, 
+      value, 
+      parentOfTargetElements: elem, 
+      dataSourceElem: elem
     });
-  } else {
-    elem.setAttribute(attrName, value);
-  }
-
-  callWatchFunctions({
-    dashCaseKeyName, 
-    value, 
-    parentOfTargetElements: elem, 
-    dataSourceElem: elem
-  });
-}
-
-// get value from a key
-// single element
-export function getValueFromKeyName (elem, camelCaseKeyName) {
-  // convert the key name to output and location format
-  let dashCaseKeyName = dashCase(camelCaseKeyName)
-  let attrName = "key:" + dashCaseKeyName;
-  let currentAttrValue = elem.getAttribute(attrName);
-  let hasCommand = currentAttrValue.startsWith("@");
-
-  if (elem.hasAttribute(outputAttr)) {
-    return elem.getAttribute(outputAttr);
-  } else if (elem.hasAttribute(locationAttr)) {
-    let locationString = elem.getAttribute(locationAttr);
-    return getLocationKeyValue(elem, dashCaseKeyName, locationString);
   }
 }
+
+// set a value for a key 
+// called on single element
+// can affet multiple child elements
+export function setValueForKeyName (elem, keyName, value) {
+  return valueForKeyName("set", elem, keyName, value);
+}
+
+// get a value for a key 
+// called on single element
+// gets value from a single child element (the first one it finds)
+export function getValueForKeyName (elem, keyName, value) {
+  valueForKeyName("get", elem, keyName, value);
+}
+
+
 
 export function getValueFromClosestKey ({elem, camelCaseKeyName}) {
   // 1. form the output attribute key name
