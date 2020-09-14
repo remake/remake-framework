@@ -4,7 +4,7 @@ This is the latest version of the Remake framework, along with a Trello clone ap
 
 Instead of using this repository, use the official Remake CLI to generate this starter project.
 
-https://github.com/remake/remake
+https://github.com/remake/remake-cli
 
 However, if you want to set it up manually, feel free to follow the following instructions:
 
