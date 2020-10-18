@@ -33,7 +33,7 @@ app.enable("trust proxy", "127.0.0.1");
 app.use(express.static(path.join(__dirname, "./dist"), {
   redirect: false
 }));
-app.use(express.static(path.join(__dirname, "../_remake-uploads"), {
+app.use(express.static(path.join(__dirname, "../_remake/uploads"), {
   redirect: false
 }));
 
