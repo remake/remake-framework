@@ -7,9 +7,9 @@
     "dev": "npm run asset-bundler-initial && concurrently --kill-others 'npm:nodemon' 'npm:asset-bundler-watch'",
     "build": "npm run asset-bundler-production",
     "nodemon": "nodemon _remake/server.js --watch ./",
-    "asset-bundler-initial": "node _remake-asset-bundler/initial-build.js",
-    "asset-bundler-production": "node _remake-asset-bundler/initial-build.js production",
-    "asset-bundler-watch": "node _remake-asset-bundler/",
+    "asset-bundler-initial": "node _remake/asset-bundler/initial-build.js",
+    "asset-bundler-production": "node _remake/asset-bundler/initial-build.js production",
+    "asset-bundler-watch": "node _remake/asset-bundler/",
     "build-selftest": "parcel build ./_remake/tests/remake-init-gen.js -d ./_remake/tests/ -o remake-init.js",
     "selftest": "npm run build-selftest && echo 'The self test page is ready. Go open the file at ./_remake/tests/selftest.html in your favorite browser.'",
     "clean": "rm -rf .cache && rm -rf _remake/dist"
