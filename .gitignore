@@ -7,5 +7,7 @@ npm-debug.log
 _remake/dist
 _remake/uploads
 !_remake/uploads/.gitkeep
-_remake-data/**/*.json
+data/**/*.json
 .remake
+
+app
