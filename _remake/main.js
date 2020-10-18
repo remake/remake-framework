@@ -201,6 +201,7 @@ initRenderedRoutes({ app });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
+  console.log('\n');
   showConsoleSuccess(`Visit your Remake app: http://localhost:${PORT}`);
   showConsoleSuccess(`Check this log to see the requests made by the app, as you use it.`);
   console.log('\n');

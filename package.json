@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm run asset-bundler-initial && concurrently --kill-others 'npm:nodemon' 'npm:asset-bundler-watch'",
     "build": "npm run asset-bundler-production",
-    "nodemon": "nodemon server.js --watch ./",
+    "nodemon": "nodemon _remake/server.js --watch ./",
     "asset-bundler-initial": "node _remake-asset-bundler/initial-build.js",
     "asset-bundler-production": "node _remake-asset-bundler/initial-build.js production",
     "asset-bundler-watch": "node _remake-asset-bundler/",
