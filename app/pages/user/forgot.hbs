@@ -1,12 +1,5 @@
-<div class="accounts">
-  <form class="accounts__form" action="/user/forgot" method="post">
-    <div class="accounts__heading">Forgot Password</div>
-    <div class="text-field">
-      <label class="text-field__label">
-        <span class="text-field__label-text">Username</span>
-        <input class="text-field__input" type="text" name="username" required>
-      </label>
-    </div>
-    <button class="button button--large button--account" type="submit">Send reset link</button>
-  </form>
-</div>
+<form action="/user/forgot" method="post">
+  <h1>Forgot Password</h1>
+  <input type="text" name="username" placeholder="Your username" required>
+  <button type="submit">Send reset password link</button>
+</form>

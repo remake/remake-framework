@@ -1,24 +1,7 @@
-<div class="accounts">
-  <form class="accounts__form" action="/user/signup" method="post">
-    <div class="accounts__heading">Sign up</div>
-    <div class="text-field">
-      <label class="text-field__label">
-        <span class="text-field__label-text">Username</span>
-        <input class="text-field__input" type="text" name="username" required>
-      </label>
-    </div>
-    <div class="text-field">
-      <label class="text-field__label">
-        <span class="text-field__label-text">Email</span>
-        <input class="text-field__input" type="email" name="email" required>
-      </label>
-    </div>
-    <div class="text-field">
-      <label class="text-field__label">
-        <span class="text-field__label-text">Password</span>
-        <input class="text-field__input" type="password" name="password" required>
-      </label>
-    </div>
-    <button class="button button--large button--account" type="submit">Sign up</button>
-  </form>
-</div>
+<form action="/user/signup" method="post">
+  <h1>Sign up</h1>
+  <input type="text" name="username" placeholder="Username" required>
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="password" name="password" placeholder="Password" required>
+  <button type="submit">Sign up</button>
+</form>

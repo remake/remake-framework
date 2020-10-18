@@ -1,11 +1,8 @@
-<div class="front-page">
-  <div class="front-page__preview-container">
-    <img class="front-page__preview" src="/images/kanban-screenshot.png">
-  </div>
-  <h2 class="front-page__heading">Welcome to TaskFellow</h2>
+<h1>Welcome to my app!</h1>
+<ul>
   {{#if currentUser}}
-    <a class="button button--large" href="/{{currentUser.details.username}}">Go to your board</a>
+    <li><a href="/{{currentUser.details.username}}">Go to your dashboard</a></li>
   {{else}}
-    <a class="button button--large" href="/user/signup">Sign up!</a>
+    <li><a href="/user/signup">Sign up for an account</a></li>
   {{/if}}
-</div>
+</ul>
