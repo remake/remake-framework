@@ -21,7 +21,7 @@
       "_remake/client-side",
       "_remake/dist",
       "data",
-      "_remake/uploads",
+      "data/uploads",
       "node_modules/",
       "app"
     ],

@@ -5,8 +5,10 @@ node_modules/
 variables.env
 npm-debug.log
 _remake/dist
-_remake/uploads
-!_remake/uploads/.gitkeep
+
+data/uploads
+!data/uploads/.gitkeep
+
 data/**/*.json
 .remake
 

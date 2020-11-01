@@ -294,7 +294,7 @@ export function initServiceRoutes({app}) {
         archive.pipe(output);
         archive.glob(path.join('app', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
         archive.glob(path.join('data', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
-        archive.glob(path.join('_remake/uploads', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
+        archive.glob(path.join('data/uploads', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
         archive.finalize();
       });
   })
