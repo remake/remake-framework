@@ -222,8 +222,8 @@ export function initServiceRoutes({app}) {
           } else {
             try {
               shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
-              shell.mkdir('-p', `${global.config.location.remake}/data/${appName}/user-app-data`);
-              shell.mkdir('-p', `${global.config.location.remake}/data/${appName}/user-details`);
+              shell.mkdir('-p', `${global.config.location.remake}/data/${appName}/app/data/database/user-app-data`);
+              shell.mkdir('-p', `${global.config.location.remake}/data/${appName}/app/data/database/user-details`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake/dist/app_${appName}`);
               shell.cp('-r', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
               shell.cp('-r', `${global.config.location.tmp}/${appName}/_remake/dist/*`, `${global.config.location.remake}/_remake/dist/app_${appName}/`);
@@ -293,8 +293,6 @@ export function initServiceRoutes({app}) {
  
         archive.pipe(output);
         archive.glob(path.join('app', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
-        archive.glob(path.join('data', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
-        archive.glob(path.join('data/uploads', app.name ,'/**/*'), { cwd: global.config.location.remake, absolute: false });
         archive.finalize();
       });
   })

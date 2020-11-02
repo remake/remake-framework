@@ -9,7 +9,7 @@ import { getDirForUserFile, getAllDirsForUserData } from "../utils/directory-hel
 // returns: {details, appData}
 export async function createUserData ({ appName, username, hash, email }) {
 
-  let [userAppDataBootstrap] = await capture(getBootstrapData({fileName: "user-starting-data", appName}));
+  let [userAppDataBootstrap] = await capture(getBootstrapData({fileName: "bootstrap", appName}));
   let [userDetailsBootstrap] = await capture(getBootstrapData({fileName: "user-starting-details", appName}));
 
   let appData = userAppDataBootstrap;

@@ -20,8 +20,7 @@
       "_remake/.sessions",
       "_remake/client-side",
       "_remake/dist",
-      "data",
-      "data/uploads",
+      "app/data/uploads",
       "node_modules/",
       "app"
     ],
