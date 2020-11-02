@@ -8,12 +8,3 @@ npm-debug.log
 .sessions/
 
 _remake/dist
-
-app/**/*.*
-!app/**/*.md
-!app/**/.gitkeep
-
-# app/data/uploads/*.*
-# !app/data/uploads/.gitkeep
-
-# app/data/**/*.json
