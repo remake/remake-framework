@@ -127,7 +127,7 @@ let thirtyDaysInMs = 2592000000;
 let thirtyDaysInSec = 2592000000 / 1000;
 app.use(expressSession({ 
   store: new FileStore({
-    path: path.join(__dirname, "../.sessions"),
+    path: path.join(__dirname, "./.sessions"),
     ttl: thirtyDaysInSec
   }),
   secret: process.env.SESSION_SECRET, 
