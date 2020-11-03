@@ -25,11 +25,11 @@ export function getDirForUserFile ({type, appName, username}) {
   let innerTypePath = type === "details" ? "user-details" : "user-app-data";
   if (RemakeStore.isMultiTenant()) {
     let innerAppPath = appName + "/";
-    let path = `../../data/${innerAppPath}/data/database/${innerTypePath}/${username}`;
-    return path.join(__dirname, path);
+    let pathName = `../../data/${innerAppPath}/data/database/${innerTypePath}/${username}.json`;
+    return path.join(__dirname, pathName);
   } else {
-    let path = `../../app/data/database/${innerTypePath}/${username}`;
-    return path.join(__dirname, path);
+    let pathName = `../../app/data/database/${innerTypePath}/${username}.json`;
+    return path.join(__dirname, pathName);
   }
 }
 
