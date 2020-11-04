@@ -16,5 +16,5 @@ When you first create a Remake project, it comes with the default Trello clone a
 If you want to start from scratch with an empty project:
 
 1. Find the directory `/your-remake-app/_remake/empty-project`
-2. Copy all the files and directories from that directory into the the following directory: `/your-remake-app/app`
+2. Copy all the files and directories from that directory into the following directory: `/your-remake-app/app`
 3. This will replace the Trello clone app and give you a fresh start! 🎉
