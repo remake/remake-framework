@@ -41,7 +41,7 @@ export function initApiSave ({app}) {
 
     // option 1: save path
     if (savePath) {
-      let dataAtPath = get(existingData, savePath); 
+      let dataAtPath = get(existingData, savePath);
 
       if (isPlainObject(dataAtPath)) {
         // deep extend, using ids to match objects in arrays
@@ -53,7 +53,7 @@ export function initApiSave ({app}) {
       } else {
         // if we're not auto generating ids OR
         // if dataAtPath is NOT an object or array
-        // replace the data the the path
+        // replace the data the path
         set(existingData, savePath, incomingData);
       }
 
