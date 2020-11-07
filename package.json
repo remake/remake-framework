@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon _remake/server.js --watch ./",
-    "clean": "rm -rf .cache && rm -rf _remake/dist",
     "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map"
   },
   "nodemonConfig": {
