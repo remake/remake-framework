@@ -6,10 +6,6 @@ npm-debug.log
 _remake-uploads
 !_remake-uploads/.gitkeep
 
-# remove the next line after creating an app in the app/ directory
-app/
-!app/.gitkeep
-
 .remake
 .cache/
 
