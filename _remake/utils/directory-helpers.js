@@ -3,34 +3,34 @@ import RemakeStore from "../lib/remake-store";
 
 export function getAllDirsForUserData ({appName}) {
   if (RemakeStore.isMultiTenant()) {
-
-    let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
-    let userAppDataPathString = `../../_remake-data/${innerAppPath}/user-details/`;
-    let userDetailsPathString = `../../_remake-data/${innerAppPath}/user-app-data/`;
+    let innerAppPath = appName + "/";
+    let userAppDataPathString = `../../data/${innerAppPath}/data/database/user-details/`;
+    let userDetailsPathString = `../../data/${innerAppPath}/data/database/user-app-data/`;
 
     return [
       path.join(__dirname, userAppDataPathString),
       path.join(__dirname, userDetailsPathString)
     ];
-
   } else {
-
-    let userAppDataPathString = `../../_remake-data/user-details/`;
-    let userDetailsPathString = `../../_remake-data/user-app-data/`;
+    let userAppDataPathString = `../../app/data/database/user-details/`;
+    let userDetailsPathString = `../../app/data/database/user-app-data/`;
     return [
       path.join(__dirname, userAppDataPathString),
       path.join(__dirname, userDetailsPathString)
     ];
-
   }
-
 }
 
 export function getDirForUserFile ({type, appName, username}) {
-  let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
-  let innerTypePath = type === "details" ? "user-details/" : "user-app-data/";
-  let pathString = `../../_remake-data/${innerAppPath}${innerTypePath}${username}.json`;
-  return path.join(__dirname, pathString);
+  let innerTypePath = type === "details" ? "user-details" : "user-app-data";
+  if (RemakeStore.isMultiTenant()) {
+    let innerAppPath = appName + "/";
+    let pathName = `../../data/${innerAppPath}/data/database/${innerTypePath}/${username}.json`;
+    return path.join(__dirname, pathName);
+  } else {
+    let pathName = `../../app/data/database/${innerTypePath}/${username}.json`;
+    return path.join(__dirname, pathName);
+  }
 }
 
 let pageNamesForUserRoutes = ["login", "signup", "reset", "forgot"];
@@ -72,13 +72,13 @@ export function getDirForBootstrapDataFile ({fileName, appName}) {
 
 export function getDirForGlobalData ({fileName, appName}) {
   let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
-  let pathString = `../../app/${innerAppPath}data/global-app-data.json`;
+  let pathString = `../../app/${innerAppPath}data/global.json`;
   return path.join(__dirname, pathString);
 }
 
 export function getDirForUpload ({appName, username}) {
   let innerAppPath = RemakeStore.isMultiTenant() ? `app_${appName}` + "/" : "";
-  let pathString = `../../_remake-uploads/${innerAppPath}${username}`;
+  let pathString = `../../app/${innerAppPath}data/uploads/${username}`;
   return path.join(__dirname, pathString);
 }
 

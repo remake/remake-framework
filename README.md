@@ -1,14 +1,10 @@
-This is the latest version of the Remake framework, along with a Trello clone app.
+# Learn the new syntax!
 
-# Easiest way to get started
+[Remake Recipes](https://recipes.remaketheweb.com/) - the easiest way to learn the new syntax!
 
-Instead of using this repository, use the official Remake CLI to generate this starter project.
+**IMPORTANT:** Use the [Remake CLI](https://github.com/remake/remake-cli) for a much easier install
 
-https://github.com/remake/remake-cli
-
-However, if you want to set it up manually, feel free to follow the following instructions:
-
-# Set Remake up manually (not through the Remake CLI):
+# Manual Setup Guide (Not Recommended - Use the CLI instead)
 
 1. Clone this repo
 
@@ -23,12 +19,14 @@ cd remake-framework
 npm install
 ```
 
-3. Create a `variables.env` file
+3. Create a `.remake` file
 
-inside `variables.env`:
+inside `.remake`:
 ```
-SESSION_SECRET=__replace_with_something_secret__
-PORT=3000
+{
+  "port": 3000,
+  "sessionSecret": "__replace_with_a_random_secret_string__"
+}
 ```
 
 4. Start the project
@@ -37,7 +35,9 @@ PORT=3000
 npm run dev
 ```
 
+5. Add a starter project to the `app/` directory
+
 # Full Remake Docs
 
-[View the full documentation](https://remaketheweb.com)
+[View the full documentation](https://docs.remaketheweb.com)
 

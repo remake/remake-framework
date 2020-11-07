@@ -1,4 +1,5 @@
 import optionsData from './optionsData';
+import { onAddItem } from './callbacks';
 import { callSaveFunction } from './onSave';
 
 export default function initSortableElements () {
@@ -7,21 +8,20 @@ export default function initSortableElements () {
   // make all elements that match the selectors sortable on page load
   makeSortable({elemToSearch: document});
 
-  // after a new element is added to the page, make it sortable
-  let addItemCallbackTemp = optionsData.addItemCallback;
-  optionsData.addItemCallback = function (options) {
-    let {itemElem} = options;
-    makeSortable({elemToSearch: itemElem});
-    addItemCallbackTemp(options);
-  }
+  // when a new item is added to the page, make it sortable if it has the "sortable" attribute
+  onAddItem(function ({success, listElem, itemElem, templateName, ajaxResponse}) {
+    if (success) {
+      makeSortable({elemToSearch: itemElem});
+    }
+  });
 
   function makeSortable ({elemToSearch}) {
-    let sortableElems = Array.from(elemToSearch.querySelectorAll("[data-i-sortable]"));
+    let sortableElems = Array.from(elemToSearch.querySelectorAll("[sortable]"));
     sortableElems.forEach(sortableListElem => {
       sortablejs.create(sortableListElem, {
-        group: sortableListElem.getAttribute("data-i-sortable") || getRandomId(),
+        group: sortableListElem.getAttribute("sortable") || getRandomId(),
         onEnd: function (event) {
-          callSaveFunction({targetElement: sortableListElem})
+          callSaveFunction({targetElem: sortableListElem})
         }
       });
     });
@@ -30,5 +30,5 @@ export default function initSortableElements () {
 
 
 function getRandomId () {
-  return "sortable-" + Math.floor(Math.random() * 10000000000);
+  return "sortable-" + Math.random().toString().substring(2);
 }

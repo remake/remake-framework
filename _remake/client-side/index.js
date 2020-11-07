@@ -1,43 +1,29 @@
-import { $ } from './queryjs';
+export { $ } from './queryjs';
 
-import { copyLayout } from './copy-layout';
+export { copyLayout } from './copy-layout';
 
-import Switches from './switchjs';
-
-import { 
-  initInputEventListeners,
-  initSaveFunctions,
+export { 
+  init,
   callSaveFunction,
-  callMultipleWatchFunctions,
-  getValueAndDataSourceElemFromKeyName
+  onSave,
+  onFileUpload,
+  onFileUploadProgress,
+  onAddItem,
+  onSync
 } from './inputjs';
 
-import { 
-  getDataFromRootNode,
-  getLocationKeyValue,
-  setLocationKeyValue,
+export { 
+  getClosestElemWithKey,
+  getValueForClosestKey,
+  setValueForClosestKey,
+  getValueForKeyName,
   setValueForKeyName,
-  getDataFromNode,
-  getDataAndDataSourceElemFromNodeAndAncestors 
+  getKeyNamesFromElem,
+  callWatchFunctionsOnElements,
+  setAllDataToEmptyStringsExceptIds
 } from './data-utilities';
 
-let init = initInputEventListeners;
-
-export default {
-  init,
-  $,
-  copyLayout,
-  Switches,
-  initInputEventListeners,
-  initSaveFunctions,
-  callSaveFunction,
-  callMultipleWatchFunctions,
-  getValueAndDataSourceElemFromKeyName,
-  getDataFromRootNode,
-  getLocationKeyValue,
-  setLocationKeyValue,
-  setValueForKeyName,
-  getDataFromNode,
-  getDataAndDataSourceElemFromNodeAndAncestors 
-}
+export {
+  getSaveData
+} from './get-save-data';
 

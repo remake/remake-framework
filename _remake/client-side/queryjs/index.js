@@ -125,7 +125,7 @@ class QueryObj {
   }
 }
 
-window.$ = $;
+// window.$ = $;
 
 export { $ };
 

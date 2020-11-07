@@ -1,0 +1,1 @@
+export { getSaveData } from "./getSaveData";

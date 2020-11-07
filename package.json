@@ -4,15 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run asset-bundler-initial && concurrently --kill-others 'npm:nodemon' 'npm:asset-bundler-watch'",
-    "build": "npm run asset-bundler-production",
-    "nodemon": "nodemon server.js --watch ./",
-    "asset-bundler-initial": "node _remake-asset-bundler/initial-build.js",
-    "asset-bundler-production": "node _remake-asset-bundler/initial-build.js production",
-    "asset-bundler-watch": "node _remake-asset-bundler/",
-    "build-selftest": "parcel build ./_remake/tests/remake-init-gen.js -d ./_remake/tests/ -o remake-init.js",
-    "selftest": "npm run build-selftest && echo 'The self test page is ready. Go open the file at ./_remake/tests/selftest.html in your favorite browser.'",
-    "clean": "rm -rf .cache && rm -rf _remake/dist"
+    "dev": "nodemon _remake/server.js --watch ./",
+    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map"
   },
   "nodemonConfig": {
     "ignore": [
@@ -20,8 +13,7 @@
       "_remake/.sessions",
       "_remake/client-side",
       "_remake/dist",
-      "_remake-data",
-      "_remake-uploads",
+      "app/data/uploads",
       "node_modules/",
       "app"
     ],
@@ -79,6 +71,7 @@
     "chokidar": "^3.2.1",
     "concurrently": "^4.1.0",
     "copy-and-watch": "^0.1.4",
+    "esbuild": "^0.8.2",
     "nodemon": "^1.19.1",
     "parcel": "^1.12.4",
     "parcel-bundler": "^1.12.4",
