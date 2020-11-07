@@ -1,154 +1,173 @@
 import { $ } from '../queryjs';
-import { camelCaseToDash } from '../hummingbird/lib/string';
-import { forEachAttr } from '../hummingbird/lib/dom';
-import { processAttributeString } from '../parse-data-attributes';
+import { forEachAttr, onAttributeEvent } from '../hummingbird/lib/dom';
 import { copyLayout } from '../copy-layout';
-import Switches from '../switchjs';
-import { getDataFromNode } from '../data-utilities';
+import { getClosestElemWithKey, setValueForKeyName, getKeyNamesFromElem } from '../data-utilities';
+import { syncDataNextTick } from "./syncData";
+import { showError } from "../common/show-error";
 import autosize from '../vendor/autosize';
 
-// data-i-editable: trigger popover with three buttons (remove, cancel, and save)
-// data-i-editable-without-remove: trigger popover with two buttons (cancel and save)
-// data-i-editable-with-hide: trigger popover with three buttons (remove, cancel, and save), 
-//                            but the remove button is special: it doesn't remove an element, 
-//                            it just sets all its data keys to empty strings
+// USAGE EXAMPLES: 
+// edit:example-key
+// edit:example-key:text
+// edit:example-key:textarea
 export default function () {
-  $.on("click", "[data-i-editable], [data-i-editable-without-remove], [data-i-editable-with-hide]", function (event) {
-    let editableTriggerElem = event.currentTarget;
-    let [ switchName, editableConfigString ] = getEditableInfo(editableTriggerElem);
-    let editablePopoverElem = document.querySelector(".remake-edit");
-    let editableConfigArr;
+  onAttributeEvent({
+    eventTypes: ["click"],
+    partialAttributeStrings: ["edit:"],
+    groupMatchesIntoSingleCallback: true,
+    filterOutElemsInsideAncestor: "[disable-events]",
+    callback: (matches) => { // matches: [{eventType, matchingElement, matchingAttribute, matchingPartialAttributeString}]
 
-    if (editableConfigString) {
-      // "profileName(text-single-line: someOption)" => [{name: "profileName", modifier: "text-single-line", args: ["someOption"]}]
-      editableConfigArr = processAttributeString(editableConfigString); 
-      
-      editableConfigArr.forEach(editableConfig => {
-        if (!editableConfig.modifier) {
-          editableConfig.modifier = "text-single-line"
+      // editableConfig: [{keyName, formType, removeOption, eventType, matchingElement, matchingAttribute, matchingPartialAttributeString}]
+      let editableConfig = matches.map(({eventType, matchingElement, matchingAttribute, matchingPartialAttributeString}) => {
+        let attributeParts = matchingAttribute.split(":");
+        // attributeParts could be:
+        // ["edit", "example-key"]
+        // ["edit", "example-key", "without-remove"]
+        // ["edit", "example-key", "textarea", "without-remove"]
+        // -> first two items are requireed, the last two are optional
+        let [_, keyName, formType, removeOption] = attributeParts;
+
+        let validRemoveOptions = ["with-remove", "without-remove", "with-erase"];
+        if (validRemoveOptions.includes(formType)) {
+          removeOption = formType;
+          formType = undefined;
+        } else {
+          removeOption = "with-remove";
         }
+
+        if (!formType) {
+          formType = "text";
+        }
+
+        return {keyName, formType, removeOption, eventType, matchingElement, matchingAttribute, matchingPartialAttributeString};
       });
-    } else {
-      // auto-generate the editable config if none is present
-      //   note: we strip out the id key because it's not editable
-      editableConfigArr = generateEditableConfigFromClosestElemWithData(editableTriggerElem);
-    }
 
-    // remove old output key attributes
-    removeOutputDataAttributes({
-      elem: editablePopoverElem,
-      keep: []
-    });
+      // get first matching element for positioning popover
+      let firstMatch = editableConfig[0];
+      let firstMatchElem = firstMatch.matchingElement;
+      let firstMatchKeyName = firstMatch.keyName;
+      let firstMatchRemoveOption = firstMatch.removeOption;
+      let firstMatchTargetElem = getClosestElemWithKey({elem: firstMatchElem, keyName: firstMatchKeyName});
 
-    // add output key attributes defined in the editable config
-    addDataOutputKeys({
-      elem: editablePopoverElem, 
-      config: editableConfigArr
-    });
+      if (!firstMatchElem || !firstMatchKeyName || !firstMatchTargetElem) {
+        showError(`Problem with the 'edit:' attribute on one of these elements:`, matches.map(m => m.matchingElement));
+        return;
+      }
 
-    // add form field types to single attribute from editable config
-    addFormFieldsBeingEdited({
-      elem: editablePopoverElem, 
-      config: editableConfigArr
-    });
-    
-    // render html inside the edit popover
-    let remakeEditAreasElem = editablePopoverElem.querySelector(".remake-edit__edit-areas");
-    remakeEditAreasElem.innerHTML = generateRemakeEditAreas({config: editableConfigArr});
+      let editablePopoverElem = document.querySelector(".remake-edit");
 
-    // copy the layout
-    copyLayout({
-      sourceElem: editableTriggerElem, 
-      targetElem: editablePopoverElem, 
-      dimensionsName: "width", 
-      xOffset: 0, 
-      yOffset: 0
-    });
+      // reset popover: remove old keys
+      removeObjectKeysFromElem({elem: editablePopoverElem});
 
-    // trigger the switch on
-    let switchObj = {name: switchName, elem: editablePopoverElem};
-    let actionObj = {name: switchName, elem: editableTriggerElem, type: "on"};
-    Switches.turnOn(switchObj, actionObj);
+      // open popover
+      let hasRemove = firstMatchRemoveOption === "with-remove";
+      let hasErase = firstMatchRemoveOption === "with-erase";
+      setValueForKeyName({elem: editablePopoverElem, keyName: "remake-edit-popover", value: "on"});
+      setValueForKeyName({elem: editablePopoverElem, keyName: "remake-edit-option-has-remove", value: hasRemove ? "on" : "off"});
+      setValueForKeyName({elem: editablePopoverElem, keyName: "remake-edit-option-has-erase", value: hasErase ? "on" : "off"});
 
-    // autosize textarea
-    let textareaElems = Array.from(remakeEditAreasElem.querySelectorAll("textarea"));
-    setTimeout(function () {
-      textareaElems.forEach(el => autosize(el));
-    });
+      // keep track of the source of the data on the popover element
+      $.data(editablePopoverElem, "source", firstMatchTargetElem);
 
-    // focus input
-    let firstFormInput = editablePopoverElem.querySelector("textarea, input")
-    if (firstFormInput) {
-      firstFormInput.focus();
+      // add object keys for storing data that's being edited in the popover
+      addObjectKeysToElem({elem: editablePopoverElem, config: editableConfig});
+
+      // sync data from the page into the popover
+      syncDataNextTick({
+        sourceElement: firstMatchElem,
+        targetElement: editablePopoverElem,
+        keyNames: editableConfig.map(obj => obj.keyName),
+        shouldSyncIntoUpdateElems: true
+      });
+
+      // render html inside the edit popover
+      let remakeEditAreasElem = editablePopoverElem.querySelector(".remake-edit__edit-areas");
+      remakeEditAreasElem.innerHTML = generateRemakeEditAreas({config: editableConfig});
+
+      // copy the layout
+      copyLayout({
+        sourceElem: firstMatchTargetElem, 
+        targetElem: editablePopoverElem, 
+        dimensionsName: "width", 
+        xOffset: 0, 
+        yOffset: 0
+      });
+
+      // autosize textareas -- not sure why or even if this needs to be in a setTimeout
+      setTimeout(function () {
+        let textareas = Array.from(editablePopoverElem.querySelectorAll("textarea"));
+        textareas.forEach(el => autosize(el));
+      });
+
+      // focus first focusable element
+      let firstFormInput = editablePopoverElem.querySelector("textarea, input")
+      if (firstFormInput) {
+        firstFormInput.focus();
+      }
+
     }
   });
 
+  // sync data from popover into the page
+  $.on("submit", "[sync]", (event) => {
+    event.preventDefault();
+    let syncElement = event.currentTarget.closest("[sync]");
+    syncDataNextTick({
+      sourceElement: syncElement,
+      targetElement: $.data(syncElement, "source"),
+      keyNames: getKeyNamesFromElem(syncElement)
+    });
+  });
+
+  // this was causing a bug before. i think the form was submitting when it shouldn't have.
   $.on("click", ".remake-edit__button:not([type='submit'])", function (event) {
     event.preventDefault();
   });
 
   document.addEventListener("keydown", event => {
+    // esc key
     if (event.keyCode === 27) {
-      let turnedOnEditablePopovers = Array.from(document.querySelectorAll("[data-switched-on='remakeEdit'], [data-switched-on='remakeEditWithoutRemove'], [data-switched-on='remakeEditWithHide']"));
+      let turnedOnEditablePopover = document.querySelector('[key:remake-edit-popover="on"]');
       
-      if (turnedOnEditablePopovers.length > 0) {
-        turnedOnEditablePopovers.forEach(el => {
-          Switches.turnOff({name: "remakeEdit", elem: el});
-          Switches.turnOff({name: "remakeEditWithoutRemove", elem: el});
-          Switches.turnOff({name: "remakeEditWithHide", elem: el});
-        });
+      if (turnedOnEditablePopover) {
+        setValueForKeyName({elem: turnedOnEditablePopover, keyName: "remake-edit-popover", value: "off"});
       }
     }
   });
 }
 
-function getEditableInfo (elem) {
-  if (elem.hasAttribute("data-i-editable")) {
-    return [ "remakeEdit", elem.getAttribute("data-i-editable") ];
-  } else if (elem.hasAttribute("data-i-editable-without-remove")) {
-    return [ "remakeEditWithoutRemove", elem.getAttribute("data-i-editable-without-remove") ];
-  } else if (elem.hasAttribute("data-i-editable-with-hide")) {
-    return [ "remakeEditWithHide", elem.getAttribute("data-i-editable-with-hide") ];
-  }
-}
-
-function removeOutputDataAttributes({elem, keep}) {
+function removeObjectKeysFromElem ({elem}) {
   let attributesToRemove = [];
-
-  forEachAttr(elem, function (attrName, attrValue) {
-    if (attrName.startsWith("data-o-key-")) {
-      if (!keep.includes(attrName)) {
-        attributesToRemove.push(attrName);
-      }
+  forEachAttr(elem, (attrName, attrValue) => {
+    if (attrName.startsWith("key:")) {
+      attributesToRemove.push(attrName);
     }
   });
-
   attributesToRemove.forEach(attrName => elem.removeAttribute(attrName));
 }
 
-function addDataOutputKeys ({elem, config}) {
+// config: [{keyName, formType, removeOption, eventType, matchingElement, matchingAttribute, matchingPartialAttributeString}]
+function addObjectKeysToElem ({elem, config}) {
   config.forEach(obj => {
-    elem.setAttribute("data-o-key-" + camelCaseToDash(obj.name), "")
+    elem.setAttribute(`temporary:key:${obj.keyName}`, "")
   });
 }
 
-function addFormFieldsBeingEdited ({elem, config}) {
-  let attrValue = config.map(obj => obj.modifier).join(" ");
-  elem.setAttribute("data-remake-edit-fields", attrValue)
-}
-
-function generateRemakeEditAreas ({config}) { // e.g. {name: "blogTitle", modifier: "text-single-line", args: []}
+// config: [{keyName, formType, removeOption, eventType, matchingElement, matchingAttribute, matchingPartialAttributeString}]
+function generateRemakeEditAreas ({config}) {
   let outputHtml = "";
 
-  config.forEach(({modifier, name}) => {
+  // formType can be "text" or "textarea" or something else that's not implemented yet
+  config.forEach(({formType, keyName}) => {
     let formFieldHtml;
 
-    if (modifier === "text-single-line") {
-      formFieldHtml = `<input class="remake-edit__input" data-i="dontTriggerSaveOnChange" name="${name}" type="text">`;
+    if (formType === "text") {
+      formFieldHtml = `<input class="remake-edit__input" update:${keyName} type="text">`;
     }
 
-    if (modifier === "text-multi-line") {
-      formFieldHtml = `<textarea class="remake-edit__textarea" data-i="dontTriggerSaveOnChange" name="${name}"></textarea>`;
+    if (formType === "textarea") {
+      formFieldHtml = `<textarea class="remake-edit__textarea" update:${keyName}></textarea>`;
     }
 
     outputHtml += `<div class="remake-edit__edit-area">${formFieldHtml}</div>`;
@@ -156,27 +175,5 @@ function generateRemakeEditAreas ({config}) { // e.g. {name: "blogTitle", modifi
 
   return outputHtml;
 }
-
-// example output: [{name: "text", modifier: "text-single-line", args: []}]
-function generateEditableConfigFromClosestElemWithData (elem) {
-  let elemWithData = elem.closest("[data-o-type]");
-
-  if (!elemWithData) {
-    return;
-  }
-
-  let dataFromElem = getDataFromNode(elemWithData);
-  let objectKeys = Object.keys(dataFromElem);
-  // strip out the id key because it's not editable
-  let objectKeysWithoutIdKey = objectKeys.filter(keyName => keyName !== "id");
-
-  return objectKeysWithoutIdKey.map(keyName => {
-    return {name: keyName, modifier: "text-single-line"}
-  });
-}
-
-
-
-
 
 

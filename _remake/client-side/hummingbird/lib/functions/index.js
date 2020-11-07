@@ -8,3 +8,4 @@ export function debounce (fn, time) {
     timeout = setTimeout(functionCall, time);
   }
 }
+

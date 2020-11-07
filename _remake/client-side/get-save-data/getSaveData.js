@@ -1,20 +1,25 @@
-import { createDataObjectFromElement, addDataFromElementToDataObject } from './getDataFromRootNodeHelpers';
+import { 
+  createDataObjectFromElement, 
+  addDataFromElementToDataObject 
+} from './getSaveDataHelpers';
 
 // special properties:
-// * data-o-type (attribute value can be "object" or "list")
-// * data-o-key (attribute value can be any string, but ideally camel cased with no spaces)
+// * object (converts element into a nested JSON object)
+// * array (converts element into a nested JSON array)
+// * key (for nesting objects and arrays inside each other under a label)
+// * key:example-key-name (for storing single pieces of data from the page as strings inside objects)
 
-export function getDataFromRootNode (rootNode) {
+export function getSaveData (rootNode) {
 
   let rootData;
 
   function getDataFromDom (currentElement, parentData) {
 
     // can this element's data be parsed?
-    let canElementDataBeParsed = currentElement.hasAttribute("data-o-type"); 
+    let canElementDataBeParsed = currentElement.hasAttribute("object") || currentElement.hasAttribute("array");
 
     // should we skip this element?
-    let skipElemAndChildren = currentElement.hasAttribute("data-o-ignore");
+    let skipElemAndChildren = currentElement.hasAttribute("ignore-data");
 
     if (skipElemAndChildren) {
       return;

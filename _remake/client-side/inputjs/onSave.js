@@ -1,131 +1,118 @@
 import { $ } from '../queryjs';
-import { getDataFromRootNode, getDataFromNode } from "../data-utilities";
+import { getSaveData } from "../get-save-data";
 import { ajaxPost } from '../hummingbird/lib/ajax';
 import { debounce } from '../hummingbird/lib/functions';
 import { getAttributeValueAsArray } from '../parse-data-attributes';
 import optionsData from './optionsData';
+import { callOnSaveCallbacks } from './callbacks';
 
 let saveFunctionsLookup = {
   // default save function posts data to /save endpoint
-  defaultSave: function ({data, path, saveToId, elem}) {
+  _defaultSave: function ({data, path, saveToId, elem}) {
     ajaxPost("/save", {data, path, saveToId}, function (res) {
-      if (optionsData.defaultSaveCallback) {
-        optionsData.defaultSaveCallback(res);
-      }
+      callOnSaveCallbacks(res);
     });
   }
 };
 
-export function initSaveFunctions (saveFunctions) {
-  Object.assign(saveFunctionsLookup, saveFunctions);
-}
-
-export function enableSaveAttribute (afterSync) {
-  afterSync(function ({elementsDataWasSyncedInto, targetElement, shouldTriggerSave}) {
-    if (shouldTriggerSave) {
-      elementsDataWasSyncedInto.forEach((elementDataWasSyncedInto) => {
-        callSaveFunction({elementDataWasSyncedInto});
-      });
-    }
-  });
+export function initSaveFunctions () {
+  if (optionsData.saveFunctions) {
+    Object.assign(saveFunctionsLookup, optionsData.saveFunctions);
+  }
 }
 
 // all saves go through here
-export function callSaveFunction ({elementDataWasSyncedInto, targetElement}) {
-  // allow two different params that do the same thing to be passed into this function: 
-  // use `elementDataWasSyncedInto` when syncing, user `targetElement` when creating or removing data
-  elementDataWasSyncedInto = elementDataWasSyncedInto || targetElement;
-  
+export function callSaveFunction ({targetElem}) {
+  let saveEnabled = !targetElem.closest("[no-save]");
+  if (!saveEnabled) {
+    return;
+  }
+
   // get the save element, which is the closest element with a save attribute
-  let saveElement = elementDataWasSyncedInto.closest("[data-o-save-deep], [data-o-save], [data-o-key-id]");
-  
-  // if there's no save element, use the body element
+  let saveElement = targetElem.closest("[custom-save], [key\\:id]");
   let isDefaultingToDataKeyIdSave = false;
   let isDefaultingToGlobalSave = false;
+  let hasCustomSaveFunction = false;
+  let saveFuncName = "_defaultSave";
+  let savePath;
+  let saveToId;
+
+  // if there's no save element, use the body element
   if (!saveElement) {
     saveElement = document.body;
     isDefaultingToGlobalSave = true;
-  } else if (saveElement.matches("[data-o-key-id]") && !saveElement.matches("[data-o-save-deep], [data-o-save]")) {
-    isDefaultingToDataKeyIdSave = true;
+    saveFuncName = "_defaultSave";
+  } else {
+    if (saveElement.matches("[custom-save]")) {
+      hasCustomSaveFunction = true;
+      [ saveFuncName, savePath, saveToId ] = getSaveFuncInfo(saveElement);
+    } else if (saveElement.matches("[key\\:id]")) {
+      isDefaultingToDataKeyIdSave = true;
+      saveFuncName = "_defaultSave";
+      saveToId = saveElement.getAttribute("key:id");
+    }
   }
 
-  if (saveElement) {
+  let saveFunc = saveFunctionsLookup[saveFuncName];
+  let dataInsideSaveElement = getSaveData(saveElement);
 
-    // detect if this is a shallow or a deep save?
-    let isDataInsideElem = isDefaultingToGlobalSave || isDefaultingToDataKeyIdSave || saveElement.matches("[data-o-save-deep]");
+  // save the data
+  saveFunc({data: dataInsideSaveElement, elem: targetElem, path: savePath, saveToId});
 
-    // get all the info we need to save this data
-    let saveFuncName, savePath, saveToId;
+  // show a warning if you think the save might be a mistakes
+  let itemIdFromUrl = document.body.getAttribute("data-item-route");
+  if (isDefaultingToGlobalSave && itemIdFromUrl) {
+    console.log(`%cWarning: Data was just saved to your database, but not to the item matching the id in this page's url: "${itemIdFromUrl}". This might not be a mistake, but if it is you can correct it just add "key:${itemIdFromUrl}" to a high-level element.`, "color: #e03131;");
+  }
+
+  // log the data if the debug option is turned on
+  if (optionsData.logDataOnSave) {
+    let logDataOnSaveString = "";
+    logDataOnSaveString += "(logDataOnSave) ";
+
     if (isDefaultingToGlobalSave) {
-      saveFuncName = "defaultSave";
+      logDataOnSaveString += "Action: Saved entire page, ";
     } else if (isDefaultingToDataKeyIdSave) {
-      saveFuncName = "defaultSave";
-      saveToId = saveElement.getAttribute("data-o-key-id");
-    } else {
-      [ saveFuncName, savePath, saveToId ] = getSaveFuncInfo(saveElement, isDataInsideElem);
-    }
-
-    let saveFunc = saveFunctionsLookup[saveFuncName];
-
-    // if there's a save function, continue
-    if (saveFunc) {
-      // get the data differently depending on if it's a shallow or deep save
-      let dataFromSaveElement = isDataInsideElem ? getDataFromRootNode(saveElement) : getDataFromNode(saveElement);
-
-      // save the data
-      saveFunc({data: dataFromSaveElement, elem: elementDataWasSyncedInto, path: savePath, saveToId});
-
-      // show a warning if you think the save might be a mistakes
-      let idInRoute = document.body.getAttribute("data-item-route");
-      let matchingIdKeyElem = document.querySelector(`[data-o-key-id="${idInRoute}"]`);
-      if (isDefaultingToGlobalSave && idInRoute && !matchingIdKeyElem) {
-        console.log(`%cWarning: No element on this page has a data-o-key-id attribute that matches the id defined by the route (id: ${idInRoute}). This means the page's data will not be saved to an id.`, "color: #e03131;");
+      logDataOnSaveString += `Action: Saved to nearest id (${saveToId}), `;
+    } else if (hasCustomSaveFunction) {
+      logDataOnSaveString += `Action: Saved to custom save function (${saveFuncName}), `;
+  
+      if (savePath) {
+        logDataOnSaveString += `Action: Saved to path: ${savePath}, `;
       }
 
-      // log the data if this debug option is turned on
-      if (optionsData.logDataOnSave) {
-        console.log("# logDataOnSave");
-        console.log("Data:", dataFromSaveElement);
-
-        let saveMethod = (isDefaultingToGlobalSave) 
-                          ? "Saved entire page" 
-                          : (isDefaultingToDataKeyIdSave) 
-                          ? `Saved to nearest id: ${saveToId}`
-                          : `Saved to nearest save function: ${saveFuncName}`;
-
-        console.log("Save method:", saveMethod);
-
-        if (savePath) {
-          console.log("Save to path:", savePath);
-        }
-
-        // explicit save to id
-        if (!isDefaultingToDataKeyIdSave && saveToId) {
-          console.log("Save to id:", saveToId);
-        }
+      if (saveToId) {
+        logDataOnSaveString += `Action: Saved to id: ${saveToId}, `;
       }
     }
+
+    console.log(logDataOnSaveString, "Data:", dataInsideSaveElement);
   }
 }
 
-export let debouncedCallSaveFunction = debounce(callSaveFunction, 800);
+// used when clicking an element/button that might want to set data ahead of the save
+export function callSaveFunctionNextTick(...args) {
+  setTimeout(() => {
+    callSaveFunction(...args);
+  });
+};
 
-export function getSaveFuncInfo (saveElement, isDataInsideElem) {
-  let dashCaseAttrName = isDataInsideElem ? "data-o-save-deep" : "data-o-save";
+export function getSaveFuncInfo (saveElement) {
+  let dashCaseAttrName = "custom-save";
   let args = getAttributeValueAsArray(saveElement, dashCaseAttrName);
 
   let funcName, savePath, saveToId;
   args.forEach((arg) => {
     if (arg.startsWith("path:")) {
-      savePath = arg.substring(5);
+      savePath = arg.substring("path:".length);
     } else if (arg.startsWith("id:")) {
-      saveToId = arg.substring(3);
+      saveToId = arg.substring("id:".length);
     } else {
       funcName = arg;
     }
   });
 
-  funcName = funcName || "defaultSave";
+  funcName = funcName || "_defaultSave";
 
   return [ funcName, savePath, saveToId ]; 
 }

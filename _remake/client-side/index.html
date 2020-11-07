@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>&ldquo;Hello, Remake!&rdquo; (Remake Recipes)</title>
+  <meta name="description" content="Simple recipes showing you how to use the Remake web app framework (new syntax!)">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jgthms/minireset.css@master/minireset.min.css">
+  <style>
+    body {
+      padding: 2rem;
+      line-height: 1.5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    }
+
+    label, button, select {
+      cursor: pointer;
+    }
+
+    .main-intro {
+      display: flex;
+      margin-bottom: 4rem;
+      padding: 2rem;
+    }
+
+    .main-intro > div:last-child {
+      margin-left: auto;
+      padding: .75rem 1.25rem .85rem;
+      border: 1px solid #12b886;
+      color: #087f5b;
+      background-color: #e6fcf5;
+      border-radius: 7px;
+    }
+
+    .main-intro h1 {
+      font-size: 36px;
+      font-weight: bold;
+      color: #212529;
+    }
+
+    .main-intro h2 {
+      margin-bottom: 1.5em;
+      font-weight: bold;
+      font-size: 24px;
+      color: #845ef7;
+    }
+
+    .main-intro h3 {
+      margin-bottom: .3em;
+      font-weight: bold;
+      font-size: 19px;
+    }
+
+    .main-intro ul, ol {
+      list-style-type: square;
+    }
+
+    .main-intro li {
+      font-size: 18px;
+      margin-bottom: .2em;
+      margin-left: 30px;
+    }
+
+
+    article {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+    }
+
+    article > section {
+      width: 40%;
+      padding: 1rem;
+      border: 8px solid #ddd;
+    }
+
+    article > section:first-child {
+      width: 60%;
+    }
+
+    article > section > aside {
+      margin-bottom: .5rem;
+      padding: 12px 16px;
+      color: #9a4f00;
+      background-color: #fff3bf;
+    }
+
+    /* app code */
+    article > section > div {
+      position: relative;
+      margin-bottom: .5rem;
+      padding: 30px 16px 18px;
+      background-color: #dbe4ff;
+    }
+
+    article > section > div:before {
+      content: "app";
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      padding: 1px 3px 2px;
+      background: #bac8ff;
+      font-weight: bold;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    /* highlighted app code */
+    article > section > pre {
+      overflow-x: scroll;
+      position: relative;
+      padding: 30px 16px 18px;
+      font-size: 15px;
+      background-color: #ede6ff;
+    }
+
+    article > section > pre:before {
+      content: "app code";
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      padding: 1px 3px 2px;
+      background: #d0bfff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-weight: bold;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    output {
+      position: relative;
+      display: block;
+      white-space: pre-wrap;
+      padding: 30px 16px 18px;
+      background-color: #c3fae8;
+    }
+
+    output:before {
+      content: "app data";
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      padding: 1px 3px 2px;
+      background: #8be8ca;
+      font-weight: bold;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .arrow {
+      padding: 1.8rem .5rem;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* CODE HIGHLIGHTING */
+
+    /* equal sign and brackets */
+    pre .support, pre .operator {
+      color: #4c6ef5;
+    }
+
+    /* actualy tag name like div, span */
+    pre .tag-name {
+      color: #d1326a;
+    }
+
+    /* for loop */
+    pre .for-loop {
+      color: #e07204;
+    }
+
+    /* string */
+    pre .string {
+      color: #139e4b;
+    }
+
+    /* attribute on an element*/
+    pre .attribute {
+      color: #972bb3;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-intro">
+    <div>
+      <h1>Remake Recipes 🌈</h1>
+      <h2>Explore what Remake can do with these simple recipes</h2>
+    </div>
+    <div>
+      <h3>With Remake, HTML gets super powers</h3>
+      <ol>
+        <li>HTML gets the power to store data</li>
+        <li>Remake lets your users edit their data</li>
+        <li>You get the power to build a full web apps for real users 10x faster</li>
+      </ol>
+    </div>
+  </div>
+  <main>
+    <article>
+      <section>
+        <aside>A single object key</aside>
+<!-- app -->
+<div object key:page-title="I am a page title"></div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>A single object key with @innerText command</aside>
+<!-- app -->
+<div object key:page-title="@innerText">I am a page title</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>An editable object key with @innerText command</aside>
+<!-- app -->
+<div object key:page-title="@innerText" edit:page-title>I am an editable page title</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Use a default value (edit and then delete all text before saving to test)</aside>
+<!-- app -->
+<div object key:page-title="@innerText" edit:page-title default:page-title="Default page title">I am an editable page title with a default value</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Multi-line editable text</aside>
+<!-- app -->
+<style>
+  [key\:some-multi-line-text] {
+    white-space: pre-line;
+  }
+</style>
+<div object key:some-multi-line-text="@innerText" edit:some-multi-line-text:textarea>Some text
+on multiple
+lines</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Drag-and-drop sortable items</aside>
+<!-- app -->
+<div array key="someSortableItems" sortable>
+  <div object key:sortable-item-text="@innerText" edit:sortable-item-text>Sortable item 1</div>
+  <div object key:sortable-item-text="@innerText" edit:sortable-item-text>Sortable item 2</div>
+  <div object key:sortable-item-text="@innerText" edit:sortable-item-text>Sortable item 3</div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Use @search to set a key value</aside>
+<!-- app -->
+<div object key:page-title="@search">
+  <div target:page-title="@innerText">Page title</div>
+  <button edit:page-title>Edit page title</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>An editable link</aside>
+<!-- app -->
+<div object key:my-favorite-link-name="@search" key:my-favorite-link-url="@search">
+  <div>
+    <a target:my-favorite-link-url="@href" href="https://www.notion.so/" target="_blank">
+      <span target:my-favorite-link-name="@innerText">Notion</span>
+    </a>
+  </div>
+  <button edit:my-favorite-link-name edit:my-favorite-link-url>Edit link</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>An editable image URL</aside>
+<!-- app -->
+<style>
+  [key\:my-favorite-image-url] > div {
+    width: 200px;
+  }
+</style>
+<div object key:my-favorite-image-url="@search">
+  <div>
+    <img target:my-favorite-image-url="@src" src="https://remake-web-assets.s3.amazonaws.com/jack-o-lanterns.png" alt="Jack o' lanterns for Halloween">
+  </div>
+  <button edit:my-favorite-image-url>Edit image URL</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>An page title that can't be removed</aside>
+<!-- app -->
+<div object key:page-title="@innerText" edit:page-title:without-remove>My Amazing Adventure!</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>On-page text input</aside>
+<!-- app -->
+<div object key:site-name="@search">
+  <div target:site-name="@innerText">Site name</div>
+  <input type="text" update:site-name value="Site name">
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>On-page textarea</aside>
+<!-- app -->
+<style>
+  [key\:text-note] {
+    white-space: pre-line;
+  }
+</style>
+<div object key:text-note="@search">
+  <div target:text-note="@innerText">This is a
+text note</div>
+  <textarea update:text-note>This is a
+text note</textarea>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>On-page radio buttons</aside>
+<!-- app -->
+<div object key:portfolio-theme="Classic">
+  <div>Portfolio theme: <b watch:portfolio-theme="@innerText">Classic</b></div>
+  <div><label><input type="radio" value="Classic" update:portfolio-theme name="portfolio-theme" checked> Classic</label></div>
+  <div><label><input type="radio" value="Modern" update:portfolio-theme name="portfolio-theme"> Modern</label></div>
+  <div><label><input type="radio" value="Artistic" update:portfolio-theme name="portfolio-theme"> Artistic</label></div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>On-page checkbox buttons</aside>
+<!-- app -->
+<style>
+  [data-available-on], [data-dark-mode-on] {
+    display: none;
+  }
+
+  [key\:dark-mode="on"] [data-dark-mode-off], [key\:available-for-projects="on"] [data-available-off] {
+    display: none;
+  }
+
+  [key\:dark-mode="on"] [data-dark-mode-on], [key\:available-for-projects="on"] [data-available-on] {
+    display: inline;
+  }
+</style>
+<div object key:dark-mode="on" key:available-for-projects="off">
+  <div><b>Settings:</b></div>
+  <div><label><input type="checkbox" update:dark-mode checked> Dark mode</label> <b data-dark-mode-on>On</b><b data-dark-mode-off>Off</b></div>
+  <div><label><input type="checkbox" update:available-for-projects> Available for projects</label> <b data-available-on>On</b><b data-available-off>Off</b></div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>On-page select input</aside>
+<!-- app -->
+<div object key:page-layout="One column">
+  <div>Page layout: <b watch:page-layout="@innerText">One column</b></div>
+  <select update:page-layout>
+    <option value="One column">One column</option>
+    <option value="Two column">Two column</option>
+    <option value="Three column">Three column</option>
+  </select>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Click to set a value</aside>
+<!-- app -->
+<div object key:favorite-color="@search">
+  <div>Favorite color: <b target:favorite-color="@innerText">none chosen</b></div>
+  <button update:favorite-color="red">red</button>
+  <button update:favorite-color="green">green</button>
+  <button update:favorite-color="rainbow">rainbow</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Click to toggle a value</aside>
+<!-- app -->
+<div object key:direct-messages="@search">
+  <div>Direct messages: <b target:direct-messages="@innerText">on</b></div>
+  <button toggle:direct-messages>Toggle</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Watch a key for changes</aside>
+<!-- app -->
+<div object key:page-title-being-watched="@search">
+  <div target:page-title-being-watched="@innerText">Page title</div>
+  <div>Mirror data: <span watch:page-title-being-watched="@innerText">Page title</span></div>
+  <div>Mirror data: <span watch:page-title-being-watched="@innerText">Page title</span></div>
+  <div>Mirror data: <span watch:page-title-being-watched="@innerText">Page title</span></div>
+  <button edit:page-title-being-watched>Edit page title</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Call a custom watch function</aside>
+<!-- app -->
+<div object key:number-for-calculation="@search">
+  <button edit:number-for-calculation>Edit number</button>
+  <div><b target:number-for-calculation="@innerText">10</b></div>
+  <div>x 3 = <span watch:number-for-calculation="customWatchFunc(3)">30</span></div>
+  <div>x 6 = <span watch:number-for-calculation="customWatchFunc(6)">60</span></div>
+  <div>x 9 = <span watch:number-for-calculation="customWatchFunc(9)">90</span></div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Inline save button (check console for results)</aside>
+<!-- app -->
+<div>
+  <button save>Save page</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Deeply nested data</aside>
+<!-- app -->
+<style>
+  .books-heading {
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-size: 21px;
+  }
+
+  .other-books {
+    margin-top: 1rem;
+    margin-left: 1rem;
+  }
+
+  .other-books > div:first-child {
+    margin-bottom: .5rem;
+    font-style: italic;
+    opacity: .5;
+  }
+
+  [key="books"] > div {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0,0,0,.25);
+  }
+
+  [key="books"] [target\:book-name] {
+    font-weight: bold;
+  }
+
+  [key="otherBooks"] > [key\:book-name] {
+    margin-bottom: .75rem;
+    padding: .5rem .5rem .5rem .75rem;
+    border-left: 3px solid rgba(0,0,0,.2);
+  }
+</style>
+<div object>
+  <h1 class="books-heading">Books:</h1>
+  <div array key="books">
+    <div object key:book-name="@search">
+      <div target:book-name="@innerText">Ready Player One</div>
+      <div object key="authorInfo" key:author-name="@search">
+        <div target:author-name="@innerText">Ernest Cline</div>
+        <div class="other-books">
+          <div>Books by same author:</div>
+          <div array key="otherBooks">
+            <div object key:book-name="@search">
+              <div target:book-name="@innerText">Ready Player Two</div>
+              <div array key="audiobookReaders">
+                <div object key:reader-name="@search" key:reader-rating="@search">
+                  <div>Read by: <span target:reader-name="@innerText">Wil Wheaton</span></div>
+                  <div target:reader-rating="@innerText">4.8/5</div>
+                </div>
+              </div>
+            </div>
+            <div object key:book-name="@search">
+              <div target:book-name="@innerText">Armada</div>
+              <div array key="audiobookReaders">
+                <div object key:reader-name="@search" key:reader-rating="@search">
+                  <div>Read by: <span target:reader-name="@innerText">Wil Wheaton</span></div>
+                  <div target:reader-rating="@innerText">n/a</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div object key:book-name="@search">
+      <div target:book-name="@innerText">Dune</div>
+      <div object key="authorInfo" key:author-name="@search">
+        <div target:author-name="@innerText">Frank Herbert</div>
+        <div class="other-books">
+          <div>Books by same author:</div>
+          <div array key="otherBooks">
+            <div object key:book-name="@search">
+              <div target:book-name="@innerText">The Jesus Incident</div>
+              <div array key="audiobookReaders">
+                <div object key:reader-name="@search" key:reader-rating="@search">
+                  <div>Read by: <span target:reader-name="@innerText">Scott Brick</span></div>
+                  <div target:reader-rating="@innerText">4.4/5</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article has-handlebars="todoApp">
+      <section>
+        <aside>Simple todo app (using Handlebars templating)</aside>
+<!-- app -->
+<div object>
+  <div array key="todos">
+    {{#for todo in todos}}
+      <div object key:text="@innerText" edit:text>{{todo.text}}</div>
+    {{/for}}
+  </div>
+  <button new:todo>Add todo</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article has-handlebars="projectApp">
+      <section>
+        <aside>Freelance project app (using Handlebars templating)</aside>
+<!-- app -->
+<style>
+  [new\:project] {
+    margin-bottom: 1rem;
+  }
+
+  [key="projects"] > [object] {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: rgba(255,255,255,.5);
+    border-radius: 4px;
+  }
+
+  [key\:project-name] > h1{
+    margin-bottom: .5rem;
+    font-weight: bold;
+  }
+
+  [key="projectItems"] {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  [key="projectItems"] > [object] {
+    margin-bottom: .5rem;
+    padding: .5rem 1rem;
+    border: 1px solid #91a7ff;
+    border-radius: 3px;
+  }
+</style>
+<div object>
+  <button new:project>New project</button>
+  <div array key="projects">
+    {{#for project in projects}}
+      <div object key:project-name="@search">
+        <h1 target:project-name="@innerText" edit:project-name>{{project.projectName}}</h1>
+        <div object key:budget="@innerText" edit:budget>$4,500</div>
+        <div array key="projectItems">
+          {{#for projectItem in project.projectItems}}
+            <div object key:item-length="@search" key:item-type="@search" edit:item-length edit:item-type>
+              <div target:item-length="@innerText">{{projectItem.itemLength}}</div>
+              <div target:item-type="@innerText">{{projectItem.itemType}}</div>
+            </div>
+          {{/for}}
+        </div>
+        <button new:project-item>New item</button>
+      </div>
+    {{/for}}
+  </div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Image upload (just a test, doesn't upload)</aside>
+<!-- app -->
+<style>
+  [key\:uploaded-image] > div {
+    width: 200px;
+    margin-top: 1.5rem;
+  }
+</style>
+<div object key:uploaded-image="@search">
+  <input update:uploaded-image type="file" accept="image/*">
+  <div>
+    <img target:uploaded-image="@src">
+  </div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Call custom save function on edit</aside>
+<!-- app -->
+<div custom-save="customSaveFunc">
+  <div object key:page-title="@innerText" edit:page-title>I am an editable page title</div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Remove element and its data</aside>
+<!-- app -->
+<div>
+  <div object key:page-title="I am a page title">
+    <button remove>Remove</button>
+  </div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Erase data from element</aside>
+<!-- app -->
+<div object key:page-title="I am a page title">
+  <button erase>Erase data</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Erase data using popover "remove" button</aside>
+<!-- app -->
+<div object key:page-title="@innerText">
+  <button edit:page-title:with-erase>Click me and then the "remove" button to test</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Disable triggering a save event from inside an element</aside>
+<!-- app -->
+<div no-save>
+  <div object key:item-title="@innerText" edit:item-title>Edit me!</div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>When saving, ignore data inside an element</aside>
+<!-- app -->
+<div object key:product-name="@search">
+  <div target:product-name="@innerText">The best product</div>
+  <div ignore-data object key="productDetails" key:product-price="@innerText">$20</div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Disable all Remake update/edit/change events inside an element</aside>
+<!-- app -->
+<div disable-events>
+  <div object key:favorite-planet="Pluto" key:a-simple-note="A note" key:cool-mode="on">
+    <input type="text" update:a-simple-note value="A note">
+    <button update:favorite-planet="Mars">Mars</button>
+    <button toggle:cool-mode>Toggle cool mode</button>
+    <button erase>Erase data</button>
+  </div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Set a temporary key with radio buttons</aside>
+<!-- app -->
+<div object temporary:key:color-picker-choice="Forest green">
+  <div>Color picker choice: <b watch:color-picker-choice="@innerText">Forest green</b></div>
+  <div><label><input type="radio" value="Forest green" update:color-picker-choice name="color-picker-choice" checked> Forest green</label></div>
+  <div><label><input type="radio" value="Sapphire" update:color-picker-choice name="color-picker-choice"> Sapphire</label></div>
+  <div><label><input type="radio" value="Amber" update:color-picker-choice name="color-picker-choice"> Amber</label></div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Temporary keys don't create app data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Set a temporary key with a button</aside>
+<!-- app -->
+<div object temporary:key:menu-selection="Site preview">
+  <div>Selected menu: <b watch:menu-selection="@innerText">Site preview</b></div>
+  <div><button update:menu-selection="Site preview" checked> Site preview</button></div>
+  <div><button update:menu-selection="Code editor"> Code editor</button></div>
+  <div><button update:menu-selection="User settings"> User settings</button></div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Temporary keys don't create app data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Edit a temporary key in a popover</aside>
+<!-- app -->
+<div object temporary:key:headline-keyword="@search">
+  <div>Generated headline: <b>Don't miss out, try <span target:headline-keyword="@innerText">Fooz</span> today!</b></div>
+  <button edit:headline-keyword>Edit keyword</button>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Temporary keys don't create app data:</aside>
+        <output></output>
+      </section>
+    </article>
+    <article>
+      <section>
+        <aside>Higher-level watch attribute shouldn't trigger a nested watch attribute</aside>
+<!-- app -->
+<style>
+  button[edit\:some-page-heading] {
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+</style>
+<div object key:some-page-heading="@search">
+  <div target:some-page-heading="@innerText">Page heading</div>
+  <div>Mirror data: <span watch:some-page-heading="@innerText">Page title</span></div>
+  <button edit:some-page-heading>Edit page title</button>
+  <div object key="nestedData" key:some-page-heading="This shouldn't update unless clicked directly">
+    <div edit:some-page-heading watch:some-page-heading="@innerText">This shouldn't update unless clicked directly</div>
+  </div>
+</div>
+<!-- /app -->
+      </section>
+      <div class="arrow">&rarr;</div>
+      <section>
+        <aside>Data:</aside>
+        <output></output>
+      </section>
+    </article>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.6/dist/handlebars.min.js"></script>
+  <script src="../dist/js/remake/remake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/crostini@1.1.0/dist/crostini.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/rainbow-code@2.1.7/dist/rainbow.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/rainbow-code@2.1.7/src/language/generic.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/rainbow-code@2.1.7/src/language/html.js"></script>
+  <script>
+    Rainbow.defer = true;
+    Rainbow.extend("html", [
+      {
+        name: "support.attribute",
+        pattern: / checked| object| array| sortable| save| remove| erase| no-save| ignore-data| key:| target:| watch:| default:| toggle:[-\w:]+| edit:[-\w:]+| new:[-\w:]+| update:[-\w:]+/gi
+      },
+      {
+        name: "for-loop",
+        pattern: /{{.*}}/gi
+      }
+    ]);
+  </script>
+
+  <script>
+    let startingDataLookup = {
+      todoApp: {"todos": [{"text": "Todo 1"}, {"text": "Todo 2"}, {"text": "Todo 3"}]},
+      projectApp: {"projects": [{"projectName":"My freelance project","projectItems":[{"itemLength":"1 hour","itemType":"planning"},{"itemLength":"2 hours","itemType":"research"},{"itemLength":"3 hour","itemType":"working"},{"itemLength":"2.5 hour","itemType":"revisions"}],"budget":"$4,500"}]}
+    };
+    let newItemDataLookup = {
+      todo: {"todo": {"text": "A new todo!"}},
+      project: {"project": {"projectName":"My New Freelance Project","projectItems":[{"itemLength":"1 hour","itemType":"planning"}],"budget":"$1,000"}},
+      projectItem: {"projectItem": {"itemLength":"1 hour","itemType":"New project item!"}}
+    };
+
+    let newItemLookup = {};
+    Handlebars.registerHelper("for", function(context, options) {
+      newItemLookup[options.hash.itemName] = options.fn;
+      // render {{else}} block
+      if (!context || context.length === 0) {
+        return options.inverse(this);
+      }
+      // contextItem has the data passed into the helper
+      let overallRender = context.map(contextItem => {
+        // move the context item inside the provided name
+        let data = {};
+        if (options.hash.itemName) {
+          data[options.hash.itemName] = contextItem;
+        }
+        // render the inner template
+        let renderedItem = options.fn(data);
+        return renderedItem;
+      }).join("");
+      return overallRender;
+    });
+
+    let forLoopStringRegex = /\{\{#for\s+(\S+)\s+in\s+([^\}\s]+)/g;
+    let handlebarsCodeBlockElems = document.querySelectorAll("[has-handlebars] > section > div");
+    handlebarsCodeBlockElems.forEach(handlebarsCodeBlockElem => {
+      let appName = handlebarsCodeBlockElem.closest("[has-handlebars]").getAttribute("has-handlebars");
+      let templateHtml = handlebarsCodeBlockElem.outerHTML;
+      handlebarsCodeBlockElem.parentElement.templateHtml = templateHtml;
+      let templateHtmlWithForLoop = templateHtml.replace(forLoopStringRegex, '{{#for $2 itemName="$1"');
+      let template = Handlebars.compile(templateHtmlWithForLoop);
+      let rendered = template(startingDataLookup[appName]);
+      handlebarsCodeBlockElem.outerHTML = rendered;
+    });
+
+    Remake.init({
+      logDataOnSave: true,
+      sortable: {sortablejs: Sortable},
+      watchFunctions: {
+        customWatchFunc: (data) => {
+          let {value, watchFuncArgs, watchElem} = data;
+          watchElem.innerText = parseInt(value) * parseInt(watchFuncArgs[0]);
+          console.log("custom watch function called!", data);
+        }
+      },
+      saveFunctions: {
+        _defaultSave: function ({data, path, saveToId, elem}) {
+          console.log("overwritten default save:", {data, path, saveToId, elem});
+
+          // every time the page is updated, update the data preview:
+          processCodeElem({codeElem: elem.closest("article").querySelector("section > div"), runRainbow: true});
+        },
+        customSaveFunc: function ({data, path, saveToId, elem}) {
+          console.log("custom save function:", {data, path, saveToId, elem});
+        }
+      },
+      _defaultAddItemCallback: function ({templateName, listElem, whereToInsert}) {
+        console.log("overwritten default add item:", {templateName, listElem, whereToInsert});
+
+        let savedRenderFunc = newItemLookup[templateName];
+        if (savedRenderFunc) {
+          let renderedPartial = savedRenderFunc(newItemDataLookup[templateName]);
+          listElem.insertAdjacentHTML(whereToInsert, renderedPartial);
+          Remake.callSaveFunction({targetElem: listElem});
+        }
+      },
+      _defaultUploadCallback: function ({fileInputElem, keyName, resetFileInput, file}) {
+        let fileReader = new FileReader();
+        fileReader.onload = () => {
+          let result = fileReader.result;
+          Remake.setValueForClosestKey({elem: fileInputElem, keyName, value: result});
+          resetFileInput(fileInputElem);
+        }
+        fileReader.readAsDataURL(file);
+
+        console.log("overwritten default upload:", {fileInputElem, keyName, resetFileInput, file});
+      }
+    });
+
+    Remake.onSave(function (res) {
+      if (!res.success) {
+        crostini("Error saving data", {type: "error"});
+      }
+    });
+
+    Remake.onFileUpload(function (res) {
+      if (res.success) {
+        crostini("File upload successful");
+      } else {
+        crostini("Error uploading file", {type: "error"});
+      }
+    });
+
+    Remake.onFileUploadProgress(function (res) {
+      console.log("File upload percentage:", res.percentage);
+    });
+
+    Remake.onAddItem(function (res) {
+      if (!res.ajaxResponse.success) {
+        crostini("Error adding new item", {type: "error"});
+      }
+    });
+
+    Remake.onSync(function (res) {
+      console.log("Data synced:", res);
+    });
+
+    function processCodeElem ({codeElem, runRainbow}) {
+      if (codeElem.parentElement.templateHtml !== "done") {
+        let codeElemHtml;
+
+        // if using Handlebars template
+        if (codeElem.parentElement.templateHtml) {
+          codeElemHtml = codeElem.parentElement.templateHtml.replace(/</g, "&lt;");
+        } else {
+          codeElemHtml = codeElem.outerHTML.replace(/</g, "&lt;");
+        }
+
+        // remove quotes after empty attributes
+        codeElemHtml = codeElemHtml.replace(/=\"\"|=''/g, "");
+
+        let preElem = codeElem.parentElement.querySelector("pre");
+        if (preElem) {
+          preElem.remove();
+        }
+        
+        codeElem.insertAdjacentHTML("afterend", `<pre><code data-language="html">${codeElemHtml}</code></pre>`);
+
+        if (codeElem.parentElement.templateHtml) {
+          codeElem.parentElement.templateHtml = "done";
+        }
+      }
+
+      let data = Remake.getSaveData(codeElem);
+      codeElem.closest("article").querySelector("output").innerText = JSON.stringify(data, null, 4);
+
+      if (runRainbow) {
+        Rainbow.color();
+      }
+    }
+
+    let codeElems = Array.from(document.querySelectorAll("section > div"));
+    function processPage () {
+      codeElems.forEach(codeElem => {
+        processCodeElem({codeElem, runRainbow: false});
+      });
+
+      Rainbow.color();
+    }
+
+    processPage();
+
+  </script>
+</body>
+</html>

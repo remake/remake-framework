@@ -12,7 +12,8 @@
     "asset-bundler-watch": "node _remake-asset-bundler/",
     "build-selftest": "parcel build ./_remake/tests/remake-init-gen.js -d ./_remake/tests/ -o remake-init.js",
     "selftest": "npm run build-selftest && echo 'The self test page is ready. Go open the file at ./_remake/tests/selftest.html in your favorite browser.'",
-    "clean": "rm -rf .cache && rm -rf _remake/dist"
+    "clean": "rm -rf .cache && rm -rf _remake/dist",
+    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap --outdir=_remake/dist/js/remake --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/js/remake/index.js _remake/dist/js/remake/remake.min.js && mv _remake/dist/js/remake/index.js.map _remake/dist/js/remake/remake.min.js.map"
   },
   "nodemonConfig": {
     "ignore": [
@@ -79,6 +80,7 @@
     "chokidar": "^3.2.1",
     "concurrently": "^4.1.0",
     "copy-and-watch": "^0.1.4",
+    "esbuild": "^0.8.2",
     "nodemon": "^1.19.1",
     "parcel": "^1.12.4",
     "parcel-bundler": "^1.12.4",
