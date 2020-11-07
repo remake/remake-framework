@@ -30,17 +30,17 @@ const app = express();
 app.enable("trust proxy", "127.0.0.1");
 
 // static assets middleware comes before other routes, so they don't get asset requests
-app.use(express.static(path.join(__dirname, "./dist"), {
-  redirect: false
-}));
-// TODO: Change for multi-tenant... something like "/app/*/assets"
-app.use(express.static(path.join(__dirname, "../app/assets"), {
-  redirect: false
-}));
-// TODO: Change for multi-tenant ... something like "/app/*/data/uploads"
-app.use(express.static(path.join(__dirname, "../app/data/uploads"), {
-  redirect: false
-}));
+if (!RemakeStore.isMultiTenant()) {
+  app.use("/remake", express.static(path.join(__dirname, "./dist/remake"), {
+    redirect: false
+  }));
+  app.use("/assets", express.static(path.join(__dirname, "../app/assets"), {
+    redirect: false
+  }));
+  app.use("/uploads", express.static(path.join(__dirname, "../app/data/uploads"), {
+    redirect: false
+  }));
+}
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));

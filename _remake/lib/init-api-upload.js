@@ -63,7 +63,8 @@ export function initApiUpload ({app}) {
       }
 
       let uploadPathParts = uploadPath.split("/");
-      let filePath = "/" + uploadPathParts[uploadPathParts.length - 2] + "/" + uploadPathParts[uploadPathParts.length - 1];
+      // e.g. /uploads/username/file.jpg
+      let filePath = "/uploads/" + uploadPathParts[uploadPathParts.length - 2] + "/" + uploadPathParts[uploadPathParts.length - 1];
 
       res.json({success: true, filePath});
     });

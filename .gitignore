@@ -3,11 +3,6 @@
 node_modules/
 npm-debug.log
 
-_remake/dist/*
-!_remake/dist/js
-_remake/dist/js/*
-!_remake/dist/js/remake/
-
 _remake-uploads
 !_remake-uploads/.gitkeep
 
