@@ -222,8 +222,9 @@ export function initServiceRoutes({app}) {
           } else {
             try {
               shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
-              shell.mkdir('-p', `${global.config.location.remake}/data/${appName}/app/data/database/user-app-data`);
-              shell.mkdir('-p', `${global.config.location.remake}/data/${appName}/app/data/database/user-details`);
+              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}/uploads`);
+              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}/data/database/user-app-data`);
+              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}/data/database/user-details`);
               shell.mkdir('-p', `${global.config.location.remake}/_remake/dist/app_${appName}`);
               shell.cp('-r', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
               shell.cp('-r', `${global.config.location.tmp}/${appName}/app/assets/*`, `${global.config.location.remake}/_remake/dist/app_${appName}`);
