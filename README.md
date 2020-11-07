@@ -1,21 +1,21 @@
-**Preview Release** - 🚧 New Remake syntax 🚧
-
-# Learn the new syntax
+# Learn the new syntax!
 
 [Remake Recipes](https://recipes.remaketheweb.com/) - the easiest way to learn the new syntax!
 
-# Setup Guide
+**IMPORTANT:** Use the [Remake CLI](https://github.com/remake/remake-cli) for a much easier install
+
+# Manual Setup Guide (Not Recommended - Use the CLI instead)
 
 1. Clone this repo
 
 ```
-git clone https://github.com/remake/remake-framework-new-syntax.git
+git clone https://github.com/remake/remake-framework.git
 ```
 
 2. Install dependencies
 
 ```
-cd remake-framework-new-syntax
+cd remake-framework
 npm install
 ```
 
@@ -34,6 +34,8 @@ inside `.remake`:
 ```
 npm run dev
 ```
+
+5. Add a starter project to the `app/` directory
 
 # Full Remake Docs
 
