@@ -10,9 +10,8 @@ _remake/dist/js/*
 
 _remake-uploads
 !_remake-uploads/.gitkeep
-_remake-data/**/*.json
 
-# remove the next line after adding a new app (e.g. with the CLI)
+# remove the next line after creating an app in the app/ directory
 app/
 !app/.gitkeep
 
