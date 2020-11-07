@@ -33,7 +33,7 @@ app.enable("trust proxy", "127.0.0.1");
 app.use(express.static(path.join(__dirname, "./dist"), {
   redirect: false
 }));
-app.use(express.static(path.join(__dirname, "../_remake-uploads"), {
+app.use(express.static(path.join(__dirname, "../app/data/uploads"), {
   redirect: false
 }));
 
@@ -127,7 +127,7 @@ let thirtyDaysInMs = 2592000000;
 let thirtyDaysInSec = 2592000000 / 1000;
 app.use(expressSession({ 
   store: new FileStore({
-    path: path.join(__dirname, "../.sessions"),
+    path: path.join(__dirname, "./.sessions"),
     ttl: thirtyDaysInSec
   }),
   secret: process.env.SESSION_SECRET, 
@@ -201,12 +201,10 @@ initRenderedRoutes({ app });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("\n\n");
-  showConsoleSuccess(`#####################################################################`);
-  showConsoleSuccess(`#                                                                   #`);
-  showConsoleSuccess(`#           Visit your Remake app: http://localhost:${PORT}            #`);
-  showConsoleSuccess(`#                                                                   #`);
-  showConsoleSuccess(`#####################################################################`);
+  console.log('\n');
+  showConsoleSuccess(`Visit your Remake app: http://localhost:${PORT}`);
+  showConsoleSuccess(`Check this log to see the requests made by the app, as you use it.`);
+  console.log('\n');
 
   if (process.send) {
     process.send("online");
