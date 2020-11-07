@@ -12,6 +12,10 @@ _remake-uploads
 !_remake-uploads/.gitkeep
 _remake-data/**/*.json
 
+# remove the next line after adding a new app (e.g. with the CLI)
+app/
+!app/.gitkeep
+
 .remake
 .cache/
 
