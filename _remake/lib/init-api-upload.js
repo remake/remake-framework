@@ -56,16 +56,14 @@ export function initApiUpload ({app}) {
       return;
     }
 
-    let uploadPath = path.join(uploadPathDir, "file_" + getLongUniqueId() + path.extname(file.name));
+    let fileName = "file_" + getLongUniqueId() + path.extname(file.name);
+    let uploadPath = path.join(uploadPathDir, fileName);
     file.mv(uploadPath, function(err) {
       if (err) {
         return res.status(500).json({success: false, reason: "processFailed"});
       }
 
-      let uploadPathParts = uploadPath.split("/");
-      // e.g. /uploads/username/file.jpg
-      let filePath = "/uploads/" + uploadPathParts[uploadPathParts.length - 2] + "/" + uploadPathParts[uploadPathParts.length - 1];
-
+      let filePath = "/uploads/" + username + "/" + fileName;
       res.json({success: true, filePath});
     });
   })

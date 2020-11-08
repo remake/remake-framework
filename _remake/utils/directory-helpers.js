@@ -77,7 +77,7 @@ export function getDirForGlobalData ({fileName, appName}) {
 }
 
 export function getDirForUpload ({appName, username}) {
-  let innerAppPath = RemakeStore.isMultiTenant() ? `app_${appName}` + "/" : "";
+  let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
   let pathString = `../../app/${innerAppPath}data/uploads/${username}`;
   return path.join(__dirname, pathString);
 }
