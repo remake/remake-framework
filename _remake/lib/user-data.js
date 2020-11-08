@@ -3,7 +3,7 @@ const path = require('upath');
 import { showConsoleError } from "../utils/console-utils";
 import { capture, mkdirpAsync } from "../utils/async-utils";
 import { getBootstrapData } from "../utils/get-bootstrap-data";
-import { getDirForUserFile, getAllDirsForUserData } from "../utils/directory-helpers";
+import { getDirForUserData } from "../utils/directory-helpers";
 
 // create new user data files
 // returns: {details, appData}
@@ -21,8 +21,9 @@ export async function createUserData ({ appName, username, hash, email }) {
   // make sure all the user data directories exist before writing to them
   await makeSureUserDataDirectoriesExist({appName});
 
-  let detailsWritePromise = jsonfile.writeFile(getDirForUserFile({type: "details", appName, username}), details, { spaces: 2 });
-  let appDataWritePromise = jsonfile.writeFile(getDirForUserFile({type: "appData", appName, username}), appData, { spaces: 2 });
+  let [appDataFileDir, detailsFileDir] = getDirForUserData({appName, withFile: true, username});
+  let appDataWritePromise = jsonfile.writeFile(appDataFileDir, appData, { spaces: 2 });
+  let detailsWritePromise = jsonfile.writeFile(detailsFileDir, details, { spaces: 2 });
 
   // let higher-level functions capture this if it errors
   await Promise.all([detailsWritePromise, appDataWritePromise]);
@@ -35,10 +36,21 @@ export async function createUserData ({ appName, username, hash, email }) {
 // returns: {details, appData}
 export async function getUserData ({ username, type, appName }) {
   try {
-    let detailsPromise = type === "appData" ? null : jsonfile.readFile(getDirForUserFile({type: "details", appName, username})); 
-    let appDataPromise = type === "details" ? null : jsonfile.readFile(getDirForUserFile({type: "appData", appName, username}));
-    let [ details, appData ] = await Promise.all([detailsPromise, appDataPromise]);
-    return { details, appData }; 
+    let [appDataFileDir, detailsFileDir] = getDirForUserData({appName, withFile: true, username});
+
+    let appDataPromise = null;
+    let detailsPromise = null;
+    if (!type) {
+      appDataPromise = jsonfile.readFile(appDataFileDir);
+      detailsPromise = jsonfile.readFile(detailsFileDir);
+    } else if (type === "appData") {
+      appDataPromise = jsonfile.readFile(appDataFileDir);
+    } else if (type === "details") {
+      detailsPromise = jsonfile.readFile(detailsFileDir);
+    }
+
+    let [ appData, details ] = await Promise.all([appDataPromise, detailsPromise]);
+    return { appData, details }; 
   } catch (e) {
     return null;
   }
@@ -49,23 +61,22 @@ export async function getUserData ({ username, type, appName }) {
 export async function setUserData ({ appName, username, data, type }) {
   let detailsWritePromise;
   let appDataWritePromise;
-
-  try {
-    if (type === "details") {
-      let dirForUserFile = getDirForUserFile({appName, type: "details", username});
-      detailsWritePromise = jsonfile.writeFile(dirForUserFile, data, { spaces: 2 });
-    }
-  } catch (e) {
-    showConsoleError("Error: Setting user details");
-  }
+  let [appDataFileDir, detailsFileDir] = getDirForUserData({appName, withFile: true, username});
 
   try {
     if (type === "appData") {
-      let dirForUserFile = getDirForUserFile({appName, type: "appData", username});
-      appDataWritePromise = jsonfile.writeFile(dirForUserFile, data, { spaces: 2 });
+      appDataWritePromise = jsonfile.writeFile(appDataFileDir, data, { spaces: 2 });
     }
   } catch (e) {
-    showConsoleError("Error: Setting user appData");
+    showConsoleError("Error: Can't set user appData");
+  }
+
+  try {
+    if (type === "details") {
+      detailsWritePromise = jsonfile.writeFile(detailsFileDir, data, { spaces: 2 });
+    }
+  } catch (e) {
+    showConsoleError("Error: Can't set user details");
   }
 
   // let higher-level functions capture this if it errors
@@ -78,7 +89,7 @@ export async function setUserData ({ appName, username, data, type }) {
 
 async function makeSureUserDataDirectoriesExist ({appName}) {
   let ret = [];
-  let dirs = getAllDirsForUserData({appName});
+  let dirs = getDirForUserData({appName});
 
   let promisesArray = dirs.map(function (dir) {
     return mkdirpAsync(dir);
