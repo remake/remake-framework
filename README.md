@@ -4,6 +4,8 @@
 
 **IMPORTANT:** Use the [Remake CLI](https://github.com/remake/remake-cli) for a much easier install
 
+**IMPORTANT:** A NEW VERSION of this framework was just released. **Don't use the current docs**. For now, you can use this [thorough recipes page](https://recipes.remaketheweb.com/) to learn the new syntax.
+
 # Manual Setup Guide (Not Recommended - Use the CLI instead)
 
 1. Clone this repo
