@@ -221,13 +221,14 @@ export function initServiceRoutes({app}) {
             return res.status(500).json(err).end();
           } else {
             try {
-              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}`);
-              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}/uploads`);
-              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}/data/database/user-app-data`);
-              shell.mkdir('-p', `${global.config.location.remake}/app/${appName}/data/database/user-details`);
-              shell.mkdir('-p', `${global.config.location.remake}/_remake/dist/app_${appName}`);
-              shell.cp('-r', `${global.config.location.tmp}/${appName}/app/*`, `${global.config.location.remake}/app/${appName}/`);
-              shell.cp('-r', `${global.config.location.tmp}/${appName}/app/assets/*`, `${global.config.location.remake}/_remake/dist/app_${appName}`);
+              let remakeDirectory = global.config.location.remake;
+              let appTempDirectory = global.config.location.tmp;
+              shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/uploads`);
+              shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/database/user-app-data`);
+              shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/database/user-details`);
+              shell.mkdir('-p', `${remakeDirectory}/_remake/dist/app_${appName}`);
+              shell.cp('-r', `${appTempDirectory}/${appName}/app/*`, `${remakeDirectory}/app/${appName}/`);
+              shell.cp('-r', `${appTempDirectory}/${appName}/app/assets/*`, `${remakeDirectory}/_remake/dist/app_${appName}`);
 
               if (/[a-z0-9\/\-]\.zip$/.test(req.file.path)) {
                 shell.rm(req.file.path);
