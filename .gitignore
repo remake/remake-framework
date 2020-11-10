@@ -3,8 +3,8 @@
 node_modules/
 npm-debug.log
 
-_remake-uploads
-!_remake-uploads/.gitkeep
+app/data/database
+app/data/uploads
 
 .remake
 .cache/
