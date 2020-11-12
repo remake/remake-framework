@@ -11,6 +11,7 @@ import {
   readdirAsync, 
   statAsync 
 } from "./async-utils";
+import { forInLoopRegex } from "./common";
 import { getHandlebarsContext } from "./handlebars-context";
 import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
@@ -103,7 +104,6 @@ export async function doesPageExist ({appName, pageName}) {
 
 let layoutNameRegex = /\{\{\s*layout\s+["'](\w+)["']\s*\}\}/;
 let yieldCommandRegex = /\{\{>\s+yield\s+\}\}/;
-let forInLoopRegex = /\{\{#for\s+(\S+)\s+in\s+([^\}\s]+)/g;
 
 async function processTemplateString ({appName, pageTemplateString}) {
   // 1. get the layout name from the template string
