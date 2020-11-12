@@ -17,7 +17,7 @@
       "node_modules/",
       "app"
     ],
-    "ext": "html,hbs,sass,css,js,png,gif,jpg,json"
+    "ext": "html,hbs,css,js,png,gif,jpg,json"
   },
   "keywords": [],
   "author": "",
@@ -29,9 +29,6 @@
     "archiver": "^3.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "browserslist": "^4.12.1",
-    "camelcase": "^5.3.1",
-    "caniuse-lite": "^1.0.30001088",
     "change-case": "^3.1.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.4",
@@ -67,15 +64,8 @@
     "upath": "^1.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.4",
-    "chokidar": "^3.2.1",
-    "concurrently": "^4.1.0",
-    "copy-and-watch": "^0.1.4",
     "esbuild": "^0.8.2",
     "nodemon": "^1.19.1",
-    "parcel": "^1.12.4",
-    "parcel-bundler": "^1.12.4",
-    "sass": "^1.23.0",
     "shelljs": "^0.8.3"
   }
 }
