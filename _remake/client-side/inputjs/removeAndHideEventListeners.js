@@ -35,7 +35,7 @@ export function initRemoveAndHideEventListeners () {
 
     // calling this on next tick gives other click events on this element that
     // might set data time to fire before the data is saved
-    callSaveFunctionNextTick({targetElem: parentElement});
+    callSaveFunctionNextTick(parentElement);
 
   });
 

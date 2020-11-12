@@ -21,7 +21,7 @@ export default function initSortableElements () {
       sortablejs.create(sortableListElem, {
         group: sortableListElem.getAttribute("sortable") || getRandomId(),
         onEnd: function (event) {
-          callSaveFunction({targetElem: sortableListElem})
+          callSaveFunction(sortableListElem)
         }
       });
     });

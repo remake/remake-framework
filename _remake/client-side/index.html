@@ -1042,7 +1042,7 @@ text note</textarea>
         if (savedRenderFunc) {
           let renderedPartial = savedRenderFunc(newItemDataLookup[templateName]);
           listElem.insertAdjacentHTML(whereToInsert, renderedPartial);
-          Remake.callSaveFunction({targetElem: listElem});
+          Remake.callSaveFunction(listElem);
         }
       },
       _defaultUploadCallback: function ({fileInputElem, keyName, resetFileInput, file}) {

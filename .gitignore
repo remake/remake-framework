@@ -3,6 +3,7 @@
 node_modules/
 npm-debug.log
 
+app/
 app/data/database
 app/data/uploads
 

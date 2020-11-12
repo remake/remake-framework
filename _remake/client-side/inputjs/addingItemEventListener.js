@@ -28,7 +28,7 @@ function _defaultAddItemCallback ({templateName, listElem, whereToInsert}) {
     listElem.insertAdjacentHTML(whereToInsert, htmlString);
 
     // save needs to be called on the list element, not the item, so it doesn't try to save to a non-existent id
-    callSaveFunction({targetElem: listElem});
+    callSaveFunction(listElem);
     
     let itemElem = whereToInsert === "afterbegin" ? listElem.firstElementChild : listElem.lastElementChild;
     callOnAddItemCallbacks({success: true, listElem, itemElem, templateName, ajaxResponse});

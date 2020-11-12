@@ -22,7 +22,7 @@ export function initSaveFunctions () {
 }
 
 // all saves go through here
-export function callSaveFunction ({targetElem}) {
+export function callSaveFunction (targetElem) {
   let saveEnabled = !targetElem.closest("[no-save]");
   if (!saveEnabled) {
     return;
