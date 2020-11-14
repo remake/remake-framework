@@ -46,7 +46,7 @@ export default function () {
       let argArray = getAttributeValueAsArray(matchingElement, matchingAttribute);
       let position = argArray.indexOf("top") !== -1 ? "top" : "bottom";
       let whereToInsert = position === "top" ? "afterbegin" : "beforeend";
-      let selector = argArray.find(arg => arg !== "top" || "bottom") || "[array]";
+      let selector = argArray.find(arg => arg !== "top" && arg !== "bottom") || "[array]";
       // find the nearest element matching the selector (searching through ancestors consecutively)
       let listElem = findNearest({elem: matchingElement, selector});
 
