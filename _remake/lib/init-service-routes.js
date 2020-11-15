@@ -104,7 +104,7 @@ export function initServiceRoutes({app}) {
   app.post('/service/signup', validEmail, validPass, (req, res) => {
     const { email, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 8); // hash password
-    connection.query('INSERT INTO users (email, pwd_hash) VALUES ( ?, ?)',
+    database.query('INSERT INTO users (email, pwd_hash) VALUES ( ?, ?)',
       [email, hashedPassword],
       (err, results, fields) => {
         if (err) {
@@ -125,7 +125,7 @@ export function initServiceRoutes({app}) {
   // validation callbacks: validEmail, validPass
   app.post('/service/login', validEmail, validPass, (req, res) => {
     const { email, password } = req.body;
-    connection.query('SELECT * FROM users WHERE email = ?',
+    database.query('SELECT * FROM users WHERE email = ?',
       [email],
       (err, results, _) => {
         if (err) {
@@ -157,7 +157,7 @@ export function initServiceRoutes({app}) {
   // user must be authenticated to access it
   app.get('/service/subdomain/check', checkIfAuthenticated, validSubdomain, (req, res) => {
     const { subdomain } = req.query;
-    connection.query('SELECT * FROM apps WHERE name = ?',
+    database.query('SELECT * FROM apps WHERE name = ?',
       [subdomain],
       (err, result, _) => {
         if (err) {
@@ -176,7 +176,7 @@ export function initServiceRoutes({app}) {
   app.post('/service/subdomain/register', checkIfAuthenticated, validSubdomain, (req, res) => {
     const { subdomain } = req.body;
 
-    connection.query('SELECT * FROM apps WHERE user_id = ?',
+    database.query('SELECT * FROM apps WHERE user_id = ?',
       [req.user_id],
       (err, results, fields) => {
         if (err) {
@@ -186,7 +186,7 @@ export function initServiceRoutes({app}) {
           return res.status(403).json({ message: `Reached ${global.config.limits.appPerUser} apps limit.` }).end();
         }
 
-        connection.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
+        database.query('INSERT INTO apps (name, user_id, domain) VALUES (?, ?, ?)',
           [subdomain, req.user_id, `${subdomain}.remakeapps.com`],
           (err, results, fields) => {
             if (err) {
@@ -207,7 +207,7 @@ export function initServiceRoutes({app}) {
   // user must be authenticated to access it
   app.post('/service/deploy', checkIfAuthenticated, upload.single('deployment'), validSubdomain, (req, res) => {
     const { appName } = req.body;
-    connection.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
+    database.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
       [req.user_id, appName],
       (err, result, _) => {
         if (err) {
@@ -243,7 +243,7 @@ export function initServiceRoutes({app}) {
   })
 
   app.get('/service/apps', checkIfAuthenticated, (req, res) => {
-    connection.query('SELECT * FROM apps WHERE user_id = ?',
+    database.query('SELECT * FROM apps WHERE user_id = ?',
       [req.user_id],
       (err, results, fields) => {
         if (err) {
@@ -256,7 +256,7 @@ export function initServiceRoutes({app}) {
   app.get('/service/backup', checkIfAuthenticated, validAppId, (req, res) => {
     const { appId } = req.query;
 
-    connection.query('SELECT * FROM apps WHERE id = ? and user_id = ?',
+    database.query('SELECT * FROM apps WHERE id = ? and user_id = ?',
       [appId, req.user_id],
       (err, results, fields) => {
         if (err) {
