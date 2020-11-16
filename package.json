@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon _remake/server.js --watch ./",
-    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map"
+    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap=external --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map && echo '//# sourceMappingURL=remake.min.js.map' >> _remake/dist/remake/js/remake.min.js"
   },
   "nodemonConfig": {
     "ignore": [
