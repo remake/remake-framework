@@ -70,9 +70,9 @@ if (RemakeStore.isMultiTenant()) {
       }
 
       const appName = hostParts[0] || "";
-      let validAppName = /^[a-z]+[a-z0-9-]*$/.test(appName);
+      const validAppName = /^[a-z]+[a-z0-9-]*$/.test(appName);
   
-      if (!/^[a-z]+[a-z0-9-]*$/.test(appName)) {
+      if (!validAppName) {
         res.status(500).send("500 Server Error - Invalid app name");
         return;
       }

@@ -6,6 +6,7 @@ const shell = require('shelljs');
 const path = require('path');
 const fs = require('fs');
 const archiver = require('archiver');
+const isValidDomain = require('is-valid-domain');
 
 // configure multer storage
 const storage = multer.diskStorage({
@@ -93,6 +94,22 @@ const validAppId = (req, res, next) => {
   }
   if (!/^[0-9]*$/.test(appId)) {
     return res.status(400).json({ message: 'Bad request: appId should be a number' }).end();
+  } else {
+    next();
+  }
+}
+
+const validDomain = (req, res, next) => {
+  const domain = req.body.domain;
+  if (!domain) {
+    return res.status(400).json({ message: 'Bad request: domain is missing' }).end();
+  }
+  if (!isValidDomain(domain)) {
+    return res.status(400).json({ message: 'Bad request: invalid domain' }).end();
+  }
+  const domainParts = domain.split('.');
+  if (domainParts.length !== 2) {
+    return res.status(400).json({ message: 'Bad request: invalid domain. We don\'t support subdomains' }).end();
   } else {
     next();
   }
@@ -240,7 +257,61 @@ export function initServiceRoutes({app}) {
           }
         })
       });
-  })
+  });
+
+  // endpoint for linking custom domain to app
+  app.post('/service/domain', checkIfAuthenticated, validSubdomain, validDomain, (req, res) => {
+    const { appName, domain } = req.body;
+
+    database.query('SELECT * FROM apps WHERE name = ? and user_id = ?',
+      [appName, req.user_id],
+      (err, results, fields) => {
+        if (err) {
+          return res.status(500).json(err).end();
+        }
+        if (results.length !== 1) {
+          return res.status(400).json({ message: "No apps found."}).end();
+        }
+
+        const app = results[0];
+        const remakeDirectory = global.config.location.remake;
+        
+        if (fs.existsSync(`${remakeDirectory}/app/${domain}`)) {
+          return res.status(200).end();
+        }
+
+        let commandOutput;
+        commandOutput = shell.ln('-s', `${remakeDirectory}/app/${app.name}`, `${remakeDirectory}/app/${domain}`);
+        if (commandOutput.code !== 0) {
+          return res.status(500).end();
+        }
+
+        const nginxConfigTemplate = fs.readFileSync(`${remakeDirectory}/_remake/templates/nginx-custom-domain.conf`, 'utf8');
+        const nginxConfig = nginxConfigTemplate.replace(/\{DOMAIN\}/g, domain);
+        fs.writeFileSync(`/etc/nginx/sites-available/${domain}`, nginxConfig);
+        commandOutput = shell.ln('-s', `/etc/nginx/sites-available/${domain}`, `/etc/nginx/sites-enabled/${domain}`);
+        if (commandOutput.code !== 0) {
+          return res.status(500).end();
+        }
+
+        commandOutput = shell.exec(`sudo certbot --nginx -d ${domain} -d www.${domain} > /dev/null`, { silent: true });
+        if (commandOutput.code !== 0) {
+          return res.status(500).end();
+        }
+
+        commandOutput = shell.exec(`sudo nginx -t`, { silent: true });
+        if (commandOutput.code !== 0) {
+          return res.status(500).end();
+        }
+
+        commandOutput = shell.exec(`sudo service nginx reload`, { silent: true });
+        if (commandOutput.code !== 0) {
+          return res.status(500).end();
+        }
+
+        return res.status(200).end();
+      });
+  });
 
   app.get('/service/apps', checkIfAuthenticated, (req, res) => {
     connection.query('SELECT * FROM apps WHERE user_id = ?',
@@ -253,7 +324,7 @@ export function initServiceRoutes({app}) {
       });
   });
 
-  app.get('/service/backup', checkIfAuthenticated, validAppId, (req, res) => {
+  app.get('/service/backup', checkIfAuthenticated, validAppId, validDomain, (req, res) => {
     const { appId } = req.query;
 
     connection.query('SELECT * FROM apps WHERE id = ? and user_id = ?',
