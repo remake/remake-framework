@@ -171,7 +171,7 @@ if (RemakeStore.isMultiTenant()) {
       tmp: "/tmp/remake"
     },
     limits: {
-      appPerUser: 10,
+      appPerUser: 20,
     }
   }
   
