@@ -6,6 +6,7 @@ npm-debug.log
 app/data/database
 app/data/uploads
 
+.env
 .remake
 .cache/
 

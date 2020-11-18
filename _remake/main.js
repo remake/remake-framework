@@ -59,16 +59,30 @@ if (RemakeStore.isMultiTenant()) {
       next();
     } else {
       // handle api endpoints, rendered routes and resources
-      let splitString = req.get("host").split(".");
-      let validSplit = splitString.length === 3;
-      let appName = splitString[0] || "";
-      let validAppName = /^[a-z]+[a-z0-9-]*$/.test(appName);
-  
-      if (!validSplit || !validAppName) {
-        res.status(500).send("500 Server Error - No App Found");
+      const hostParts = req.get("host").split(".");
+      if (hostParts.length !== 2 && hostParts.length !== 3) {
+        res.status(500).send("500 Server Error - Invalid host name");
         return;
       }
+
+      if (hostParts[0] === "www") {
+        hostParts.shift();
+      }
+
+      const appName = hostParts[0] || "";
+      const validAppName = /^[a-z]+[a-z0-9-]*$/.test(appName);
+  
+      if (!validAppName) {
+        res.status(500).send("500 Server Error - Invalid app name");
+        return;
+      }
+
+      if (hostParts.length === 2) {
+        req.appName = hostParts.join(".");
+      } else {
       req.appName = appName;
+      }
+
       next();
     }
   });
