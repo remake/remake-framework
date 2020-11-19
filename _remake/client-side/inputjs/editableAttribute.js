@@ -26,19 +26,15 @@ export default function () {
         // ["edit", "example-key", "without-remove"]
         // ["edit", "example-key", "textarea", "without-remove"]
         // -> first two items are requireed, the last two are optional
-        let [_, keyName, formType, removeOption] = attributeParts;
+        let [_, keyName, ...otherOptions] = attributeParts;
 
         let validRemoveOptions = ["with-remove", "without-remove", "with-erase"];
-        if (validRemoveOptions.includes(formType)) {
-          removeOption = formType;
-          formType = undefined;
-        } else {
-          removeOption = "with-remove";
-        }
+        let validFormTypes = ["text", "textarea"];
 
-        if (!formType) {
-          formType = "text";
-        }
+        // if `otherOptions` includes includes a valid remove option, use that. Otherwise, use default value.
+        let removeOption = validRemoveOptions.find(str => otherOptions.includes(str)) || "with-remove";
+        // if `otherOptions` includes includes a valid form type option, use that. Otherwise, use default value.
+        let formType = validFormTypes.find(str => otherOptions.includes(str)) || "text";
 
         return {keyName, formType, removeOption, eventType, matchingElement, matchingAttribute, matchingPartialAttributeString};
       });

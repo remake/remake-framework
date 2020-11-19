@@ -68,7 +68,7 @@ export function callSaveFunction (targetElem) {
   // log the data if the debug option is turned on
   if (optionsData.logDataOnSave) {
     let logDataOnSaveString = "";
-    logDataOnSaveString += "(logDataOnSave) ";
+    logDataOnSaveString += "[Dev mode] Logging Remake Data on save: ";
 
     if (isDefaultingToGlobalSave) {
       logDataOnSaveString += "Action: Saved entire page, ";
