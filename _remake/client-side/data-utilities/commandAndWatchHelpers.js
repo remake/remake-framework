@@ -1,6 +1,6 @@
 import { isValidCommand } from '../common/get-valid-element-properties';
 import { parseStringWithIndefiniteNumberOfParams } from "../parse-data-attributes";
-import { getValueForClosestKey, getClosestElemWithKey, getTargetElemsForKeyName } from "./getAndSetKeyValues";
+import { getValueForClosestKey, getClosestElemWithKey, getTargetElemsForKeyName, getValueForKeyName } from "./getAndSetKeyValues";
 import { forEachAttr } from '../hummingbird/lib/dom';
 import optionsData from '../inputjs/optionsData';
 const camelCase = require('lodash/camelCase');
@@ -15,7 +15,7 @@ export function callWatchFunctionsOnElements (elems) {
         let dashCaseKeyName = attrName.substring("watch:".length);
         let closestElemWithKey = getClosestElemWithKey({elem, keyName: dashCaseKeyName});
         let value = getValueForKeyName({elem: closestElemWithKey, keyName: dashCaseKeyName});
-        let targetElems = getTargetElemsForKeyName({elem, keyName});
+        let targetElems = getTargetElemsForKeyName({elem, keyName: dashCaseKeyName});
         triggerWatchAttributes({elem, dashCaseKeyName, value, targetElems});
       }
     });

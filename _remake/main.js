@@ -8,6 +8,7 @@ const shell = require("shelljs");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
+const normalizeUrl = require('normalize-url');
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
@@ -100,7 +101,9 @@ app.use(async function (req, res, next) {
   req.urlData = {};
   req.urlData.host = req.get("host");
   req.urlData.url = req.protocol + "://" + req.urlData.host + req.originalUrl;
-  req.urlData.referrerUrl = req.get("Referrer") || "";
+  let referrer = req.get("Referrer");
+  let referrerNormalized = referrer ? normalizeUrl(referrer) : "";
+  req.urlData.referrerUrl = referrerNormalized;
 
   req.urlData.urlObj = new URL(req.urlData.url) || {};
   req.urlData.urlPathname = req.urlData.urlObj.pathname || {};
