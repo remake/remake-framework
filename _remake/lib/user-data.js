@@ -38,19 +38,13 @@ export async function getUserData ({ username, type, appName }) {
   try {
     let [appDataFileDir, detailsFileDir] = getDirForUserData({appName, withFile: true, username});
 
-    let appDataPromise = null;
-    let detailsPromise = null;
-    if (!type) {
-      appDataPromise = jsonfile.readFile(appDataFileDir);
-      detailsPromise = jsonfile.readFile(detailsFileDir);
-    } else if (type === "appData") {
-      appDataPromise = jsonfile.readFile(appDataFileDir);
-    } else if (type === "details") {
-      detailsPromise = jsonfile.readFile(detailsFileDir);
-    }
+    let [appData] = await capture(jsonfile.readFile(appDataFileDir));
+    let [details] = await capture(jsonfile.readFile(detailsFileDir));
 
-    let [ appData, details ] = await Promise.all([appDataPromise, detailsPromise]);
-    return { appData, details }; 
+    return {
+      appData: appData || {}, 
+      details: details || {}
+    }; 
   } catch (e) {
     return null;
   }
