@@ -97,7 +97,8 @@ function initUserAccounts ({ app }) {
       return;
     }
 
-    let [usernameTaken] = await capture(getUserData({ username }));
+    let [existingUser] = await capture(getUserData({ username }));
+    let usernameTaken = existingUser && existingUser.username;
     if (usernameTaken) {
       req.flash("error", "That username is taken, please try another one!");
       res.redirect('/user/signup');
