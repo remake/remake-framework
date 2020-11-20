@@ -42,8 +42,8 @@ export async function getUserData ({ username, type, appName }) {
     let [details] = await capture(jsonfile.readFile(detailsFileDir));
 
     return {
-      appData: appData || {}, 
-      details: details || {}
+      appData: appData, 
+      details: details
     }; 
   } catch (e) {
     return null;
