@@ -35,19 +35,22 @@ export async function createUserData ({ appName, username, hash, email }) {
 // - `type` field optional
 // returns: {details, appData}
 export async function getUserData ({ username, type, appName }) {
-  try {
-    let [appDataFileDir, detailsFileDir] = getDirForUserData({appName, withFile: true, username});
+  let [appDataFileDir, detailsFileDir] = getDirForUserData({appName, withFile: true, username});
 
-    let [appData] = await capture(jsonfile.readFile(appDataFileDir));
-    let [details] = await capture(jsonfile.readFile(detailsFileDir));
-
-    return {
-      appData: appData, 
-      details: details
-    }; 
-  } catch (e) {
+  let [appData] = await capture(jsonfile.readFile(appDataFileDir));
+  if (!appData) {
     return null;
   }
+
+  let [details] = await capture(jsonfile.readFile(detailsFileDir));
+  if (!details) {
+    return null;
+  }
+
+  return {
+    appData: appData, 
+    details: details
+  };
 }
 
 // set EITHER details data OR appData data by username
