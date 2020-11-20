@@ -12,6 +12,14 @@ export function initHandlebarsHelpers ({Handlebars}) {
     return options || "_remake_random_id_";
   });
 
+  Handlebars.registerHelper('checked', function(currentValue) {
+    if (currentValue === "true" || currentValue === true) {
+       return 'checked="checked"';
+    } else {
+      return '';
+    }
+  });
+
   // #for 
   // a custom helper that loops over some items
   //
