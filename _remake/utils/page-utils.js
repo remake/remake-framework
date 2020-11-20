@@ -55,8 +55,15 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
   let flashErrors = req.flash("error");
   let flashSuccesses = req.flash("success");
-  let [itemData, itemDataError] = await capture(processData({res, appName, pageAuthor, data, itemId}));
-  let {currentItem, parentItem} = itemData;
+
+  let currentItem = {};
+  let parentItem = {};
+  let generateUniqueIdsOption = process.env.GENERATE_UNIQUE_IDS;
+  if (["true", true].includes(generateUniqueIdsOption)) {
+    let [itemData, itemDataError] = await capture(processData({res, appName, pageAuthor, data, itemId}));
+    let currentItem = itemData.currentItem;
+    let parentItem = itemData.parentItem;
+  }
 
   let allData = {
     ...data,
