@@ -63,7 +63,7 @@ export default function () {
       if (eventType === "change") {
         // checkbox
         if (inputType === "checkbox") {
-          value = matchingElement.checked ? (matchingElement.value || "on") : "off";
+          value = matchingElement.checked ? true : false;
         }
 
         // radio, select
@@ -101,10 +101,10 @@ export default function () {
     callback: ({matchingElement, matchingAttribute, matchingPartialAttributeString}) => {
       let keyName = matchingAttribute.substring(matchingPartialAttributeString.length);
       let currentValue = getValueForClosestKey({elem: matchingElement, keyName}) || "";
-      if (currentValue.toLowerCase() !== "on") {
-        setValueForClosestKey({elem: matchingElement, keyName, value: "on"});
+      if (currentValue.toLowerCase() !== "true") {
+        setValueForClosestKey({elem: matchingElement, keyName, value: true});
       } else {
-        setValueForClosestKey({elem: matchingElement, keyName, value: "off"});
+        setValueForClosestKey({elem: matchingElement, keyName, value: false});
       }
     }
   });
