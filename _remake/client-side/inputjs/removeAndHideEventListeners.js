@@ -2,6 +2,7 @@ import { $ } from '../queryjs';
 import { callSaveFunctionNextTick } from './onSave';
 import { syncDataNextTick } from "./syncData";
 import { setAllDataToEmptyStringsExceptIds, getKeyNamesFromElem } from "../data-utilities";
+import { callOnRemoveItemCallbacks } from './callbacks';
 
 export function initRemoveAndHideEventListeners () {
 
@@ -37,6 +38,8 @@ export function initRemoveAndHideEventListeners () {
     // might set data time to fire before the data is saved
     callSaveFunctionNextTick(parentElement);
 
+    callOnRemoveItemCallbacks();
+
   });
 
   // useful for hiding items the user doesn't want visible, but allowing them to add them back later
@@ -70,6 +73,8 @@ export function initRemoveAndHideEventListeners () {
       // this will trigger a save
       setAllDataToEmptyStringsExceptIds(elemWithData);
     }
+
+    callOnRemoveItemCallbacks();
 
   });
 
