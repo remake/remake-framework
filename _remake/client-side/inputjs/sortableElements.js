@@ -17,18 +17,25 @@ export default function initSortableElements () {
 
   function makeSortable ({elemToSearch}) {
     let sortableElems = Array.from(elemToSearch.querySelectorAll("[sortable]"));
+
     sortableElems.forEach(sortableListElem => {
-      sortablejs.create(sortableListElem, {
-        group: sortableListElem.getAttribute("sortable") || getRandomId(),
+      let sortableOptions = {
+        group: sortableListElem.getAttribute("sortable") || getRandomSortableId(),
         onEnd: function (event) {
           callSaveFunction(sortableListElem)
         }
-      });
+      };
+
+      if (sortableListElem.querySelector("[sortable-handle]")) {
+        sortableOptions.handle = "[sortable-handle]";
+      }
+
+      sortablejs.create(sortableListElem, sortableOptions);
     });
   }
 }
 
 
-function getRandomId () {
+function getRandomSortableId () {
   return "sortable-" + Math.random().toString().substring(2);
 }

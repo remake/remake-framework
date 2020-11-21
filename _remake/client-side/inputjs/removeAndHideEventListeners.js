@@ -7,10 +7,16 @@ import { callOnRemoveItemCallbacks } from './callbacks';
 export function initRemoveAndHideEventListeners () {
 
   // useful for permanently removing items, especially from a list of similar items
-  $.on("click", "[remove]", function (event) {
+  $.on("click", "[remove],[remove\\:with-confirm]", function (event) {
 
     if (event.target.closest("[disable-events]")) {
       return;
+    }
+
+    if (event.currentTarget.hasAttribute("remove:with-confirm")) {
+      if (!window.confirm("Are you sure you want to delete this element?")) {
+        return;
+      }
     }
 
     // 1. find the nearest ancestor element that has the attribute `sync`
@@ -43,10 +49,16 @@ export function initRemoveAndHideEventListeners () {
   });
 
   // useful for hiding items the user doesn't want visible, but allowing them to add them back later
-  $.on("click", "[erase]", function (event) {
+  $.on("click", "[erase],[erase\\:with-confirm]", function (event) {
 
     if (event.target.closest("[disable-events]")) {
       return;
+    }
+
+    if (event.currentTarget.hasAttribute("erase:with-confirm")) {
+      if (!window.confirm("Are you sure you want to clear this data?")) {
+        return;
+      }
     }
 
     // 1. find the nearest ancestor element that has the attribute `sync`
