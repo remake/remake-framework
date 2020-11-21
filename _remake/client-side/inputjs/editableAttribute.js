@@ -59,6 +59,9 @@ export default function () {
       // open popover
       let hasRemove = firstMatchRemoveOption === "with-remove";
       let hasErase = firstMatchRemoveOption === "with-erase";
+      editablePopoverElem.setAttribute(`temporary:key:remake-edit-popover`, "");
+      editablePopoverElem.setAttribute(`temporary:key:remake-edit-option-has-remove`, "");
+      editablePopoverElem.setAttribute(`temporary:key:remake-edit-option-has-erase`, "");
       setValueForKeyName({elem: editablePopoverElem, keyName: "remake-edit-popover", value: "on"});
       setValueForKeyName({elem: editablePopoverElem, keyName: "remake-edit-option-has-remove", value: hasRemove ? "on" : "off"});
       setValueForKeyName({elem: editablePopoverElem, keyName: "remake-edit-option-has-erase", value: hasErase ? "on" : "off"});
@@ -136,10 +139,11 @@ export default function () {
 function removeObjectKeysFromElem ({elem}) {
   let attributesToRemove = [];
   forEachAttr(elem, (attrName, attrValue) => {
-    if (attrName.startsWith("key:")) {
+    if (attrName.startsWith("key:") || attrName.startsWith("temporary:key:")) {
       attributesToRemove.push(attrName);
     }
   });
+  // this is outside the loop because you can't remove items from an array when you're looping through it
   attributesToRemove.forEach(attrName => elem.removeAttribute(attrName));
 }
 
