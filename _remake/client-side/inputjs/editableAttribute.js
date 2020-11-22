@@ -86,7 +86,7 @@ export default function () {
 
       // copy the layout
       copyLayout({
-        sourceElem: firstMatchTargetElem, 
+        sourceElem: firstMatchElem, 
         targetElem: editablePopoverElem, 
         dimensionsName: "width", 
         xOffset: 0, 
