@@ -19,6 +19,10 @@ export default function initSortableElements () {
     let sortableElems = Array.from(elemToSearch.querySelectorAll("[sortable]"));
 
     sortableElems.forEach(sortableListElem => {
+      if (sortableListElem.closest("[disable-events]")) {
+        return;
+      }
+
       let sortableOptions = {
         group: sortableListElem.getAttribute("sortable") || getRandomSortableId(),
         onEnd: function (event) {

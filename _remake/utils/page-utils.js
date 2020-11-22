@@ -65,6 +65,8 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
     let parentItem = itemData.parentItem;
   }
 
+  let isPreviewing = query && query.preview;
+
   let allData = {
     ...data,
     globalData,
@@ -78,7 +80,8 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
     flashSuccesses,
     currentUser,
     pageAuthor,
-    isPageAuthor,
+    isPageAuthor: isPreviewing ? false : isPageAuthor,
+    isPreviewing,
     pageHasAppData: !!pageAuthor
   };
 
@@ -86,10 +89,10 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
 
 }
 
-export function getPageHtml ({pageTemplate, data, appName, username, itemId}) {
+export function getPageHtml ({pageTemplate, data, appName, username, itemId, isPreviewing}) {
   let html = pageTemplate(data);
   let currentUser = data.currentUser;
-  let htmlWithAppStatus = addRemakeAppStatusToPage({html, data, currentUser, username, itemId});
+  let htmlWithAppStatus = addRemakeAppStatusToPage({html, data, currentUser, username, itemId, isPreviewing});
   return htmlWithAppStatus;
 }
 

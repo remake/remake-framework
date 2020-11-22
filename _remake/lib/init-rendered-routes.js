@@ -59,7 +59,7 @@ async function renderPage ({req, res, pageName, username, itemId}) {
     return;
   }
 
-  let html = getPageHtml({pageTemplate, data, appName: req.appName, username, itemId});
+  let html = getPageHtml({pageTemplate, data, appName: req.appName, username, itemId, isPreviewing: req && req.query && req.query.preview});
   res.send(html);
 }
 
