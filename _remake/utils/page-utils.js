@@ -17,6 +17,7 @@ import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
 import { getPartialsAsInlinePartials } from "./get-partials";
 import { getGlobalData } from "./get-global-data";
+import RemakeStore from "./lib/remake-store";
 
 
 export async function getRootAppsPageHtml () {
@@ -59,10 +60,10 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let currentItem = {};
   let parentItem = {};
   let generateUniqueIdsOption = process.env.GENERATE_UNIQUE_IDS;
-  if (["true", true].includes(generateUniqueIdsOption)) {
+  if (RemakeStore.isMultiTenant() || ["true", true].includes(generateUniqueIdsOption)) {
     let [itemData, itemDataError] = await capture(processData({res, appName, pageAuthor, data, itemId}));
-    let currentItem = itemData.currentItem;
-    let parentItem = itemData.parentItem;
+    currentItem = itemData.currentItem;
+    parentItem = itemData.parentItem;
   }
 
   let isPreviewing = query && query.preview;
