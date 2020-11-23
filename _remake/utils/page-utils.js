@@ -17,7 +17,7 @@ import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
 import { getPartialsAsInlinePartials } from "./get-partials";
 import { getGlobalData } from "./get-global-data";
-import RemakeStore from "./lib/remake-store";
+import RemakeStore from "../lib/remake-store";
 
 
 export async function getRootAppsPageHtml () {
