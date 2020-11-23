@@ -222,41 +222,31 @@ export function initServiceRoutes({app}) {
   // upload app files if the user owns the app
   // validation callbacks: checkIfAuthenticated, validSubdomain, upload.single(...)
   // user must be authenticated to access it
-  app.post('/service/deploy', checkIfAuthenticated, upload.single('deployment'), validSubdomain, (req, res) => {
+  app.post('/service/deploy', upload.single('deployment'), validSubdomain, (req, res) => {
     const { appName } = req.body;
-    database.query('SELECT * FROM apps WHERE user_id = ? AND name = ?',
-      [req.user_id, appName],
-      (err, result, _) => {
-        if (err) {
-          return res.status(500).json(err).end();
-        }
-        if (result.length === 0) {
-          return res.status(403).json('Unauthorized to deploy').end();
-        }
-        extract(req.file.path, { dir: `${global.config.location.tmp}/${appName}` }, (err) => {
-          if (err) {
-            return res.status(500).json(err).end();
-          } else {
-            try {
-              let remakeDirectory = global.config.location.remake;
-              let appTempDirectory = global.config.location.tmp;
-              shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/uploads`);
-              shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/database/user-app-data`);
-              shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/database/user-details`);
-              shell.mkdir('-p', `${remakeDirectory}/_remake/dist/app_${appName}`);
-              shell.cp('-r', `${appTempDirectory}/${appName}/app/*`, `${remakeDirectory}/app/${appName}/`);
-              shell.cp('-r', `${appTempDirectory}/${appName}/app/assets/*`, `${remakeDirectory}/_remake/dist/app_${appName}`);
+    extract(req.file.path, { dir: `${global.config.location.tmp}/${appName}` }, (err) => {
+      if (err) {
+        return res.status(500).json(err).end();
+      } else {
+        try {
+          let remakeDirectory = global.config.location.remake;
+          let appTempDirectory = global.config.location.tmp;
+          shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/uploads`);
+          shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/database/user-app-data`);
+          shell.mkdir('-p', `${remakeDirectory}/app/${appName}/data/database/user-details`);
+          shell.mkdir('-p', `${remakeDirectory}/_remake/dist/app_${appName}`);
+          shell.cp('-r', `${appTempDirectory}/${appName}/app/*`, `${remakeDirectory}/app/${appName}/`);
+          shell.cp('-r', `${appTempDirectory}/${appName}/app/assets/*`, `${remakeDirectory}/_remake/dist/app_${appName}`);
 
-              if (/[a-z0-9\/\-]\.zip$/.test(req.file.path)) {
-                shell.rm(req.file.path);
-              }
-              return res.status(200).end();
-            } catch (err) {
-              return res.status(500).end();
-            }
+          if (/[a-z0-9\/\-]\.zip$/.test(req.file.path)) {
+            shell.rm(req.file.path);
           }
-        })
-      });
+          return res.status(200).end();
+        } catch (err) {
+          return res.status(500).end();
+        }
+      }
+    })
   });
 
   // endpoint for linking custom domain to app
