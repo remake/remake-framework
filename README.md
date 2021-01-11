@@ -119,3 +119,5 @@ Remake is an open-source, and contributions are always welcome. If you identify 
 
 - [Andrew de Jong](https://gitlab.com/android4682)
 - [Painatalman](https://github.com/Painatalman)
+- [Joe Masilotti](https://masilotti.com/)
+- [Catalin Tudorache](https://charlietango.co/)
