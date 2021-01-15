@@ -25,6 +25,12 @@ import processShowIfAttributes from '../common/show-if';
 const merge = require('lodash/merge');
 
 function init (options) {
+  if (optionsData.alreadyInitialized) {
+    return;
+  } else {
+    optionsData.alreadyInitialized = true;
+  }
+
   merge(optionsData, options);
   
   // first because they affect might affect visibility of some elements
