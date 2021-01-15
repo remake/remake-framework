@@ -1,3 +1,7 @@
+# 2.3.3 (January 15, 2021)
+
+- Don't allow Remake to be initialized more than once
+
 # 2.3.2 (November 28, 2020)
 
 - Fixed bug on Windows causing the `remake create` command to not work ([See the fix](https://stackoverflow.com/a/16951241/87432))
