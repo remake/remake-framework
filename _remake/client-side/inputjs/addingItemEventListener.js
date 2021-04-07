@@ -9,7 +9,7 @@ import { callOnAddItemCallbacks } from './callbacks';
 import optionsData from './optionsData';
 const camelCase = require('lodash/camelCase');
 
-function _defaultAddItemCallback ({templateName, listElem, whereToInsert}) {
+function _defaultAddItemCallback ({templateName, listElem, whereToInsert, openEditPrompt}) {
   // pass the template name into an endpoint and get the resulting html back
   ajaxPost("/new", {templateName}, function (ajaxResponse) {
     let {htmlString, success} = ajaxResponse;
@@ -29,8 +29,11 @@ function _defaultAddItemCallback ({templateName, listElem, whereToInsert}) {
 
     // save needs to be called on the list element, not the item, so it doesn't try to save to a non-existent id
     callSaveFunction(listElem);
-    
+
     let itemElem = whereToInsert === "afterbegin" ? listElem.firstElementChild : listElem.lastElementChild;
+
+    // Click new itemElem so that it opens up the edit prompt
+    if (openEditPrompt) itemElem.click();
     callOnAddItemCallbacks({success: true, listElem, itemElem, templateName, ajaxResponse});
   });
 }
@@ -38,7 +41,7 @@ function _defaultAddItemCallback ({templateName, listElem, whereToInsert}) {
 export default function () {
   onAttributeEvent({
     eventTypes: ["click"],
-    partialAttributeStrings: ["new:"], 
+    partialAttributeStrings: ["new:"],
     filterOutElemsInsideAncestor: "[disable-events]",
     callback: ({matchingElement, matchingAttribute}) => {
       let templateName = camelCase(matchingAttribute.substring("new:".length));
@@ -49,14 +52,14 @@ export default function () {
       let selector = argArray.find(arg => arg !== "top" && arg !== "bottom") || "[array]";
       // find the nearest element matching the selector (searching through ancestors consecutively)
       let listElem = findNearest({elem: matchingElement, selector});
+      // Automatically open edit prompt if a single `edit` attr is present
+      let openEditPrompt = matchingElement.hasAttribute('edit');
 
       if (!optionsData._defaultAddItemCallback) {
-        _defaultAddItemCallback({templateName, listElem, whereToInsert});
+        _defaultAddItemCallback({templateName, listElem, whereToInsert, openEditPrompt});
       } else {
-        optionsData._defaultAddItemCallback({templateName, listElem, whereToInsert});        
+        optionsData._defaultAddItemCallback({templateName, listElem, openEditPrompt});
       }
     }
   });
 }
-
-
