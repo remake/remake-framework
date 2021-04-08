@@ -1,4 +1,5 @@
 import RemakeStore from "../lib/remake-store";
+import { getUniqueId } from "../lib/get-unique-id";
 import routeUtils from "../utils/route-utils";
 const path = require("upath");
 
@@ -11,7 +12,7 @@ export function initHandlebarsHelpers ({Handlebars}) {
   Handlebars.registerHelper('generateIdIfNone', function(id, uniqueMarker, options) {
     if (!options) {
       options = uniqueMarker;
-      uniqueMarker = null;
+      uniqueMarker = getUniqueId(); // should be unique by default so generateIdIfNone calls that don't provide a uniqueMarker each get unique ids
     }
 
     uniqueMarker = (uniqueMarker || "").replace(/\W/g, "_"); // remove special characters
