@@ -8,8 +8,9 @@ export function initHandlebarsHelpers ({Handlebars}) {
 
   Handlebars.registerHelper(handlebarsHelpers);
 
-  Handlebars.registerHelper('generateIdIfNone', function(options) {
-    return options || "_remake_random_id_";
+  Handlebars.registerHelper('generateIdIfNone', function(id, uniqueMarker) {
+    uniqueMarker = (uniqueMarker || "").replace(/\W/g, "_"); // remove special characters
+    return id || `__remake_unique_marker_${uniqueMarker}`;
   });
 
   Handlebars.registerHelper('checked', function(currentValue) {

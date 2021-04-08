@@ -17,6 +17,7 @@ import { processData } from "./process-data";
 import { addRemakeAppStatusToPage } from "./add-remake-app-status";
 import { getPartialsAsInlinePartials } from "./get-partials";
 import { getGlobalData } from "./get-global-data";
+import { getHtmlWithUniqueIds } from "./get-html-with-unique-ids";
 import RemakeStore from "../lib/remake-store";
 
 
@@ -60,6 +61,7 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let currentItem = {};
   let parentItem = {};
   let generateUniqueIdsOption = process.env.GENERATE_UNIQUE_IDS;
+
   if (RemakeStore.isMultiTenant() || ["true", true].includes(generateUniqueIdsOption)) {
     let [itemData, itemDataError] = await capture(processData({res, appName, pageAuthor, data, itemId}));
     currentItem = itemData.currentItem;
@@ -94,7 +96,8 @@ export function getPageHtml ({pageTemplate, data, appName, username, itemId, isP
   let html = pageTemplate(data);
   let currentUser = data.currentUser;
   let htmlWithAppStatus = addRemakeAppStatusToPage({html, data, currentUser, username, itemId, isPreviewing});
-  return htmlWithAppStatus;
+  let htmlWithUniqueIds = getHtmlWithUniqueIds({htmlString: htmlWithAppStatus});
+  return htmlWithUniqueIds;
 }
 
 export async function doesPageExist ({appName, pageName}) {
