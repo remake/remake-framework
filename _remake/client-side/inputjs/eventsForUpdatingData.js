@@ -53,7 +53,7 @@ export default function () {
 
       // textarea and input[type='text']
       if (eventType === "input") {
-        if (nodeName === "textarea" || inputType === "text" || inputType === "") {
+        if (nodeName === "textarea" || inputType === "text" || inputType === "color" || inputType === "") {
           value = matchingElement.value;
           setValueForClosestKey({elem, keyName, value});
         }
