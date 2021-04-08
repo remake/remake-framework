@@ -58,7 +58,7 @@ export default function () {
       if (!optionsData._defaultAddItemCallback) {
         _defaultAddItemCallback({templateName, listElem, whereToInsert, openEditPrompt});
       } else {
-        optionsData._defaultAddItemCallback({templateName, listElem, openEditPrompt});
+        optionsData._defaultAddItemCallback({templateName, listElem, whereToInsert, openEditPrompt});
       }
     }
   });
