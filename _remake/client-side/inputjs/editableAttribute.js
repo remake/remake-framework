@@ -1,3 +1,4 @@
+import {on, off, fire} from 'delegated-events';
 import { $ } from '../queryjs';
 import { forEachAttr, onAttributeEvent } from '../hummingbird/lib/dom';
 import { copyLayout } from '../copy-layout';
@@ -109,7 +110,7 @@ export default function () {
   });
 
   // sync data from popover into the page
-  $.on("submit", "[sync]", (event) => {
+  on("submit", "[sync]", (event) => {
     event.preventDefault();
     let syncElement = event.currentTarget.closest("[sync]");
     syncDataNextTick({
@@ -120,7 +121,7 @@ export default function () {
   });
 
   // this was causing a bug before. i think the form was submitting when it shouldn't have.
-  $.on("click", ".remake-edit__button:not([type='submit'])", function (event) {
+  on("click", ".remake-edit__button:not([type='submit'])", function (event) {
     event.preventDefault();
   });
 

@@ -1,6 +1,11 @@
 import { isValidCommand } from '../common/get-valid-element-properties';
 import { parseStringWithIndefiniteNumberOfParams } from "../parse-data-attributes";
-import { getValueForClosestKey, getClosestElemWithKey, getTargetElemsForKeyName, getValueForKeyName } from "./getAndSetKeyValues";
+import { 
+  getValueForClosestKey, 
+  getClosestElemWithKey, 
+  getTargetElemsForKeyName, 
+  getValueForKeyName 
+} from "./getAndSetKeyValues";
 import { forEachAttr } from '../hummingbird/lib/dom';
 import optionsData from '../inputjs/optionsData';
 const camelCase = require('lodash/camelCase');

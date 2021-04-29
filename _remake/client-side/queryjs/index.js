@@ -6,12 +6,6 @@
 
   # API
 
-  ## event delegation
-
-  $.on('click', '.js-button', func);
-  $.off('click', '.js-button', func);
-  $.fire(image, 'robot:singularity', {name: 'Hubot'});
-
   ## instance methods
 
   // get ONLY first elem (as an array)
@@ -48,15 +42,9 @@
 
 */
 
-import {on, off, fire} from 'delegated-events'; // an excellent library for delegated events
-
 var $ = function (selector) {
   return new QueryObj(selector);
 }
-
-$.on = on;
-$.off = off;
-$.fire = fire;
 
 let data = [];
 $.data = function (elem, key, value) {

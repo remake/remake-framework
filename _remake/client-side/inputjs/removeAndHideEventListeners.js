@@ -1,3 +1,4 @@
+import {on, off, fire} from 'delegated-events';
 import { $ } from '../queryjs';
 import { callSaveFunctionNextTick } from './onSave';
 import { syncDataNextTick } from "./syncData";
@@ -7,7 +8,7 @@ import { callOnRemoveItemCallbacks } from './callbacks';
 export function initRemoveAndHideEventListeners () {
 
   // useful for permanently removing items, especially from a list of similar items
-  $.on("click", "[remove],[remove\\:with-confirm]", function (event) {
+  on("click", "[remove],[remove\\:with-confirm]", function (event) {
 
     if (event.target.closest("[disable-events]")) {
       return;
@@ -49,7 +50,7 @@ export function initRemoveAndHideEventListeners () {
   });
 
   // useful for hiding items the user doesn't want visible, but allowing them to add them back later
-  $.on("click", "[erase],[erase\\:with-confirm]", function (event) {
+  on("click", "[erase],[erase\\:with-confirm]", function (event) {
 
     if (event.target.closest("[disable-events]")) {
       return;

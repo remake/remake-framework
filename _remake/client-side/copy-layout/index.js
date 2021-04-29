@@ -1,3 +1,4 @@
+import {on, off, fire} from 'delegated-events';
 import { $ } from '../queryjs';
 import { getElementOffset } from '../hummingbird/lib/dom';
 import { 
@@ -62,7 +63,7 @@ let lookupParser = [
 // - e.g. ".abc" or "#xyz" (any selector)
 // 
 
-$.on("click", "[data-copy-layout], [data-copy-position], [data-copy-dimensions]", (event) => {
+on("click", "[data-copy-layout], [data-copy-position], [data-copy-dimensions]", (event) => {
   let sourceElement = event.currentTarget;
 
   // parse position/dimensions attributes of source element as a list
