@@ -1,4 +1,6 @@
 const Handlebars = require('handlebars');
+const JSDOM = require("jsdom").JSDOM;
+const merge = require('lodash/merge');
 import { isPlainObject } from 'lodash-es';
 import forEachDeep from "deepdash-es/forEachDeep";
 import { getUniqueId } from "./get-unique-id";
@@ -11,6 +13,7 @@ import { showConsoleError } from "../utils/console-utils";
 import { getBootstrapData } from "../utils/get-bootstrap-data";
 import { getQueryParams } from "../utils/get-query-params";
 import { getHtmlWithUniqueIds } from "../utils/get-html-with-unique-ids";
+import { getSaveData } from "../client-side/get-save-data";
 import RemakeStore from "./remake-store";
 
 
@@ -47,15 +50,6 @@ export function initApiNew ({app}) {
       return;
     }
 
-    let [partialBootstrapData] = await capture(getBootstrapData({appName, fileName: partialName}));
-
-    // add a unique key to every plain object in the bootstrap data
-    forEachDeep(partialBootstrapData, function (value, key, parentValue, context) {
-      if (isPlainObject(value)) {
-        value.id = getUniqueId();
-      }
-    });
-
     let query = getQueryParams({req, fromReferrer: true});
     let pathname = req.urlData.referrerUrlPathname;
     let currentUser = req.user;
@@ -83,9 +77,23 @@ export function initApiNew ({app}) {
     let [itemData] = await capture(processData({appName, res, pageAuthor, data, params, requestType: "ajax"}));
     let {currentItem, parentItem} = itemData;
 
+    // getting a skeleton of the data from the new item template so it can be filled with unique ids at every level
+    let [partialBootstrapData] = await capture(getBootstrapData({appName, fileName: partialName}));
+    let tempHtmlString = partialRenderFunc({});
+    let domFromString = new JSDOM(tempHtmlString);
+    let saveData = getSaveData(domFromString.window.document.body);
+    let saveDataWithBootstrapData = merge(saveData, partialBootstrapData);
+    // add a unique key to every plain object in the bootstrap data
+    forEachDeep(saveDataWithBootstrapData, function (value, key, parentValue, context) {
+      if (isPlainObject(value)) {
+        value.id = getUniqueId();
+      }
+    });
+    let newItemData = {[partialName]: saveDataWithBootstrapData};
+
     let htmlString = partialRenderFunc({
       ...data,
-      ...partialBootstrapData,
+      ...newItemData,
       params,
       query,
       pathname,
