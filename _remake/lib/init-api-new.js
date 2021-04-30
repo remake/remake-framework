@@ -78,18 +78,19 @@ export function initApiNew ({app}) {
     let {currentItem, parentItem} = itemData;
 
     // getting a skeleton of the data from the new item template so it can be filled with unique ids at every level
-    let [partialBootstrapData] = await capture(getBootstrapData({appName, fileName: partialName}));
     let tempHtmlString = partialRenderFunc({});
     let domFromString = new JSDOM(tempHtmlString);
     let saveData = getSaveData(domFromString.window.document.body);
-    let saveDataWithBootstrapData = merge(saveData, partialBootstrapData);
+    let saveDataNested = {[partialName]: saveData};
+    // merge skeleton of data from template with bootstrap data provided by user
+    let [partialBootstrapData] = await capture(getBootstrapData({appName, fileName: partialName}));
+    let newItemData = merge(saveDataNested, partialBootstrapData);
     // add a unique key to every plain object in the bootstrap data
-    forEachDeep(saveDataWithBootstrapData, function (value, key, parentValue, context) {
+    forEachDeep(newItemData, function (value, key, parentValue, context) {
       if (isPlainObject(value)) {
         value.id = getUniqueId();
       }
     });
-    let newItemData = {[partialName]: saveDataWithBootstrapData};
 
     let htmlString = partialRenderFunc({
       ...data,
