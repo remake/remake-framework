@@ -29,8 +29,15 @@ export function addDataFromElementToDataObject (elem, parentData) {
       return parentData;
     }
   } else {
-    parentData.push(nodeData.value);
-    return nodeData.value;
+    if (nodeData.key) {
+      let wrapperObj = {};
+      wrapperObj[nodeData.key] = nodeData.value;
+      parentData.push(wrapperObj);
+      return nodeData.value;
+    } else {
+      parentData.push(nodeData.value);
+      return nodeData.value;
+    }
   }
 }
 
