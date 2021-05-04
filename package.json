@@ -69,6 +69,7 @@
   "devDependencies": {
     "esbuild": "^0.8.2",
     "nodemon": "^1.19.1",
+    "prettier": "2.2.1",
     "shelljs": "^0.8.3"
   }
 }
