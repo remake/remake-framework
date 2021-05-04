@@ -8,3 +8,7 @@
 - **[Alyssa X](https://alyssax.com/)**
 
   - Designed and built the HTML and CSS for the Remake starter application (KanBan Board)
+
+- **[Aiden Bai](https://github.com/aidenybai)**
+
+  - Added a feature: ability to automatically trigger an edit popover after creating a new item
