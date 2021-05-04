@@ -17,7 +17,7 @@ const camelCase = require("lodash/camelCase");
 
 function _defaultAddItemCallback({ templateName, listElem, whereToInsert, shouldTriggerEdit }) {
   // pass the template name into an endpoint and get the resulting html back
-  ajaxPost("/new", { templateName }, function (ajaxResponse) {
+  ajaxPost("/new", { templateName }, ajaxResponse => {
     let { htmlString, success } = ajaxResponse;
 
     if (!success) {
