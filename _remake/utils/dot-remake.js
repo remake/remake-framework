@@ -7,7 +7,7 @@ const log = console.log;
 // write fields to .remake
 function writeDotRemake(content) {
   const cwd = process.cwd();
-  const dotRemakePath = path.join(cwd, "../.remake");
+  const dotRemakePath = path.join(cwd, ".remake");
   try {
     fs.writeFileSync(dotRemakePath, JSON.stringify(content, null, 4));
     return true;
@@ -20,7 +20,7 @@ function writeDotRemake(content) {
 // read .remake in memory
 function readDotRemake() {
   const cwd = process.cwd();
-  const dotRemakePath = path.join(cwd, "../.remake");
+  const dotRemakePath = path.join(cwd, ".remake");
 
   // check if .remake file exists
   const dotRemakeExists = fs.existsSync(dotRemakePath);
