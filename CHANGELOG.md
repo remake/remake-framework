@@ -1,3 +1,11 @@
+# 2.4.0
+
+- Generate unique ids for new items automatically 🧙‍♂️
+- Added an attribute argument `:edit` for the `new:` attribute (e.g. use like this: `new:example-item:edit`). It automatically triggers an edit popover when a new item is created!
+- Fixed bug: Remake wasn't nesting data that's grabbed from the DOM in a consistent way
+- Added Prettier and formatted all code to look nicer
+- Getting DOM data with `getSaveData()` now works server-side
+
 # 2.3.3 (January 15, 2021)
 
 - Don't allow Remake to be initialized more than once
