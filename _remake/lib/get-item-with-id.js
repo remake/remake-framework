@@ -1,7 +1,7 @@
-import { isPlainObject } from 'lodash-es';
+import { isPlainObject } from "lodash-es";
 import forEachDeep from "deepdash-es/forEachDeep";
 
-export function getItemWithId (data, id) {
+export function getItemWithId(data, id) {
   let currentItem;
 
   forEachDeep(data, function (value, key, parentValue, context) {

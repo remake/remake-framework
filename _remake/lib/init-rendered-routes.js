@@ -1,10 +1,10 @@
-const path = require('upath');
+const path = require("upath");
 import { capture, readdirAsync } from "../utils/async-utils";
-import { 
-  getPageTemplate, 
-  getDataForPage, 
-  getPageHtml, 
-  getRootAppsPageHtml 
+import {
+  getPageTemplate,
+  getDataForPage,
+  getPageHtml,
+  getRootAppsPageHtml,
 } from "../utils/page-utils";
 import { getUserData } from "./user-data";
 import parseUrl from "parseurl";
@@ -26,9 +26,10 @@ import RemakeStore from "./remake-store";
   • /username/pageName/id
 */
 
-async function renderPage ({req, res, pageName, username, itemId}) {
-
-  let [pageTemplate, pageTemplateError] = await capture(getPageTemplate({pageName, appName: req.appName}));
+async function renderPage({ req, res, pageName, username, itemId }) {
+  let [pageTemplate, pageTemplateError] = await capture(
+    getPageTemplate({ pageName, appName: req.appName })
+  );
 
   if (!pageTemplate) {
     res.status(404).send("404 Not Found");
@@ -37,7 +38,7 @@ async function renderPage ({req, res, pageName, username, itemId}) {
 
   let pageAuthor;
   if (username) {
-    [pageAuthor] = await capture(getUserData({username, appName: req.appName}));
+    [pageAuthor] = await capture(getUserData({ username, appName: req.appName }));
 
     // if username is in the route, there should be a corresponding user
     if (!pageAuthor) {
@@ -47,7 +48,9 @@ async function renderPage ({req, res, pageName, username, itemId}) {
   }
 
   // GET DATA
-  let [data, dataError] = await capture(getDataForPage({req, res, appName: req.appName, pageAuthor, itemId}));
+  let [data, dataError] = await capture(
+    getDataForPage({ req, res, appName: req.appName, pageAuthor, itemId })
+  );
 
   if (dataError) {
     res.status(500).send("500 Server Error");
@@ -59,16 +62,21 @@ async function renderPage ({req, res, pageName, username, itemId}) {
     return;
   }
 
-  let html = getPageHtml({pageTemplate, data, appName: req.appName, username, itemId, isPreviewing: req && req.query && req.query.preview});
+  let html = getPageHtml({
+    pageTemplate,
+    data,
+    appName: req.appName,
+    username,
+    itemId,
+    isPreviewing: req && req.query && req.query.preview,
+  });
   res.send(html);
 }
 
-export async function initRenderedRoutes ({ app }) {
-
+export async function initRenderedRoutes({ app }) {
   app.get("*", async function (req, res) {
-
     // don't cache html from these routes
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 
     let params = req.urlData.pageParams;
 
@@ -77,8 +85,6 @@ export async function initRenderedRoutes ({ app }) {
       return;
     }
 
-    await renderPage({req, res, ...params});
-
+    await renderPage({ req, res, ...params });
   });
-
 }

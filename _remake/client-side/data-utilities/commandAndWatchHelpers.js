@@ -1,22 +1,27 @@
-import { isValidCommand } from '../common/get-valid-element-properties';
+import { isValidCommand } from "../common/get-valid-element-properties";
 import { parseStringWithIndefiniteNumberOfParams } from "../parse-data-attributes";
-import { getValueForClosestKey, getClosestElemWithKey, getTargetElemsForKeyName, getValueForKeyName } from "./getAndSetKeyValues";
-import { forEachAttr } from '../hummingbird/lib/dom';
-import optionsData from '../inputjs/optionsData';
-const camelCase = require('lodash/camelCase');
-const difference = require('lodash/difference');
+import {
+  getValueForClosestKey,
+  getClosestElemWithKey,
+  getTargetElemsForKeyName,
+  getValueForKeyName,
+} from "./getAndSetKeyValues";
+import { forEachAttr } from "../hummingbird/lib/dom";
+import optionsData from "../inputjs/optionsData";
+const camelCase = require("lodash/camelCase");
+const difference = require("lodash/difference");
 
 // useful for running watch functions when the page loads
 // e.g. callWatchFunctionsOnElements(document.querySelectorAll("[watch]"))
-export function callWatchFunctionsOnElements (elems) {
+export function callWatchFunctionsOnElements(elems) {
   elems.forEach(elem => {
     forEachAttr(elem, (attrName, attrValue) => {
       if (attrName.indexOf("watch:") === 0) {
         let dashCaseKeyName = attrName.substring("watch:".length);
-        let closestElemWithKey = getClosestElemWithKey({elem, keyName: dashCaseKeyName});
-        let value = getValueForKeyName({elem: closestElemWithKey, keyName: dashCaseKeyName});
-        let targetElems = getTargetElemsForKeyName({elem, keyName: dashCaseKeyName});
-        triggerWatchAttributes({elem, dashCaseKeyName, value, targetElems});
+        let closestElemWithKey = getClosestElemWithKey({ elem, keyName: dashCaseKeyName });
+        let value = getValueForKeyName({ elem: closestElemWithKey, keyName: dashCaseKeyName });
+        let targetElems = getTargetElemsForKeyName({ elem, keyName: dashCaseKeyName });
+        triggerWatchAttributes({ elem, dashCaseKeyName, value, targetElems });
       }
     });
   });
@@ -24,11 +29,14 @@ export function callWatchFunctionsOnElements (elems) {
 
 // trigger watch attributes inside an element
 // note: this allows for watching multiple keys with the same name as long as they're at different levels
-export function triggerWatchAttributes ({elem, dashCaseKeyName, value, targetElems}) {
+export function triggerWatchAttributes({ elem, dashCaseKeyName, value, targetElems }) {
   let selector = `[watch\\:${dashCaseKeyName}]`;
   let attr = `watch:${dashCaseKeyName}`;
   // nested watch elements with second-level elements filtered out
-  let watchElems = difference(elem.querySelectorAll(selector), elem.querySelectorAll(`:scope [key\\:${dashCaseKeyName}] [watch\\:${dashCaseKeyName}]`));
+  let watchElems = difference(
+    elem.querySelectorAll(selector),
+    elem.querySelectorAll(`:scope [key\\:${dashCaseKeyName}] [watch\\:${dashCaseKeyName}]`)
+  );
   if (elem.matches(selector)) {
     watchElems.unshift(elem);
   }
@@ -37,9 +45,9 @@ export function triggerWatchAttributes ({elem, dashCaseKeyName, value, targetEle
     let watchAttrValue = watchElem.getAttribute(attr);
     // e.g. [{funcName: "@innerText", args: []}, {funcName: "customFunc", args: [1,2,3]}]
     let listOfCommands = parseStringWithIndefiniteNumberOfParams(watchAttrValue);
-    listOfCommands.forEach(({funcName, args}) => {
-      if (isValidCommand({commandName: funcName})) {
-        executeCommand({elem: watchElem, commandName: funcName, value, method: "set"})
+    listOfCommands.forEach(({ funcName, args }) => {
+      if (isValidCommand({ commandName: funcName })) {
+        executeCommand({ elem: watchElem, commandName: funcName, value, method: "set" });
       } else {
         // call custom watch function
         let watchFunc = optionsData.watchFunctions && optionsData.watchFunctions[funcName];
@@ -54,7 +62,7 @@ export function triggerWatchAttributes ({elem, dashCaseKeyName, value, targetEle
             watchFuncName: funcName, // name of the current watch function being called
             watchFuncArgs: args, // any args passed to a custom func, e.g. ["on", "36"]
             dataSourceElem: elem, // the element that setValueForKeyName() was called on, but maybe not the element data was set on (because of @search)
-            dataTargetElems: targetElems // the elements that data was set on, but maybe not the original element setValueForKeyName() was called on (because of @search)
+            dataTargetElems: targetElems, // the elements that data was set on, but maybe not the original element setValueForKeyName() was called on (because of @search)
           });
         }
       }
@@ -70,18 +78,18 @@ export function triggerWatchAttributes ({elem, dashCaseKeyName, value, targetEle
 //              if using "get", it will return the value from the FIRST element only
 //     @attr: get the named attribute and get/set it on the current element
 //     native prop: get/set a property on the current element
-export function executeCommandOnMultipleElements ({targetElems = [], targetAttr, value, method}) {
+export function executeCommandOnMultipleElements({ targetElems = [], targetAttr, value, method }) {
   for (let i = 0; i < targetElems.length; i++) {
     let targetElem = targetElems[i];
     // the target's command e.g. "@innerText" or "@attr:data-example"
     // every target needs a command as the value of the passed in attribute
     let commandName = targetElem.getAttribute(targetAttr);
 
-    if (isValidCommand({commandName})) {
+    if (isValidCommand({ commandName })) {
       if (method === "set") {
-        executeCommand({elem: targetElem, commandName, value, method});
+        executeCommand({ elem: targetElem, commandName, value, method });
       } else {
-        return executeCommand({elem: targetElem, commandName, value, method});
+        return executeCommand({ elem: targetElem, commandName, value, method });
       }
     }
   }
@@ -90,7 +98,7 @@ export function executeCommandOnMultipleElements ({targetElems = [], targetAttr,
 // the target for a command will usually be the element that has the command
 // with one exception: @search, which causes us to look one level deeper to find
 // the elements and their commands
-export function getTargetsForCommand ({elem, dashCaseKeyName, attrName, attrValue}) {
+export function getTargetsForCommand({ elem, dashCaseKeyName, attrName, attrValue }) {
   let targetAttr;
   let targetElems;
 
@@ -109,11 +117,11 @@ export function getTargetsForCommand ({elem, dashCaseKeyName, attrName, attrValu
     targetElems = [elem];
   }
 
-  return {targetElems, targetAttr};
+  return { targetElems, targetAttr };
 }
 
 // executes a named command on a target element
-function executeCommand ({elem, commandName, value, method}) {
+function executeCommand({ elem, commandName, value, method }) {
   if (commandName.indexOf("@attr:") === 0) {
     // CUSTOM ATTRIBUTES (e.g. "@attr:data-example")
     let attr = commandName.substring("@attr:".length);

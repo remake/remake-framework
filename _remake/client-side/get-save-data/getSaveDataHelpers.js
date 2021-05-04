@@ -1,8 +1,8 @@
-import { forEachAttr } from '../hummingbird/lib/dom';
-import { getValueForKeyName } from '../data-utilities';
-const camelCase = require('lodash/camelCase');
+import { forEachAttr } from "../hummingbird/lib/dom";
+import { getValueForKeyName } from "../data-utilities";
+const camelCase = require("lodash/camelCase");
 
-export function createDataObjectFromElement (elem) {
+export function createDataObjectFromElement(elem) {
   let nodeData = parseNodeForSave(elem);
 
   if (nodeData.key) {
@@ -16,7 +16,7 @@ export function createDataObjectFromElement (elem) {
   }
 }
 
-export function addDataFromElementToDataObject (elem, parentData) {
+export function addDataFromElementToDataObject(elem, parentData) {
   let isParentDataAnObject = !Array.isArray(parentData);
   let nodeData = parseNodeForSave(elem);
 
@@ -29,17 +29,24 @@ export function addDataFromElementToDataObject (elem, parentData) {
       return parentData;
     }
   } else {
-    parentData.push(nodeData.value);
-    return nodeData.value;
+    if (nodeData.key) {
+      let wrapperObj = {};
+      wrapperObj[nodeData.key] = nodeData.value;
+      parentData.push(wrapperObj);
+      return nodeData.value;
+    } else {
+      parentData.push(nodeData.value);
+      return nodeData.value;
+    }
   }
 }
 
 // example return value:
 // {key: "profileInfo", value: {name: "Kate"}}
-function parseNodeForSave (elem) { 
+function parseNodeForSave(elem) {
   return {
     key: elem.getAttribute("key"),
-    value: elem.hasAttribute("array") ? [] : getSaveDataFromElement(elem)
+    value: elem.hasAttribute("array") ? [] : getSaveDataFromElement(elem),
   };
 }
 
@@ -49,15 +56,15 @@ function parseNodeForSave (elem) {
 // <div object key:example-one="1" key:example-two="2"></div>
 // Into:
 // {exampleOne: "1", exampleTwo: "2"}
-function getSaveDataFromElement (elem) {
+function getSaveDataFromElement(elem) {
   let keyPrefix = "key:";
   let data = {};
 
-  forEachAttr(elem, (attrName) => {
+  forEachAttr(elem, attrName => {
     if (attrName.indexOf(keyPrefix) === 0) {
       let keyName = attrName.substring(keyPrefix.length);
       let camelCaseKeyName = camelCase(keyName);
-      data[camelCaseKeyName] = getValueForKeyName({elem, keyName});
+      data[camelCaseKeyName] = getValueForKeyName({ elem, keyName });
     }
   });
 

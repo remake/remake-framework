@@ -1,8 +1,9 @@
-import { $ } from '../queryjs';
-import { callSaveFunctionNextTick } from './onSave';
+import { on, off, fire } from "delegated-events";
+import { $ } from "../queryjs";
+import { callSaveFunctionNextTick } from "./onSave";
 
 export default function () {
-  $.on("click", "[save]", function (event) {
+  on("click", "[save]", function (event) {
     let clickedElem = event.currentTarget;
 
     if (clickedElem.closest("[disable-events]")) {

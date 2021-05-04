@@ -1,9 +1,9 @@
-import { ajaxFileUpload } from '../hummingbird/lib/ajax';
-import optionsData from './optionsData';
-import { setValueForClosestKey } from '../data-utilities';
-import { callOnFileUploadCallbacks, callOnFileUploadProgressCallbacks } from './callbacks';
+import { ajaxFileUpload } from "../hummingbird/lib/ajax";
+import optionsData from "./optionsData";
+import { setValueForClosestKey } from "../data-utilities";
+import { callOnFileUploadCallbacks, callOnFileUploadProgressCallbacks } from "./callbacks";
 
-export function handleUpload ({elem, keyName}) {
+export function handleUpload({ elem, keyName }) {
   let fileUploadStartTime;
   let fileUploadFinishTime;
   let fileInputElem = elem;
@@ -13,20 +13,20 @@ export function handleUpload ({elem, keyName}) {
     fileInputElem.disabled = true;
 
     if (!optionsData._defaultUploadCallback) {
-      uploadFile({fileInputElem, keyName});
+      uploadFile({ fileInputElem, keyName });
     } else {
       let file = fileInputElem.files[0];
-      optionsData._defaultUploadCallback({fileInputElem, keyName, resetFileInput, file});
+      optionsData._defaultUploadCallback({ fileInputElem, keyName, resetFileInput, file });
     }
   }
 }
 
-function uploadFile ({fileInputElem, keyName}) {
+function uploadFile({ fileInputElem, keyName }) {
   ajaxFileUpload({
     fileInputElem,
     onProgress: function (percentage) {
       if (percentage === 0) {
-        fileUploadStartTime = (new Date()).getTime();
+        fileUploadStartTime = new Date().getTime();
       }
 
       setPercentageOnUploadingNotice(percentage);
@@ -35,41 +35,41 @@ function uploadFile ({fileInputElem, keyName}) {
         resetFileInput(fileInputElem);
       }
 
-      callOnFileUploadProgressCallbacks({percentage});
+      callOnFileUploadProgressCallbacks({ percentage });
     },
     onSuccess: function (res) {
-      setValueForClosestKey({elem: fileInputElem, keyName, value: res.filePath});
+      setValueForClosestKey({ elem: fileInputElem, keyName, value: res.filePath });
 
-      callOnFileUploadCallbacks({success: true, res});
+      callOnFileUploadCallbacks({ success: true, res });
     },
     onError: function () {
       resetFileInput(fileInputElem);
 
-      callOnFileUploadCallbacks({success: false});
-    }
+      callOnFileUploadCallbacks({ success: false });
+    },
   });
 }
 
 // uploading notice
-function setPercentageOnUploadingNotice (percentage) {
+function setPercentageOnUploadingNotice(percentage) {
   let uploadingNotice = document.querySelector(".uploading-notice");
   let progressCompleteElem = document.querySelector(".uploading-notice__progress-bar-complete");
   let progressStatusElem = document.querySelector(".uploading-notice__status-percentage");
-  
+
   percentage = percentage || 0;
 
   if (percentage > 0) {
     uploadingNotice.classList.add("uploading-notice--visible");
-  } 
+  }
 
   progressCompleteElem.style.transform = `scaleX(${percentage / 100})`;
   progressStatusElem.innerText = parseInt(percentage, 10) + "%";
 
   if (percentage === 100) {
-    fileUploadFinishTime = (new Date()).getTime();
+    fileUploadFinishTime = new Date().getTime();
 
     let timeoutMs = 1500;
-    if ((fileUploadFinishTime - fileUploadStartTime) < 2500) {
+    if (fileUploadFinishTime - fileUploadStartTime < 2500) {
       timeoutMs = 2300;
     }
 
@@ -79,8 +79,7 @@ function setPercentageOnUploadingNotice (percentage) {
   }
 }
 
-function resetFileInput (elem) {
+function resetFileInput(elem) {
   elem.disabled = false;
   elem.value = "";
 }
-

@@ -1,18 +1,18 @@
-export { $ } from './queryjs';
+export { $ } from "./queryjs";
 
-export { copyLayout } from './copy-layout';
+export { copyLayout } from "./copy-layout";
 
-export { 
+export {
   init,
   callSaveFunction,
   onSave,
   onFileUpload,
   onFileUploadProgress,
   onAddItem,
-  onSync
-} from './inputjs';
+  onSync,
+} from "./inputjs";
 
-export { 
+export {
   getClosestElemWithKey,
   getValueForClosestKey,
   setValueForClosestKey,
@@ -20,10 +20,7 @@ export {
   setValueForKeyName,
   getKeyNamesFromElem,
   callWatchFunctionsOnElements,
-  setAllDataToEmptyStringsExceptIds
-} from './data-utilities';
+  setAllDataToEmptyStringsExceptIds,
+} from "./data-utilities";
 
-export {
-  getSaveData
-} from './get-save-data';
-
+export { getSaveData } from "./get-save-data";

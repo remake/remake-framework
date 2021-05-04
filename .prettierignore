@@ -1,0 +1,5 @@
+.cache/
+app/
+node_modules/
+_remake/dist/
+_remake/.sessions/

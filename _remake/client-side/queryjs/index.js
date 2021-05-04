@@ -6,12 +6,6 @@
 
   # API
 
-  ## event delegation
-
-  $.on('click', '.js-button', func);
-  $.off('click', '.js-button', func);
-  $.fire(image, 'robot:singularity', {name: 'Hubot'});
-
   ## instance methods
 
   // get ONLY first elem (as an array)
@@ -48,15 +42,9 @@
 
 */
 
-import {on, off, fire} from 'delegated-events'; // an excellent library for delegated events
-
 var $ = function (selector) {
   return new QueryObj(selector);
-}
-
-$.on = on;
-$.off = off;
-$.fire = fire;
+};
 
 let data = [];
 $.data = function (elem, key, value) {
@@ -68,19 +56,19 @@ $.data = function (elem, key, value) {
   if (!value) {
     let match = data.find(item => item.elem === elem && item.key === key);
     return match && match.value;
-  } 
-  
+  }
+
   // set data:
   if (value) {
     let existingIndex = data.findIndex(item => item.elem === elem && item.key === key);
-    
+
     if (existingIndex > -1) {
       data.splice(existingIndex, 1);
     }
 
-    data.push({key, value, elem});
-  } 
-}
+    data.push({ key, value, elem });
+  }
+};
 
 $.arr = function (arrLike) {
   if (arrLike === null || arrLike === undefined) {
@@ -88,7 +76,7 @@ $.arr = function (arrLike) {
   } else {
     return Array.from(arrLike);
   }
-}
+};
 
 class QueryObj {
   constructor(selector) {
@@ -96,7 +84,7 @@ class QueryObj {
     let nodeListArr = Array.from(nodeList);
 
     if (selector.endsWith(":first")) {
-      nodeListArr = nodeListArr.slice(0,1);
+      nodeListArr = nodeListArr.slice(0, 1);
     }
 
     this.arr = nodeListArr;
@@ -114,7 +102,7 @@ class QueryObj {
   data(key, value) {
     for (var i = 0; i < this.arr.length; i++) {
       let elem = this.arr[i];
-      
+
       $.data(elem, key, value);
     }
   }
@@ -128,5 +116,3 @@ class QueryObj {
 // window.$ = $;
 
 export { $ };
-
-

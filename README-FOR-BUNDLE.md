@@ -22,7 +22,7 @@ npm run dev
 
 Look in the "app" directory to see all the code for the Trello clone app:
 
-Inside the `/app/pages` directory you'll find the `app-index.hbs` file. 
+Inside the `/app/pages` directory you'll find the `app-index.hbs` file.
 
 This file includes the entire Trello clone app! 👍
 

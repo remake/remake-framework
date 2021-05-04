@@ -27,8 +27,6 @@
   - `sumKeyValues`: sums the number values of keys that match the current key and uses the passed in `selector` element to update another element with this sum
 - FIX BUG: deleting all the content from a user's `user-app-data` json file won't stall the app. The data will just default to an empty object.
 
-
-
 # 2.1.2 (November 18, 2020)
 
 - Remake has support for custom domains! 🎉
@@ -68,6 +66,7 @@
 # 1.11.0 (July 6, 2020)
 
 - Breaking change: Renamed `username.hbs` to `app-index.hbs` (so it's clearer that it's supposed to be the dynamic home page of the app)
+
 * Added ability to include an `{{else}}` clause in a `{{for}}` loop for when there are no items to iterate over
 * Small change: Made adding a layout to a page have more forgiving syntax (no longer requires spaces between braces)
 * Added an empty Remake app to `/_remake/empty-project` so users can get started more quickly with their own projects
@@ -81,10 +80,10 @@
 - Breaking change: Renamed the `asset-bundler/` directory to `_remake-asset-bundler` to differentiate it from files that are modifiable by the user
 - Fixed: The `remake backup` command now works for file uploads
 
-*Important:* If you're updating from an older version of Remake using the `remake update-framework` command, do this:
+_Important:_ If you're updating from an older version of Remake using the `remake update-framework` command, do this:
 
 1. Run `remake update-framework`
-2. Make sure all the dependencies from `https://github.com/remake/remake-framework/blob/master/package.json` are in your own `package.json` 
+2. Make sure all the dependencies from `https://github.com/remake/remake-framework/blob/master/package.json` are in your own `package.json`
 3. Rename the `asset-bundler` directory to `_remake-asset-bundler`
 
 You may also need to run `npm rebuild` if you get an error like `"Error: Could not locate the bindings file."`.
@@ -94,14 +93,16 @@ Sorry about this. It'll be easier to update in the future.
 # 1.10.0 (April 15, 2020)
 
 - Implemented file upload, which only requires a few lines of code to get working! (max file size 50MB by default)
+
 ```
 <div data-o-type="object" data-l-key-uploaded-image>
   <input data-i type="file" name="uploadedImage">
   <img data-l-target-uploaded-image src="{{uploadedImage}}">
 </div>
 ```
-- Added a few helper file upload features: 
-  - Upload progress notification 
+
+- Added a few helper file upload features:
+  - Upload progress notification
   - Callbacks for file upload events
 - Changed the way the `data-i` attribute works
   - By default it triggers a save unless its value is set to `dontTriggerSaveOnChange`
@@ -117,7 +118,7 @@ Sorry about this. It'll be easier to update in the future.
 
 # 1.8.0 (November 24, 2019)
 
-- Added a separate `remake.sass` helper styles file for: 
+- Added a separate `remake.sass` helper styles file for:
   - hiding `data-i-new` elements
   - preserving multi-lines in multi-line editable elements
   - show a dashed border around editable elements that have no content in them
@@ -141,12 +142,10 @@ Sorry about this. It'll be easier to update in the future.
   - New `--multitenant` flag for `remake create` command
   - Better logging and user feedback from CLI
 
-
 # 1.6.0 (October 31, 2019)
 
 - Added support for sortable items. Instructions for how to enable: https://www.notion.so/hellounicorns/Docs-Sortable-Plugin-3cdd44ece76745faa1a6e043ef0c3a76
 - Fixed asset bundler bug. Changing Remake's client-side framework code (in `/_remake/client-side`) will now cause the asset bundler to recompile all the JS in `/app`. Before, it wasn't watching the code in `/_remake/client-side` at all.
-
 
 # 1.5.0 (October 31, 2019)
 

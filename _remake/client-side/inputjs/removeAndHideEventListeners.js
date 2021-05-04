@@ -1,14 +1,13 @@
-import { $ } from '../queryjs';
-import { callSaveFunctionNextTick } from './onSave';
+import { on, off, fire } from "delegated-events";
+import { $ } from "../queryjs";
+import { callSaveFunctionNextTick } from "./onSave";
 import { syncDataNextTick } from "./syncData";
 import { setAllDataToEmptyStringsExceptIds, getKeyNamesFromElem } from "../data-utilities";
-import { callOnRemoveItemCallbacks } from './callbacks';
+import { callOnRemoveItemCallbacks } from "./callbacks";
 
-export function initRemoveAndHideEventListeners () {
-
+export function initRemoveAndHideEventListeners() {
   // useful for permanently removing items, especially from a list of similar items
-  $.on("click", "[remove],[remove\\:with-confirm]", function (event) {
-
+  on("click", "[remove],[remove\\:with-confirm]", function (event) {
     if (event.target.closest("[disable-events]")) {
       return;
     }
@@ -45,12 +44,10 @@ export function initRemoveAndHideEventListeners () {
     callSaveFunctionNextTick(parentElement);
 
     callOnRemoveItemCallbacks();
-
   });
 
   // useful for hiding items the user doesn't want visible, but allowing them to add them back later
-  $.on("click", "[erase],[erase\\:with-confirm]", function (event) {
-
+  on("click", "[erase],[erase\\:with-confirm]", function (event) {
     if (event.target.closest("[disable-events]")) {
       return;
     }
@@ -74,11 +71,11 @@ export function initRemoveAndHideEventListeners () {
       syncDataNextTick({
         sourceElement: syncElement,
         targetElement: $.data(syncElement, "source"),
-        keyNames: getKeyNamesFromElem(syncElement)
+        keyNames: getKeyNamesFromElem(syncElement),
       });
     } else {
       // handle the case where we're clicking a "remove(ERASE)" button on the page (not in a popover)
-      
+
       // look through the data keys and set ALL their values to empty strings
       let elemWithData = event.currentTarget.closest("[object]");
 
@@ -87,11 +84,5 @@ export function initRemoveAndHideEventListeners () {
     }
 
     callOnRemoveItemCallbacks();
-
   });
-
 }
-
-
-
-

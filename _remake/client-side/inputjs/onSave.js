@@ -1,28 +1,28 @@
-import { $ } from '../queryjs';
+import { $ } from "../queryjs";
 import { getSaveData } from "../get-save-data";
-import { ajaxPost } from '../hummingbird/lib/ajax';
-import { debounce } from '../hummingbird/lib/functions';
-import { getAttributeValueAsArray } from '../parse-data-attributes';
-import optionsData from './optionsData';
-import { callOnSaveCallbacks } from './callbacks';
+import { ajaxPost } from "../hummingbird/lib/ajax";
+import { debounce } from "../hummingbird/lib/functions";
+import { getAttributeValueAsArray } from "../parse-data-attributes";
+import optionsData from "./optionsData";
+import { callOnSaveCallbacks } from "./callbacks";
 
 let saveFunctionsLookup = {
   // default save function posts data to /save endpoint
-  _defaultSave: function ({data, path, saveToId, elem}) {
-    ajaxPost("/save", {data, path, saveToId}, function (res) {
+  _defaultSave: function ({ data, path, saveToId, elem }) {
+    ajaxPost("/save", { data, path, saveToId }, function (res) {
       callOnSaveCallbacks(res);
     });
-  }
+  },
 };
 
-export function initSaveFunctions () {
+export function initSaveFunctions() {
   if (optionsData.saveFunctions) {
     Object.assign(saveFunctionsLookup, optionsData.saveFunctions);
   }
 }
 
 // all saves go through here
-export function callSaveFunction (targetElem) {
+export function callSaveFunction(targetElem) {
   let saveEnabled = !targetElem.closest("[no-save]");
   if (!saveEnabled) {
     return;
@@ -45,7 +45,7 @@ export function callSaveFunction (targetElem) {
   } else {
     if (saveElement.matches("[custom-save]")) {
       hasCustomSaveFunction = true;
-      [ saveFuncName, savePath, saveToId ] = getSaveFuncInfo(saveElement);
+      [saveFuncName, savePath, saveToId] = getSaveFuncInfo(saveElement);
     } else if (saveElement.matches("[key\\:id]")) {
       isDefaultingToDataKeyIdSave = true;
       saveFuncName = "_defaultSave";
@@ -57,12 +57,15 @@ export function callSaveFunction (targetElem) {
   let dataInsideSaveElement = getSaveData(saveElement);
 
   // save the data
-  saveFunc({data: dataInsideSaveElement, elem: targetElem, path: savePath, saveToId});
+  saveFunc({ data: dataInsideSaveElement, elem: targetElem, path: savePath, saveToId });
 
   // show a warning if you think the save might be a mistakes
   let itemIdFromUrl = document.body.getAttribute("data-item-route");
   if (isDefaultingToGlobalSave && itemIdFromUrl) {
-    console.log(`%cWarning: Data was just saved to your database, but not to the item matching the id in this page's url: "${itemIdFromUrl}". This might not be a mistake, but if it is you can correct it just add "key:${itemIdFromUrl}" to a high-level element.`, "color: #e03131;");
+    console.log(
+      `%cWarning: Data was just saved to your database, but not to the item matching the id in this page's url: "${itemIdFromUrl}". This might not be a mistake, but if it is you can correct it just add "key:${itemIdFromUrl}" to a high-level element.`,
+      "color: #e03131;"
+    );
   }
 
   // log the data if the debug option is turned on
@@ -76,7 +79,7 @@ export function callSaveFunction (targetElem) {
       logDataOnSaveString += `Action: Saved to nearest id (${saveToId}), `;
     } else if (hasCustomSaveFunction) {
       logDataOnSaveString += `Action: Saved to custom save function (${saveFuncName}), `;
-  
+
       if (savePath) {
         logDataOnSaveString += `Action: Saved to path: ${savePath}, `;
       }
@@ -95,14 +98,14 @@ export function callSaveFunctionNextTick(...args) {
   setTimeout(() => {
     callSaveFunction(...args);
   });
-};
+}
 
-export function getSaveFuncInfo (saveElement) {
+export function getSaveFuncInfo(saveElement) {
   let dashCaseAttrName = "custom-save";
   let args = getAttributeValueAsArray(saveElement, dashCaseAttrName);
 
   let funcName, savePath, saveToId;
-  args.forEach((arg) => {
+  args.forEach(arg => {
     if (arg.startsWith("path:")) {
       savePath = arg.substring("path:".length);
     } else if (arg.startsWith("id:")) {
@@ -114,15 +117,5 @@ export function getSaveFuncInfo (saveElement) {
 
   funcName = funcName || "_defaultSave";
 
-  return [ funcName, savePath, saveToId ]; 
+  return [funcName, savePath, saveToId];
 }
-
-
-
-
-
-
-
-
-
-

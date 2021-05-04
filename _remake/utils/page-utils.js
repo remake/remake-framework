@@ -1,16 +1,11 @@
-const parseUrl = require('parseurl');
+const parseUrl = require("parseurl");
 const jsonfile = require("jsonfile");
-import { 
-  getDirForPageTemplate, 
-  getDirForRootApp, 
-  getDirForLayoutTemplate
+import {
+  getDirForPageTemplate,
+  getDirForRootApp,
+  getDirForLayoutTemplate,
 } from "./directory-helpers";
-import { 
-  capture,
-  readFileAsync, 
-  readdirAsync, 
-  statAsync 
-} from "./async-utils";
+import { capture, readFileAsync, readdirAsync, statAsync } from "./async-utils";
 import { forInLoopRegex } from "./common";
 import { getHandlebarsContext } from "./handlebars-context";
 import { processData } from "./process-data";
@@ -20,13 +15,16 @@ import { getGlobalData } from "./get-global-data";
 import { getHtmlWithUniqueIds } from "./get-html-with-unique-ids";
 import RemakeStore from "../lib/remake-store";
 
-
-export async function getRootAppsPageHtml () {
-  let [dirsWithFileTypes] = await capture(readdirAsync(getDirForRootApp(), { withFileTypes: true }));
+export async function getRootAppsPageHtml() {
+  let [dirsWithFileTypes] = await capture(
+    readdirAsync(getDirForRootApp(), { withFileTypes: true })
+  );
 
   if (dirsWithFileTypes) {
     let dirs = dirsWithFileTypes.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
-    let html = `<h1>Apps</h1><ul>${dirs.map(dir => `<li><a href="/app_${dir}">${dir}</a></li>`).join("")}</ul>`;
+    let html = `<h1>Apps</h1><ul>${dirs
+      .map(dir => `<li><a href="/app_${dir}">${dir}</a></li>`)
+      .join("")}</ul>`;
     return html;
   } else {
     return `<h1>No apps found</h1>`;
@@ -35,26 +33,27 @@ export async function getRootAppsPageHtml () {
 
 // returns a template that can accept data
 //   must be inside a layout, for...in helpers replaced, and compiled by handlebars
-export async function getPageTemplate ({pageName, appName}) {
-  let pageTemplateDir = getDirForPageTemplate({pageName, appName});
-  let [pageTemplateString] = await capture(readFileAsync(pageTemplateDir, 'utf8'));
+export async function getPageTemplate({ pageName, appName }) {
+  let pageTemplateDir = getDirForPageTemplate({ pageName, appName });
+  let [pageTemplateString] = await capture(readFileAsync(pageTemplateDir, "utf8"));
 
   if (pageTemplateString) {
-    let pageTemplateStringProcessed = await processTemplateString({appName, pageTemplateString});
+    let pageTemplateStringProcessed = await processTemplateString({ appName, pageTemplateString });
 
-    const Handlebars = getHandlebarsContext({appName});
+    const Handlebars = getHandlebarsContext({ appName });
     return Handlebars.compile(pageTemplateStringProcessed);
   }
 }
 
-export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
+export async function getDataForPage({ req, res, appName, pageAuthor, itemId }) {
   let params = req.params;
   let query = req.query;
   let pathname = parseUrl(req).pathname;
   let currentUser = req.user;
   let data = (pageAuthor && pageAuthor.appData) || {};
-  let [globalData] = await capture(getGlobalData({appName}));
-  let isPageAuthor = currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
+  let [globalData] = await capture(getGlobalData({ appName }));
+  let isPageAuthor =
+    currentUser && pageAuthor && currentUser.details.username === pageAuthor.details.username;
   let flashErrors = req.flash("error");
   let flashSuccesses = req.flash("success");
 
@@ -63,7 +62,9 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
   let generateUniqueIdsOption = process.env.GENERATE_UNIQUE_IDS;
 
   if (RemakeStore.isMultiTenant() || ["true", true].includes(generateUniqueIdsOption)) {
-    let [itemData, itemDataError] = await capture(processData({res, appName, pageAuthor, data, itemId}));
+    let [itemData, itemDataError] = await capture(
+      processData({ res, appName, pageAuthor, data, itemId })
+    );
     currentItem = itemData.currentItem;
     parentItem = itemData.parentItem;
   }
@@ -85,23 +86,29 @@ export async function getDataForPage ({req, res, appName, pageAuthor, itemId}) {
     pageAuthor,
     isPageAuthor: isPreviewing ? false : isPageAuthor,
     isPreviewing,
-    pageHasAppData: !!pageAuthor
+    pageHasAppData: !!pageAuthor,
   };
 
   return allData;
-
 }
 
-export function getPageHtml ({pageTemplate, data, appName, username, itemId, isPreviewing}) {
+export function getPageHtml({ pageTemplate, data, appName, username, itemId, isPreviewing }) {
   let html = pageTemplate(data);
   let currentUser = data.currentUser;
-  let htmlWithAppStatus = addRemakeAppStatusToPage({html, data, currentUser, username, itemId, isPreviewing});
-  let htmlWithUniqueIds = getHtmlWithUniqueIds({htmlString: htmlWithAppStatus});
+  let htmlWithAppStatus = addRemakeAppStatusToPage({
+    html,
+    data,
+    currentUser,
+    username,
+    itemId,
+    isPreviewing,
+  });
+  let htmlWithUniqueIds = getHtmlWithUniqueIds({ htmlString: htmlWithAppStatus });
   return htmlWithUniqueIds;
 }
 
-export async function doesPageExist ({appName, pageName}) {
-  let pageTemplateFileDir = getDirForPageTemplate({appName, pageName});
+export async function doesPageExist({ appName, pageName }) {
+  let pageTemplateFileDir = getDirForPageTemplate({ appName, pageName });
 
   try {
     return await statAsync(pageTemplateFileDir);
@@ -119,34 +126,36 @@ export async function doesPageExist ({appName, pageName}) {
 let layoutNameRegex = /\{\{\s*layout\s+["'](\w+)["']\s*\}\}/;
 let yieldCommandRegex = /\{\{>\s+yield\s+\}\}/;
 
-async function processTemplateString ({appName, pageTemplateString}) {
+async function processTemplateString({ appName, pageTemplateString }) {
   // 1. get the layout name from the template string
   //    looks like: {{ layout "layoutName" }}
   let layoutNameMatch = pageTemplateString.match(layoutNameRegex);
   let layoutName = layoutNameMatch ? layoutNameMatch[1] : "default";
 
   // 2. get layout template string
-  let layoutTemplateDir = getDirForLayoutTemplate({appName, layoutName});
-  let [layoutTemplateString] = await capture(readFileAsync(layoutTemplateDir, 'utf8'));
+  let layoutTemplateDir = getDirForLayoutTemplate({ appName, layoutName });
+  let [layoutTemplateString] = await capture(readFileAsync(layoutTemplateDir, "utf8"));
 
-  // 3. remove the custom "layout" command from the page template. 
+  // 3. remove the custom "layout" command from the page template.
   //    looks like: {{ layout "layoutName" }}
   let templateStringWithoutLayout = pageTemplateString.replace(layoutNameRegex, "");
 
   // 4. replace any "for...in" loops with real #for helper syntax
-  let templateStringWithoutForInLoop = templateStringWithoutLayout.replace(forInLoopRegex, '{{#for $2 itemName="$1"');
+  let templateStringWithoutForInLoop = templateStringWithoutLayout.replace(
+    forInLoopRegex,
+    '{{#for $2 itemName="$1"'
+  );
 
   // 5. insert the page template into its layout
   //    yield command looks like: {{> yield }}
-  let templateStringWithLayout = layoutTemplateString.replace(yieldCommandRegex, templateStringWithoutForInLoop);
+  let templateStringWithLayout = layoutTemplateString.replace(
+    yieldCommandRegex,
+    templateStringWithoutForInLoop
+  );
 
   // 6. insert inline partials into template
-  let [inlinePartialsString] = await capture(getPartialsAsInlinePartials({appName}));
+  let [inlinePartialsString] = await capture(getPartialsAsInlinePartials({ appName }));
   let finalTemplateString = inlinePartialsString + templateStringWithLayout;
 
   return finalTemplateString;
 }
-
-
-
-

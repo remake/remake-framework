@@ -25,6 +25,11 @@
   "alias": {
     "remake-framework": "./_remake/client-side/index.js"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "dependencies": {
     "archiver": "^3.1.1",
     "bcryptjs": "^2.4.3",
@@ -46,6 +51,7 @@
     "handlebars": "^4.7.6",
     "handlebars-helpers": "^0.10.0",
     "is-valid-domain": "0.0.17",
+    "jsdom": "^16.5.3",
     "jsonfile": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
@@ -67,7 +73,10 @@
   },
   "devDependencies": {
     "esbuild": "^0.8.2",
+    "husky": "^6.0.0",
     "nodemon": "^1.19.1",
+    "prettier": "2.2.1",
+    "pretty-quick": "^3.1.0",
     "shelljs": "^0.8.3"
   }
 }

@@ -1,3 +1,3 @@
-export function showError (...messages) {
+export function showError(...messages) {
   console.error("Remake Error:", ...messages);
 }

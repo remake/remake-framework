@@ -1,9 +1,6 @@
-import { onAttributeEvent } from '../hummingbird/lib/dom';
-import { handleUpload } from './fileUpload';
-import { 
-  getValueForClosestKey, 
-  setValueForClosestKey
-} from '../data-utilities';
+import { onAttributeEvent } from "../hummingbird/lib/dom";
+import { handleUpload } from "./fileUpload";
+import { getValueForClosestKey, setValueForClosestKey } from "../data-utilities";
 
 export default function () {
   /* 
@@ -44,7 +41,12 @@ export default function () {
     eventTypes: ["input", "click", "change"],
     partialAttributeStrings: ["update:"],
     filterOutElemsInsideAncestor: "[disable-events]",
-    callback: ({eventType, matchingElement, matchingAttribute, matchingPartialAttributeString}) => {
+    callback: ({
+      eventType,
+      matchingElement,
+      matchingAttribute,
+      matchingPartialAttributeString,
+    }) => {
       let keyName = matchingAttribute.substring(matchingPartialAttributeString.length);
       let nodeName = matchingElement.nodeName && matchingElement.nodeName.toLowerCase();
       let inputType = matchingElement.type ? matchingElement.type.toLowerCase() : "";
@@ -53,9 +55,14 @@ export default function () {
 
       // textarea and input[type='text']
       if (eventType === "input") {
-        if (nodeName === "textarea" || inputType === "text" || inputType === "color" || inputType === "") {
+        if (
+          nodeName === "textarea" ||
+          inputType === "text" ||
+          inputType === "color" ||
+          inputType === ""
+        ) {
           value = matchingElement.value;
-          setValueForClosestKey({elem, keyName, value});
+          setValueForClosestKey({ elem, keyName, value });
         }
       }
 
@@ -73,7 +80,7 @@ export default function () {
 
         // file upload
         if (inputType === "file") {
-          handleUpload({elem: matchingElement, keyName});
+          handleUpload({ elem: matchingElement, keyName });
         }
       }
 
@@ -83,9 +90,9 @@ export default function () {
       }
 
       if (value !== null) {
-        setValueForClosestKey({elem: matchingElement, keyName, value});
+        setValueForClosestKey({ elem: matchingElement, keyName, value });
       }
-    }
+    },
   });
 
   /* 
@@ -98,23 +105,14 @@ export default function () {
     eventTypes: ["click"],
     partialAttributeStrings: ["toggle:"],
     filterOutElemsInsideAncestor: "[disable-events]",
-    callback: ({matchingElement, matchingAttribute, matchingPartialAttributeString}) => {
+    callback: ({ matchingElement, matchingAttribute, matchingPartialAttributeString }) => {
       let keyName = matchingAttribute.substring(matchingPartialAttributeString.length);
-      let currentValue = getValueForClosestKey({elem: matchingElement, keyName}) || "";
+      let currentValue = getValueForClosestKey({ elem: matchingElement, keyName }) || "";
       if (currentValue.toLowerCase() !== "true") {
-        setValueForClosestKey({elem: matchingElement, keyName, value: true});
+        setValueForClosestKey({ elem: matchingElement, keyName, value: true });
       } else {
-        setValueForClosestKey({elem: matchingElement, keyName, value: false});
+        setValueForClosestKey({ elem: matchingElement, keyName, value: false });
       }
-    }
+    },
   });
-
 }
-
-
-
-
-
-
-
-
