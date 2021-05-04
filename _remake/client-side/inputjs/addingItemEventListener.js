@@ -52,6 +52,8 @@ function _defaultAddItemCallback({ templateName, listElem, whereToInsert, should
         let matches = editAttributes.map(attrName => ({
           matchingElement: itemElem,
           matchingAttribute: attrName,
+          eventType: "click",
+          matchingPartialAttributeString: "edit:",
         }));
         openEditCallback(matches);
       }

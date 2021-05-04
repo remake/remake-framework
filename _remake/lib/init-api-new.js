@@ -81,7 +81,8 @@ export function initApiNew({ app }) {
     let tempHtmlString = partialRenderFunc({});
     let domFromString = new JSDOM(tempHtmlString);
     let saveData = getSaveData(domFromString.window.document.body);
-    let saveDataNested = { [partialName]: saveData };
+    let saveDataNested = {};
+    saveDataNested[partialName] = saveData;
     // merge skeleton of data from template with bootstrap data provided by user
     let [partialBootstrapData] = await capture(
       getBootstrapData({ appName, fileName: partialName })
