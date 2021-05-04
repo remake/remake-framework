@@ -29,6 +29,26 @@ export function forEachMatchingElem (parentElem, selector, callback) {
 }
 
 
+export function forEachNestedElem (elem, callback) {
+  callback(elem);
+
+  for (let i = 0, l = elem.children.length; i < l; i++) {
+    forEachNestedElem(elem.children[i], callback);
+  }
+}
+
+
+export function findNestedElem (elem, testFunc) {
+  let firstMatch;
+  forEachNestedElem(elem, function (el) {
+    if (!firstMatch && testFunc(el)) {
+      firstMatch = el;
+    }
+  });
+  return firstMatch;
+}
+
+
 // get an element's parents, optionally filtering them by a selector
 export function getParents ({elem, selector, includeCurrentElement}) {
   let parents = [];

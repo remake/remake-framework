@@ -1,15 +1,16 @@
 import { $ } from '../queryjs';
 import { getAttributeValueAsArray } from '../parse-data-attributes';
 import { ajaxPost } from '../hummingbird/lib/ajax';
-import { findNearest, onAttributeEvent} from '../hummingbird/lib/dom';
+import { findNearest, onAttributeEvent, forEachNestedElem, findNestedElem } from '../hummingbird/lib/dom';
 import { isStringANumber } from '../hummingbird/lib/string';
 import { showError } from '../common/show-error';
 import { callSaveFunction } from './onSave';
 import { callOnAddItemCallbacks } from './callbacks';
+import { openEditCallback } from "./editableAttribute.js";
 import optionsData from './optionsData';
 const camelCase = require('lodash/camelCase');
 
-function _defaultAddItemCallback ({templateName, listElem, whereToInsert}) {
+function _defaultAddItemCallback ({templateName, listElem, whereToInsert, shouldTriggerEdit}) {
   // pass the template name into an endpoint and get the resulting html back
   ajaxPost("/new", {templateName}, function (ajaxResponse) {
     let {htmlString, success} = ajaxResponse;
@@ -31,6 +32,27 @@ function _defaultAddItemCallback ({templateName, listElem, whereToInsert}) {
     callSaveFunction(listElem);
     
     let itemElem = whereToInsert === "afterbegin" ? listElem.firstElementChild : listElem.lastElementChild;
+
+    if (shouldTriggerEdit) {
+      let elemWithEditAttribute = findNestedElem(itemElem, (el) => {
+        let attributeNames = el.getAttributeNames();
+        let editAttribute = attributeNames.find(name => name.startsWith("edit:"));
+        return editAttribute;
+      });
+
+      if (elemWithEditAttribute) {
+        let attributeNames = elemWithEditAttribute.getAttributeNames();
+        let editAttributes = attributeNames.filter(name => name.startsWith("edit:"));
+        if (editAttributes.length > 0) {
+          let matches = editAttributes.map(attrName => ({
+            matchingElement: itemElem,
+            matchingAttribute: attrName
+          }));
+          openEditCallback(matches);
+        }
+      }
+    }
+
     callOnAddItemCallbacks({success: true, listElem, itemElem, templateName, ajaxResponse});
   });
 }
@@ -38,10 +60,11 @@ function _defaultAddItemCallback ({templateName, listElem, whereToInsert}) {
 export default function () {
   onAttributeEvent({
     eventTypes: ["click"],
-    partialAttributeStrings: ["new:"], 
+    partialAttributeStrings: ["new:"],
     filterOutElemsInsideAncestor: "[disable-events]",
     callback: ({matchingElement, matchingAttribute}) => {
-      let templateName = camelCase(matchingAttribute.substring("new:".length));
+      let attributeParts = matchingAttribute.split(":");
+      let templateName = camelCase(attributeParts[1]);
       // possible values in argArray: top/bottom or some selector
       let argArray = getAttributeValueAsArray(matchingElement, matchingAttribute);
       let position = argArray.indexOf("top") !== -1 ? "top" : "bottom";
@@ -49,11 +72,13 @@ export default function () {
       let selector = argArray.find(arg => arg !== "top" && arg !== "bottom") || "[array]";
       // find the nearest element matching the selector (searching through ancestors consecutively)
       let listElem = findNearest({elem: matchingElement, selector});
+      
+      let shouldTriggerEdit = attributeParts.indexOf("edit") !== -1;
 
       if (!optionsData._defaultAddItemCallback) {
-        _defaultAddItemCallback({templateName, listElem, whereToInsert});
+        _defaultAddItemCallback({templateName, listElem, whereToInsert, shouldTriggerEdit});
       } else {
-        optionsData._defaultAddItemCallback({templateName, listElem, whereToInsert});        
+        optionsData._defaultAddItemCallback({templateName, listElem, whereToInsert, shouldTriggerEdit});        
       }
     }
   });
