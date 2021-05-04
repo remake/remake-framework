@@ -40,6 +40,7 @@ export function forEachNestedElem (elem, callback) {
 
 export function findNestedElem (elem, testFunc) {
   let firstMatch;
+  // unfortunate that this loops through all child elements even after a match is found
   forEachNestedElem(elem, function (el) {
     if (!firstMatch && testFunc(el)) {
       firstMatch = el;
