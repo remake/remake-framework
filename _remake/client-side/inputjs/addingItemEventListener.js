@@ -1,22 +1,27 @@
-import { $ } from '../queryjs';
-import { getAttributeValueAsArray } from '../parse-data-attributes';
-import { ajaxPost } from '../hummingbird/lib/ajax';
-import { findNearest, onAttributeEvent, forEachNestedElem, findNestedElem } from '../hummingbird/lib/dom';
-import { isStringANumber } from '../hummingbird/lib/string';
-import { showError } from '../common/show-error';
-import { callSaveFunction } from './onSave';
-import { callOnAddItemCallbacks } from './callbacks';
+import { $ } from "../queryjs";
+import { getAttributeValueAsArray } from "../parse-data-attributes";
+import { ajaxPost } from "../hummingbird/lib/ajax";
+import {
+  findNearest,
+  onAttributeEvent,
+  forEachNestedElem,
+  findNestedElem,
+} from "../hummingbird/lib/dom";
+import { isStringANumber } from "../hummingbird/lib/string";
+import { showError } from "../common/show-error";
+import { callSaveFunction } from "./onSave";
+import { callOnAddItemCallbacks } from "./callbacks";
 import { openEditCallback } from "./editableAttribute.js";
-import optionsData from './optionsData';
-const camelCase = require('lodash/camelCase');
+import optionsData from "./optionsData";
+const camelCase = require("lodash/camelCase");
 
-function _defaultAddItemCallback ({templateName, listElem, whereToInsert, shouldTriggerEdit}) {
+function _defaultAddItemCallback({ templateName, listElem, whereToInsert, shouldTriggerEdit }) {
   // pass the template name into an endpoint and get the resulting html back
-  ajaxPost("/new", {templateName}, function (ajaxResponse) {
-    let {htmlString, success} = ajaxResponse;
+  ajaxPost("/new", { templateName }, function (ajaxResponse) {
+    let { htmlString, success } = ajaxResponse;
 
     if (!success) {
-      callOnAddItemCallbacks({success: false, templateName, ajaxResponse});
+      callOnAddItemCallbacks({ success: false, templateName, ajaxResponse });
       return;
     }
 
@@ -30,11 +35,12 @@ function _defaultAddItemCallback ({templateName, listElem, whereToInsert, should
 
     // save needs to be called on the list element, not the item, so it doesn't try to save to a non-existent id
     callSaveFunction(listElem);
-    
-    let itemElem = whereToInsert === "afterbegin" ? listElem.firstElementChild : listElem.lastElementChild;
+
+    let itemElem =
+      whereToInsert === "afterbegin" ? listElem.firstElementChild : listElem.lastElementChild;
 
     if (shouldTriggerEdit) {
-      let firstElemWithAnEditAttribute = findNestedElem(itemElem, (el) => {
+      let firstElemWithAnEditAttribute = findNestedElem(itemElem, el => {
         let attributeNames = el.getAttributeNames();
         let hasEditAttribute = attributeNames.find(name => name.startsWith("edit:"));
         return hasEditAttribute;
@@ -45,13 +51,13 @@ function _defaultAddItemCallback ({templateName, listElem, whereToInsert, should
         let editAttributes = attributeNames.filter(name => name.startsWith("edit:"));
         let matches = editAttributes.map(attrName => ({
           matchingElement: itemElem,
-          matchingAttribute: attrName
+          matchingAttribute: attrName,
         }));
         openEditCallback(matches);
       }
     }
 
-    callOnAddItemCallbacks({success: true, listElem, itemElem, templateName, ajaxResponse});
+    callOnAddItemCallbacks({ success: true, listElem, itemElem, templateName, ajaxResponse });
   });
 }
 
@@ -60,7 +66,7 @@ export default function () {
     eventTypes: ["click"],
     partialAttributeStrings: ["new:"],
     filterOutElemsInsideAncestor: "[disable-events]",
-    callback: ({matchingElement, matchingAttribute}) => {
+    callback: ({ matchingElement, matchingAttribute }) => {
       let attributeParts = matchingAttribute.split(":");
       let templateName = camelCase(attributeParts[1]);
       // possible values in argArray: top/bottom or some selector
@@ -69,17 +75,20 @@ export default function () {
       let whereToInsert = position === "top" ? "afterbegin" : "beforeend";
       let selector = argArray.find(arg => arg !== "top" && arg !== "bottom") || "[array]";
       // find the nearest element matching the selector (searching through ancestors consecutively)
-      let listElem = findNearest({elem: matchingElement, selector});
-      
+      let listElem = findNearest({ elem: matchingElement, selector });
+
       let shouldTriggerEdit = attributeParts.indexOf("edit") !== -1;
 
       if (!optionsData._defaultAddItemCallback) {
-        _defaultAddItemCallback({templateName, listElem, whereToInsert, shouldTriggerEdit});
+        _defaultAddItemCallback({ templateName, listElem, whereToInsert, shouldTriggerEdit });
       } else {
-        optionsData._defaultAddItemCallback({templateName, listElem, whereToInsert, shouldTriggerEdit});        
+        optionsData._defaultAddItemCallback({
+          templateName,
+          listElem,
+          whereToInsert,
+          shouldTriggerEdit,
+        });
       }
-    }
+    },
   });
 }
-
-

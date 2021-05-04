@@ -1,20 +1,22 @@
 import { capture } from "./async-utils";
-import { set, isPlainObject } from 'lodash-es';
+import { set, isPlainObject } from "lodash-es";
 import forEachDeep from "deepdash-es/forEachDeep";
 import { getUniqueId } from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
 
-export async function processData ({appName, res, pageAuthor, data, itemId, requestType}) {
-  let itemData = {currentItem: undefined, parentItem: undefined};
+export async function processData({ appName, res, pageAuthor, data, itemId, requestType }) {
+  let itemData = { currentItem: undefined, parentItem: undefined };
   let itemDataError;
 
   if (pageAuthor) {
     // add unique ids to data & get currentItem and parentItem
-    [itemData, itemDataError] = await capture(addIdsAndGetItemData({appName, data, user: pageAuthor, itemId}));
+    [itemData, itemDataError] = await capture(
+      addIdsAndGetItemData({ appName, data, user: pageAuthor, itemId })
+    );
 
     if (itemDataError) {
       if (requestType === "ajax") {
-        res.json({success: false, reason: "addingUniqueIds"});
+        res.json({ success: false, reason: "addingUniqueIds" });
       } else {
         res.status(500).send("500 Server Error");
       }
@@ -24,7 +26,7 @@ export async function processData ({appName, res, pageAuthor, data, itemId, requ
 
   if (itemId && !itemData.currentItem) {
     if (requestType === "ajax") {
-      res.json({success: false, reason: "noCurrentItem"});
+      res.json({ success: false, reason: "noCurrentItem" });
     } else {
       res.status(404).send("404 Not Found");
     }
@@ -34,15 +36,13 @@ export async function processData ({appName, res, pageAuthor, data, itemId, requ
   return itemData;
 }
 
-async function addIdsAndGetItemData ({appName, data, user, itemId}) {
+async function addIdsAndGetItemData({ appName, data, user, itemId }) {
   let currentItem;
   let parentItem;
   let someUniqueIdsAdded = false;
 
   forEachDeep(data, function (value, key, parentValue, context) {
-
     if (isPlainObject(value)) {
-
       // if an :id is specified in the route, get the data for it (currentItem and its parentItem)
       if (itemId && itemId === value.id) {
         currentItem = value;
@@ -64,18 +64,14 @@ async function addIdsAndGetItemData ({appName, data, user, itemId}) {
         value.id = getUniqueId();
         someUniqueIdsAdded = true;
       }
-
     }
-
   });
 
   // save the data if some new ids have been added to it
   if (someUniqueIdsAdded) {
     // let higher-level functions capture this if it errors
-    await setUserData({appName, username: user.details.username, data, type: "appData"});
+    await setUserData({ appName, username: user.details.username, data, type: "appData" });
   }
 
   return { currentItem, parentItem };
 }
-
-

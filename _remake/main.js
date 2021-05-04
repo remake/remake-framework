@@ -8,7 +8,7 @@ const shell = require("shelljs");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
-const normalizeUrl = require('normalize-url');
+const normalizeUrl = require("normalize-url");
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
@@ -32,15 +32,24 @@ app.enable("trust proxy", "127.0.0.1");
 
 // static assets middleware comes before other routes, so they don't get asset requests
 if (!RemakeStore.isMultiTenant()) {
-  app.use("/remake", express.static(path.join(__dirname, "./dist/remake"), {
-    redirect: false
-  }));
-  app.use("/assets", express.static(path.join(__dirname, "../app/assets"), {
-    redirect: false
-  }));
-  app.use("/uploads", express.static(path.join(__dirname, "../app/data/uploads"), {
-    redirect: false
-  }));
+  app.use(
+    "/remake",
+    express.static(path.join(__dirname, "./dist/remake"), {
+      redirect: false,
+    })
+  );
+  app.use(
+    "/assets",
+    express.static(path.join(__dirname, "../app/assets"), {
+      redirect: false,
+    })
+  );
+  app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "../app/data/uploads"), {
+      redirect: false,
+    })
+  );
 }
 
 app.use(cookieParser());
@@ -72,7 +81,7 @@ if (RemakeStore.isMultiTenant()) {
 
       const appName = hostParts[0] || "";
       const validAppName = /^[a-z]+[a-z0-9-]*$/.test(appName);
-  
+
       if (!validAppName) {
         res.status(500).send("500 Server Error - Invalid app name");
         return;
@@ -81,7 +90,7 @@ if (RemakeStore.isMultiTenant()) {
       if (hostParts.length === 2) {
         req.appName = hostParts.join(".");
       } else {
-      req.appName = appName;
+        req.appName = appName;
       }
 
       next();
@@ -97,7 +106,6 @@ app.use(function (req, res, next) {
 
 // attach url data to the request
 app.use(async function (req, res, next) {
-
   req.urlData = {};
   req.urlData.host = req.get("host");
   req.urlData.url = req.protocol + "://" + req.urlData.host + req.originalUrl;
@@ -109,28 +117,39 @@ app.use(async function (req, res, next) {
   req.urlData.urlPathname = req.urlData.urlObj.pathname || {};
 
   req.urlData.referrerUrlObj = (req.urlData.referrerUrl && new URL(req.urlData.referrerUrl)) || {};
-  req.urlData.referrerUrlPathname = (req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname) || "";
+  req.urlData.referrerUrlPathname =
+    (req.urlData.referrerUrl && req.urlData.referrerUrlObj.pathname) || "";
 
   // attach params to urlData (e.g. firstParam, secondParam, thirdParam, fourthParam)
-  let routeMatcher = pathMatch("/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?/:fifthParam?");
+  let routeMatcher = pathMatch(
+    "/:firstParam?/:secondParam?/:thirdParam?/:fourthParam?/:fifthParam?"
+  );
   let pageParamsGeneric, pageParams, pageParamsError;
   if (req.isAjax) {
     // for ajax requests:
     // - we get the path segments from the referrer
     // - there will always be a max of 3 path segments in the referrer
     req.urlData.pageParamsGeneric = routeMatcher(req.urlData.referrerUrlPathname) || {};
-    [pageParams, pageParamsError] = await capture(getParams({req}));
+    [pageParams, pageParamsError] = await capture(getParams({ req }));
   } else if (!RemakeStore.isMultiTenant()) {
     // when single-tenant is enabled, there will always be a max of 3 path segments
     req.urlData.pageParamsGeneric = routeMatcher(req.urlData.urlPathname) || {};
-    [pageParams, pageParamsError] = await capture(getParams({req}));
+    [pageParams, pageParamsError] = await capture(getParams({ req }));
   } else {
     // this case is for a multi-tenant, non-ajax request (i.e. a page render)
     // there will always be a max of 4 path segments in this case.
     // the first segment is the app name and simply needs to be stripped out
-    let {firstParam, secondParam, thirdParam, fourthParam, fifthParam} = routeMatcher(req.urlData.urlPathname);
-    req.urlData.pageParamsGeneric = {firstParam: secondParam, secondParam: thirdParam, thirdParam: fourthParam, fourthParam: fifthParam} || {};
-    [pageParams, pageParamsError] = await capture(getParams({req}));
+    let { firstParam, secondParam, thirdParam, fourthParam, fifthParam } = routeMatcher(
+      req.urlData.urlPathname
+    );
+    req.urlData.pageParamsGeneric =
+      {
+        firstParam: secondParam,
+        secondParam: thirdParam,
+        thirdParam: fourthParam,
+        fourthParam: fifthParam,
+      } || {};
+    [pageParams, pageParamsError] = await capture(getParams({ req }));
   }
 
   if (pageParamsError) {
@@ -143,22 +162,23 @@ app.use(async function (req, res, next) {
   next();
 });
 
-
 // express session
 let thirtyDaysInMs = 2592000000;
 let thirtyDaysInSec = 2592000000 / 1000;
-app.use(expressSession({ 
-  store: new FileStore({
-    path: path.join(__dirname, "./.sessions"),
-    ttl: thirtyDaysInSec
-  }),
-  secret: process.env.SESSION_SECRET, 
-  resave: true, 
-  saveUninitialized: true,
-  cookie: {
-    maxAge: thirtyDaysInMs
-  }
-}));
+app.use(
+  expressSession({
+    store: new FileStore({
+      path: path.join(__dirname, "./.sessions"),
+      ttl: thirtyDaysInSec,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: thirtyDaysInMs,
+    },
+  })
+);
 
 // flash message middleware
 app.use(flash());
@@ -181,23 +201,23 @@ if (RemakeStore.isMultiTenant()) {
       // JWT_SECRET is generated by CLI and
       // exported as an env var by setEnvironmentVariables();
       // Each multi tenant instance should have a unique JWT secret
-      secret: process.env.JWT_SECRET, 
-      duration: 365 * 24 * 3600 // 1 year
+      secret: process.env.JWT_SECRET,
+      duration: 365 * 24 * 3600, // 1 year
     },
     location: {
       remake: "/opt/remake/remake-deployment",
-      tmp: "/tmp/remake"
+      tmp: "/tmp/remake",
     },
     limits: {
       appPerUser: 20,
-    }
-  }
-  
+    },
+  };
+
   global.database = mysql.createPool({
-    host : config.db.host,
-    user : config.db.user,
-    password : config.db.password,
-    database : config.db.name,
+    host: config.db.host,
+    user: config.db.user,
+    password: config.db.password,
+    database: config.db.name,
     port: config.db.port,
     connectionLimit: config.db.limit,
   });
@@ -208,7 +228,7 @@ if (RemakeStore.isMultiTenant()) {
 // and create temporary location used for unzipping deployment archives
 if (RemakeStore.isMultiTenant()) {
   initServiceRoutes({ app });
-  shell.mkdir('-p', global.config.location.tmp);
+  shell.mkdir("-p", global.config.location.tmp);
 }
 
 // REMAKE CORE FRAMEWORK
@@ -220,10 +240,10 @@ initRenderedRoutes({ app });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log('\n');
+  console.log("\n");
   showConsoleSuccess(`Visit your Remake app: http://localhost:${PORT}`);
   showConsoleSuccess(`Check this log to see the requests made by the app, as you use it.`);
-  console.log('\n');
+  console.log("\n");
 
   if (process.send) {
     process.send("online");

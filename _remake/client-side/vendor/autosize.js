@@ -1,44 +1,47 @@
-const map = (typeof Map === "function") ? new Map() : (function () {
-  const keys = [];
-  const values = [];
+const map =
+  typeof Map === "function"
+    ? new Map()
+    : (function () {
+        const keys = [];
+        const values = [];
 
-  return {
-    has(key) {
-      return keys.indexOf(key) > -1;
-    },
-    get(key) {
-      return values[keys.indexOf(key)];
-    },
-    set(key, value) {
-      if (keys.indexOf(key) === -1) {
-        keys.push(key);
-        values.push(value);
-      }
-    },
-    delete(key) {
-      const index = keys.indexOf(key);
-      if (index > -1) {
-        keys.splice(index, 1);
-        values.splice(index, 1);
-      }
-    },
-  }
-})();
+        return {
+          has(key) {
+            return keys.indexOf(key) > -1;
+          },
+          get(key) {
+            return values[keys.indexOf(key)];
+          },
+          set(key, value) {
+            if (keys.indexOf(key) === -1) {
+              keys.push(key);
+              values.push(value);
+            }
+          },
+          delete(key) {
+            const index = keys.indexOf(key);
+            if (index > -1) {
+              keys.splice(index, 1);
+              values.splice(index, 1);
+            }
+          },
+        };
+      })();
 
-let createEvent = (name)=> new Event(name, {bubbles: true});
+let createEvent = name => new Event(name, { bubbles: true });
 try {
-  new Event('test');
-} catch(e) {
+  new Event("test");
+} catch (e) {
   // IE does not support `new Event()`
-  createEvent = (name)=> {
-    const evt = document.createEvent('Event');
+  createEvent = name => {
+    const evt = document.createEvent("Event");
     evt.initEvent(name, true, false);
     return evt;
   };
 }
 
 function assign(ta) {
-  if (!ta || !ta.nodeName || ta.nodeName !== 'TEXTAREA' || map.has(ta)) return;
+  if (!ta || !ta.nodeName || ta.nodeName !== "TEXTAREA" || map.has(ta)) return;
 
   let heightOffset = null;
   let clientWidth = null;
@@ -47,16 +50,16 @@ function assign(ta) {
   function init() {
     const style = window.getComputedStyle(ta, null);
 
-    if (style.resize === 'vertical') {
-      ta.style.resize = 'none';
-    } else if (style.resize === 'both') {
-      ta.style.resize = 'horizontal';
+    if (style.resize === "vertical") {
+      ta.style.resize = "none";
+    } else if (style.resize === "both") {
+      ta.style.resize = "horizontal";
     }
 
-    if (style.boxSizing === 'content-box') {
-      heightOffset = -(parseFloat(style.paddingTop)+parseFloat(style.paddingBottom));
+    if (style.boxSizing === "content-box") {
+      heightOffset = -(parseFloat(style.paddingTop) + parseFloat(style.paddingBottom));
     } else {
-      heightOffset = parseFloat(style.borderTopWidth)+parseFloat(style.borderBottomWidth);
+      heightOffset = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
     }
     // Fix when a textarea is not on document body and heightOffset is Not a Number
     if (isNaN(heightOffset)) {
@@ -72,7 +75,7 @@ function assign(ta) {
       // When the textarea y-overflow is hidden, Chrome/Safari do not reflow the text to account for the space
       // made available by removing the scrollbar. The following forces the necessary text reflow.
       const width = ta.style.width;
-      ta.style.width = '0px';
+      ta.style.width = "0px";
       // Force reflow:
       /* jshint ignore:start */
       ta.offsetWidth;
@@ -91,7 +94,7 @@ function assign(ta) {
         arr.push({
           node: el.parentNode,
           scrollTop: el.parentNode.scrollTop,
-        })
+        });
       }
       el = el.parentNode;
     }
@@ -108,15 +111,15 @@ function assign(ta) {
     const overflows = getParentOverflows(ta);
     const docTop = document.documentElement && document.documentElement.scrollTop; // Needed for Mobile IE (ticket #240)
 
-    ta.style.height = '';
-    ta.style.height = (ta.scrollHeight+heightOffset)+'px';
+    ta.style.height = "";
+    ta.style.height = ta.scrollHeight + heightOffset + "px";
 
     // used to check if an update is actually necessary on window.resize
     clientWidth = ta.clientWidth;
 
     // prevents scroll-position jumping
     overflows.forEach(el => {
-      el.node.scrollTop = el.scrollTop
+      el.node.scrollTop = el.scrollTop;
     });
 
     if (docTop) {
@@ -131,28 +134,37 @@ function assign(ta) {
     const computed = window.getComputedStyle(ta, null);
 
     // Using offsetHeight as a replacement for computed.height in IE, because IE does not account use of border-box
-    var actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(computed.height)) : ta.offsetHeight;
+    var actualHeight =
+      computed.boxSizing === "content-box"
+        ? Math.round(parseFloat(computed.height))
+        : ta.offsetHeight;
 
-    // The actual height not matching the style height (set via the resize method) indicates that 
+    // The actual height not matching the style height (set via the resize method) indicates that
     // the max-height has been exceeded, in which case the overflow should be allowed.
     if (actualHeight < styleHeight) {
-      if (computed.overflowY === 'hidden') {
-        changeOverflow('scroll');
+      if (computed.overflowY === "hidden") {
+        changeOverflow("scroll");
         resize();
-        actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(window.getComputedStyle(ta, null).height)) : ta.offsetHeight;
+        actualHeight =
+          computed.boxSizing === "content-box"
+            ? Math.round(parseFloat(window.getComputedStyle(ta, null).height))
+            : ta.offsetHeight;
       }
     } else {
       // Normally keep overflow set to hidden, to avoid flash of scrollbar as the textarea expands.
-      if (computed.overflowY !== 'hidden') {
-        changeOverflow('hidden');
+      if (computed.overflowY !== "hidden") {
+        changeOverflow("hidden");
         resize();
-        actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(window.getComputedStyle(ta, null).height)) : ta.offsetHeight;
+        actualHeight =
+          computed.boxSizing === "content-box"
+            ? Math.round(parseFloat(window.getComputedStyle(ta, null).height))
+            : ta.offsetHeight;
       }
     }
 
     if (cachedHeight !== actualHeight) {
       cachedHeight = actualHeight;
-      const evt = createEvent('autosize:resized');
+      const evt = createEvent("autosize:resized");
       try {
         ta.dispatchEvent(evt);
       } catch (err) {
@@ -169,11 +181,11 @@ function assign(ta) {
   };
 
   const destroy = (style => {
-    window.removeEventListener('resize', pageResize, false);
-    ta.removeEventListener('input', update, false);
-    ta.removeEventListener('keyup', update, false);
-    ta.removeEventListener('autosize:destroy', destroy, false);
-    ta.removeEventListener('autosize:update', update, false);
+    window.removeEventListener("resize", pageResize, false);
+    ta.removeEventListener("input", update, false);
+    ta.removeEventListener("keyup", update, false);
+    ta.removeEventListener("autosize:destroy", destroy, false);
+    ta.removeEventListener("autosize:update", update, false);
 
     Object.keys(style).forEach(key => {
       ta.style[key] = style[key];
@@ -188,20 +200,20 @@ function assign(ta) {
     wordWrap: ta.style.wordWrap,
   });
 
-  ta.addEventListener('autosize:destroy', destroy, false);
+  ta.addEventListener("autosize:destroy", destroy, false);
 
   // IE9 does not fire onpropertychange or oninput for deletions,
   // so binding to onkeyup to catch most of those events.
   // There is no way that I know of to detect something like 'cut' in IE9.
-  if ('onpropertychange' in ta && 'oninput' in ta) {
-    ta.addEventListener('keyup', update, false);
+  if ("onpropertychange" in ta && "oninput" in ta) {
+    ta.addEventListener("keyup", update, false);
   }
 
-  window.addEventListener('resize', pageResize, false);
-  ta.addEventListener('input', update, false);
-  ta.addEventListener('autosize:update', update, false);
-  ta.style.overflowX = 'hidden';
-  ta.style.wordWrap = 'break-word';
+  window.addEventListener("resize", pageResize, false);
+  ta.addEventListener("input", update, false);
+  ta.addEventListener("autosize:update", update, false);
+  ta.style.overflowX = "hidden";
+  ta.style.wordWrap = "break-word";
 
   map.set(ta, {
     destroy,
@@ -228,7 +240,7 @@ function update(ta) {
 let autosize = null;
 
 // Do nothing in Node.js environment and IE8 (or lower)
-if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') {
+if (typeof window === "undefined" || typeof window.getComputedStyle !== "function") {
   autosize = el => el;
   autosize.destroy = el => el;
   autosize.update = el => el;

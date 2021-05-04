@@ -1,11 +1,24 @@
 import routeUtils from "../utils/route-utils";
 
-export function addRemakeAppStatusToPage ({html, data, currentUser, username, itemId, isPreviewing}) {
-  let attributeString = createBodyAttributeString({data, currentUser, username, itemId, isPreviewing});
+export function addRemakeAppStatusToPage({
+  html,
+  data,
+  currentUser,
+  username,
+  itemId,
+  isPreviewing,
+}) {
+  let attributeString = createBodyAttributeString({
+    data,
+    currentUser,
+    username,
+    itemId,
+    isPreviewing,
+  });
   return html.replace("<body", attributeString);
 }
 
-function createBodyAttributeString ({data, currentUser, username, itemId, isPreviewing}) {
+function createBodyAttributeString({ data, currentUser, username, itemId, isPreviewing }) {
   let str = "<body ";
 
   if (currentUser) {
@@ -24,15 +37,15 @@ function createBodyAttributeString ({data, currentUser, username, itemId, isPrev
     str += "data-is-previewing ";
   }
 
-  if (routeUtils.isBaseRoute({username, itemId})) {
+  if (routeUtils.isBaseRoute({ username, itemId })) {
     str += "data-base-route ";
   }
 
-  if (routeUtils.isUsernameRoute({username, itemId})) {
+  if (routeUtils.isUsernameRoute({ username, itemId })) {
     str += "data-username-route ";
   }
 
-  if (routeUtils.isItemRoute({username, itemId})) {
+  if (routeUtils.isItemRoute({ username, itemId })) {
     str += `data-item-route="${itemId}" `;
   }
 

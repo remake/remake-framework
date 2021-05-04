@@ -34,11 +34,11 @@
   - Has support for showing elements as `display: flex`. Just use `flex-show-if` instead of `show-if`
  
 */
-export default function processShowIfAttributes () {
+export default function processShowIfAttributes() {
   var showIfElems = Array.from(document.querySelectorAll("[show-if],[flex-show-if]"));
   // don't process elements more than once
   var filterOutProcessed = showIfElems.filter(el => !el._processedByShowIf);
-  
+
   // will be: ["tab=personal-projects", "tab=my-projects", "tab=other-projects"]
   var keyValuesStrings = [];
   filterOutProcessed.forEach(el => {
@@ -50,14 +50,19 @@ export default function processShowIfAttributes () {
     }
     el._processedByShowIf = true;
   });
-  
+
   // e.g ["tab=personal-projects", "tab=my-projects", "tab=other-projects"]
   var uniqueValues = Array.from(new Set(keyValuesStrings));
 
   if (uniqueValues.length) {
     // e.g. ["tab", ["personal-projects", "my-projects"]]
     var keysAndValuesSeparate = uniqueValues.map(str => str.split("="));
-    var showIfStyles = keysAndValuesSeparate.map(val => `[key\\:${val[0]}="${val[1]}"] [show-if~="${val[0]}=${val[1]}"], [temporary\\:key\\:${val[0]}="${val[1]}"] [show-if~="${val[0]}=${val[1]}"] {display: block;} `).join("");
+    var showIfStyles = keysAndValuesSeparate
+      .map(
+        val =>
+          `[key\\:${val[0]}="${val[1]}"] [show-if~="${val[0]}=${val[1]}"], [temporary\\:key\\:${val[0]}="${val[1]}"] [show-if~="${val[0]}=${val[1]}"] {display: block;} `
+      )
+      .join("");
     showIfStyles += showIfStyles.replace(/show-if/g, "flex-show-if").replace(/block/g, "flex");
     var styleHtml = `<style>[show-if], [flex-show-if] {display: none;} ${showIfStyles}</style>`;
     document.head.insertAdjacentHTML("beforeend", styleHtml);

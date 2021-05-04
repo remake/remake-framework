@@ -1,14 +1,14 @@
 var store = {
   state: {
-    newItemTemplates: {}
+    newItemTemplates: {},
   },
-  isMultiTenant () {
+  isMultiTenant() {
     return process.env.REMAKE_MULTI_TENANT === "true";
   },
-  isDevelopmentMode () {
+  isDevelopmentMode() {
     return process.env.NODE_ENV === "development";
   },
-  addNewItemRenderFunction({name, func, appName} = {}) {
+  addNewItemRenderFunction({ name, func, appName } = {}) {
     if (!name || !func) {
       return;
     }
@@ -23,7 +23,7 @@ var store = {
 
     this.state.newItemTemplates[appName][name] = func;
   },
-  getNewItemRenderFunction({name, appName}) {
+  getNewItemRenderFunction({ name, appName }) {
     let newItemTemplates = this.state.newItemTemplates;
 
     if (!this.state.isMultiTenant) {
@@ -33,7 +33,7 @@ var store = {
     if (newItemTemplates[appName] && newItemTemplates[appName][name]) {
       return newItemTemplates[appName][name];
     }
-  }
+  },
 };
 
 export default store;

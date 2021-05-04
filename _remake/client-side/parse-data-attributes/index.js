@@ -7,7 +7,7 @@
 // 4 if letter is ")", set flag to false
 // 5 if flag is set to true and letter is a space, remove the space
 // 6 combine all letters into a final string
-function removeSpacesInParentheses (str) {
+function removeSpacesInParentheses(str) {
   let letters = str.split("");
   let newLetters = [];
 
@@ -25,33 +25,35 @@ function removeSpacesInParentheses (str) {
 
     newLetters.push(currentLetter);
   }
-  
+
   return newLetters.join("");
 }
 
 // trims string, replaces multiple spaces with single spaces
-function formatSpaces (str) {
+function formatSpaces(str) {
   return str.trim().replace(/  +/g, " ");
 }
 
 function parseAttributeString(attributesString) {
   let formattedString = removeSpacesInParentheses(formatSpaces(attributesString)); // => "switchName(no-auto,parent) switchName2(auto,parent)"
   let separatedParamSections = formattedString.split(" "); // => ["switchName(no-auto,parent)", "switchName2(auto,parent)"]
-  let separatedAllParams = separatedParamSections.map((str) => str.replace(/\s|\)/g, "").split(/\(|,/)); // => [["switchName", "no-auto", "parent"], ["switchName2", "auto", "parent"]]
+  let separatedAllParams = separatedParamSections.map(str =>
+    str.replace(/\s|\)/g, "").split(/\(|,/)
+  ); // => [["switchName", "no-auto", "parent"], ["switchName2", "auto", "parent"]]
 
   return separatedAllParams;
 }
 
 // this parses multiple *repeating* parameters, each with possible *sub-parameters*
-function makeParseFunction (attributeName, keyNames) {
-  return function parseFunction (elem) { 
+function makeParseFunction(attributeName, keyNames) {
+  return function parseFunction(elem) {
     let attributesString = elem.getAttribute(attributeName); // e.g. "switchName(no-auto, parent) switchName2(auto, parent)"
 
     if (!attributesString) {
       return [];
     }
 
-    let parsedAttributeValues = parseAttributeString(attributesString); // e.g. [["switchName", "no-auto", "parent"], ["switchName2", "auto", "parent"]]        
+    let parsedAttributeValues = parseAttributeString(attributesString); // e.g. [["switchName", "no-auto", "parent"], ["switchName2", "auto", "parent"]]
 
     return parsedAttributeValues.map(function (arrayOfValues) {
       let returnObj = {};
@@ -63,32 +65,36 @@ function makeParseFunction (attributeName, keyNames) {
       });
       return returnObj;
     });
-  }
+  };
 }
 
 let parseSwitchAttributes = makeParseFunction("data-switches", ["name", "auto", "customName"]);
-let parseSwitchActionAttributes = makeParseFunction("data-switch-actions", ["name", "type", "context"]);
+let parseSwitchActionAttributes = makeParseFunction("data-switch-actions", [
+  "name",
+  "type",
+  "context",
+]);
 let parseSwitchStopAttributes = makeParseFunction("data-switch-stop", ["name"]);
 let parseSwitchedOnAttributes = makeParseFunction("data-switched-on", ["name"]);
 
-function parseStringWithIndefiniteNumberOfParams (attributesString) {
+function parseStringWithIndefiniteNumberOfParams(attributesString) {
   if (!attributesString) {
     return [];
   }
 
-  let parsedAttributeValues = parseAttributeString(attributesString); // e.g. [["func1", "1", "2"], ["func2"]]        
+  let parsedAttributeValues = parseAttributeString(attributesString); // e.g. [["func1", "1", "2"], ["func2"]]
 
   return parsedAttributeValues.map(function (arrayOfValues) {
     return {
       funcName: arrayOfValues[0],
-      args: arrayOfValues.slice(1)
+      args: arrayOfValues.slice(1),
     };
   });
 }
 
 // this parses multiple parameters that *don't* repeat and *don't* have sub-parameters
-function makeSimpleParseFunction (attributeName, keyNames) {
-  return function parseFunction (elem) { 
+function makeSimpleParseFunction(attributeName, keyNames) {
+  return function parseFunction(elem) {
     let attributesString = elem.getAttribute(attributeName);
 
     if (!attributesString) {
@@ -99,22 +105,33 @@ function makeSimpleParseFunction (attributeName, keyNames) {
     let parsedAttributeValues = attributesString.split(" "); // e.g. [".btn", "100", "-50", "both", ".btn--small"]
 
     return parsedAttributeValues.reduce((accumulator, currentValue, index) => {
-
       let keyName = keyNames[index];
 
       accumulator[keyName] = currentValue;
 
       return accumulator;
-
     }, {});
-  }
+  };
 }
 
-let parseCopyLayoutAttributes = makeSimpleParseFunction("data-copy-layout", ["selectorForPositionTarget", "xOffset", "yOffset", "dimensionsName", "selectorForDimensionsTarget"]);
-let parseCopyPositionAttributes = makeSimpleParseFunction("data-copy-position", ["selectorForPositionTarget", "xOffset", "yOffset"]);
-let parseCopyDimensionsAttributes = makeSimpleParseFunction("data-copy-dimensions", ["selectorForDimensionsTarget", "dimensionsName"]);
+let parseCopyLayoutAttributes = makeSimpleParseFunction("data-copy-layout", [
+  "selectorForPositionTarget",
+  "xOffset",
+  "yOffset",
+  "dimensionsName",
+  "selectorForDimensionsTarget",
+]);
+let parseCopyPositionAttributes = makeSimpleParseFunction("data-copy-position", [
+  "selectorForPositionTarget",
+  "xOffset",
+  "yOffset",
+]);
+let parseCopyDimensionsAttributes = makeSimpleParseFunction("data-copy-dimensions", [
+  "selectorForDimensionsTarget",
+  "dimensionsName",
+]);
 
-function getAttributeValueAsArray (elem, attributeName) {
+function getAttributeValueAsArray(elem, attributeName) {
   // get the value of the attribute
   let attributesString = elem.getAttribute(attributeName);
 
@@ -130,7 +147,6 @@ function getAttributeValueAsArray (elem, attributeName) {
   return attributesString.split(" ");
 }
 
-
 // -------------------------------------------------------------------------
 //    advanced attribute parsing (supports args that have spaces in them!)
 // -------------------------------------------------------------------------
@@ -139,11 +155,11 @@ function getAttributeValueAsArray (elem, attributeName) {
 let regexForPhrase = /^[^\(\):,\s]+$/;
 let regexForPhraseOrSpecialCharacter = /([^\(\):,\s]+|[\(\):,]+)/g;
 
-function getParts (attributeString) {
+function getParts(attributeString) {
   return attributeString.match(regexForPhraseOrSpecialCharacter);
 }
 
-function assembleResult (parts) {
+function assembleResult(parts) {
   let currentObject;
   let extractedObjects = [];
   let isWithinParens = false;
@@ -174,7 +190,10 @@ function assembleResult (parts) {
       hasModifierBeenProcessed = false;
     }
 
-    if (regexForPhrase.test(currentPart) && (nextPart === "(" || (!isWithinParens && currentPart !== "(" && currentPart !== ")"))) {
+    if (
+      regexForPhrase.test(currentPart) &&
+      (nextPart === "(" || (!isWithinParens && currentPart !== "(" && currentPart !== ")"))
+    ) {
       // create new object and add it to final array
       currentObject = {};
       extractedObjects.push(currentObject);
@@ -204,22 +223,20 @@ function assembleResult (parts) {
 // "favoriteColor(colorPicker: red blue orange green) profileName(text-single-line)"
 // into:
 // [{name: "favoriteColor", modifier: "colorPicker", args: ["red, blue, orange, green"]}, {name: "profileName", modifier: "text-single-line"}]
-// 
+//
 // rules
 // - each section is defined by a this structure: `string(string: string string string)`
-// - `name` is the first string in each section 
+// - `name` is the first string in each section
 // - `modifier` is always the first string inside the parentheses
 // - `args` are always after the modifier
-// - modifier, args, and parentheses are all optional, but in order to have args you 
+// - modifier, args, and parentheses are all optional, but in order to have args you
 //   need a modifier and in order to have a modifier, you need parentheses
-function processAttributeString (attributeString) {
+function processAttributeString(attributeString) {
   let parts = getParts(attributeString);
   let extractedObjects = assembleResult(parts);
 
   return extractedObjects;
 }
-
-
 
 export {
   parseSwitchAttributes,
@@ -232,9 +249,5 @@ export {
   parseStringWithIndefiniteNumberOfParams,
   formatSpaces,
   getAttributeValueAsArray,
-  processAttributeString
+  processAttributeString,
 };
-
-
-
-

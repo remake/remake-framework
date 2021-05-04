@@ -1,4 +1,4 @@
-export function getQueryParams ({req, fromReferrer}) {
+export function getQueryParams({ req, fromReferrer }) {
   let queryObj = {};
   let searchParams;
 
@@ -9,7 +9,7 @@ export function getQueryParams ({req, fromReferrer}) {
   }
 
   for (let searchParamsPair of searchParams) {
-    queryObj[searchParamsPair[0]] = searchParamsPair[1]; 
+    queryObj[searchParamsPair[0]] = searchParamsPair[1];
   }
 
   return queryObj;

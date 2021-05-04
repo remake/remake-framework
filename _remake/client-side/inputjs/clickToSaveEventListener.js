@@ -1,6 +1,6 @@
-import {on, off, fire} from 'delegated-events';
-import { $ } from '../queryjs';
-import { callSaveFunctionNextTick } from './onSave';
+import { on, off, fire } from "delegated-events";
+import { $ } from "../queryjs";
+import { callSaveFunctionNextTick } from "./onSave";
 
 export default function () {
   on("click", "[save]", function (event) {

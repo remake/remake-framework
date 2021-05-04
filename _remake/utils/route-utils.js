@@ -1,19 +1,19 @@
-const path = require('upath');
+const path = require("upath");
 import parseUrl from "parseurl";
 import { capture } from "./async-utils";
 
-function isBaseRoute ({username, itemId}) {
+function isBaseRoute({ username, itemId }) {
   return !itemId && !username;
 }
-function isUsernameRoute ({username, itemId}) {
+function isUsernameRoute({ username, itemId }) {
   return !!username;
 }
-function isItemRoute ({username, itemId}) {
+function isItemRoute({ username, itemId }) {
   return !!itemId;
 }
 
 export default {
   isBaseRoute,
   isUsernameRoute,
-  isItemRoute  
-}
+  isItemRoute,
+};
