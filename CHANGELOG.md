@@ -1,3 +1,7 @@
+# 2.4.1
+
+- The Remake CLI will now install any missing npm packages after user updates Remake framework
+
 # 2.4.0
 
 - Generate unique ids for new items automatically 🧙‍♂️
