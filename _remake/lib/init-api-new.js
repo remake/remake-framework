@@ -1,7 +1,6 @@
+const _ = require("lodash");
 const Handlebars = require("handlebars");
 const JSDOM = require("jsdom").JSDOM;
-const merge = require("lodash/merge");
-import { isPlainObject } from "lodash-es";
 import forEachDeep from "deepdash-es/forEachDeep";
 import { getUniqueId } from "./get-unique-id";
 import { getUserData } from "./user-data";
@@ -87,10 +86,10 @@ export function initApiNew({ app }) {
     let [partialBootstrapData] = await capture(
       getBootstrapData({ appName, fileName: partialName })
     );
-    let newItemData = merge(saveDataNested, partialBootstrapData);
+    let newItemData = _.merge(saveDataNested, partialBootstrapData);
     // add a unique key to every plain object in the bootstrap data
     forEachDeep(newItemData, function (value, key, parentValue, context) {
-      if (isPlainObject(value)) {
+      if (_.isPlainObject(value)) {
         value.id = getUniqueId();
       }
     });

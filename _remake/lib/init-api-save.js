@@ -1,5 +1,5 @@
+const _ = require("lodash");
 const Handlebars = require("handlebars");
-import { get, set, isPlainObject } from "lodash-es";
 import { getItemWithId } from "./get-item-with-id";
 import { specialDeepExtend } from "./special-deep-extend";
 import { setUserData } from "./user-data";
@@ -38,20 +38,20 @@ export function initApiSave({ app }) {
 
     // option 1: save path
     if (savePath) {
-      let dataAtPath = get(existingData, savePath);
+      let dataAtPath = _.get(existingData, savePath);
 
-      if (isPlainObject(dataAtPath)) {
+      if (_.isPlainObject(dataAtPath)) {
         // deep extend, using ids to match objects in arrays
         specialDeepExtend(dataAtPath, incomingData);
-        set(existingData, savePath, incomingData);
+        _.set(existingData, savePath, incomingData);
       } else if (Array.isArray(dataAtPath)) {
         specialDeepExtend(dataAtPath, incomingData);
-        set(existingData, savePath, incomingData);
+        _.set(existingData, savePath, incomingData);
       } else {
         // if we're not auto generating ids OR
         // if dataAtPath is NOT an object or array
         // replace the data the path
-        set(existingData, savePath, incomingData);
+        _.set(existingData, savePath, incomingData);
       }
 
       // option 2: save to id

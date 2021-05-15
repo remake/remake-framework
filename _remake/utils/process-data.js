@@ -1,5 +1,5 @@
+const _ = require("lodash");
 import { capture } from "./async-utils";
-import { set, isPlainObject } from "lodash-es";
 import forEachDeep from "deepdash-es/forEachDeep";
 import { getUniqueId } from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
@@ -42,7 +42,7 @@ async function addIdsAndGetItemData({ appName, data, user, itemId }) {
   let someUniqueIdsAdded = false;
 
   forEachDeep(data, function (value, key, parentValue, context) {
-    if (isPlainObject(value)) {
+    if (_.isPlainObject(value)) {
       // if an :id is specified in the route, get the data for it (currentItem and its parentItem)
       if (itemId && itemId === value.id) {
         currentItem = value;
@@ -52,7 +52,7 @@ async function addIdsAndGetItemData({ appName, data, user, itemId }) {
           let currentParent = context.parents[i].value;
 
           // the first plain object found in parent items is parentItem
-          if (isPlainObject(currentParent)) {
+          if (_.isPlainObject(currentParent)) {
             parentItem = currentParent;
             break;
           }
