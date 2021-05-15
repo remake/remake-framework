@@ -1,6 +1,6 @@
 # 2.4.1
 
-- The Remake CLI will now install any missing npm packages after user updates Remake framework
+- The Remake CLI will now install missing npm packages after the user updates the framework using `remake update-framework`
 
 # 2.4.0
 
