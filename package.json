@@ -39,7 +39,7 @@
     "cookie-parser": "^1.4.4",
     "crostini": "^1.0.3",
     "deep-extend": "^0.6.0",
-    "deepdash-es": "^4.2.5",
+    "deepdash": "^5.3.7",
     "delegated-events": "^1.1.0",
     "directory-tree": "^2.2.3",
     "esm": "^3.2.25",
