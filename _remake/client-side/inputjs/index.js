@@ -22,6 +22,11 @@ import processShowIfAttributes from "../common/show-if";
 const merge = require("lodash/merge");
 
 function init(options) {
+  if (optionsData.sortable) {
+    // can be called more than once without initializing the same elements twice
+    initSortableElements();
+  }
+
   if (optionsData.alreadyInitialized) {
 
     if (!document.getElementById("remake__auto-generated")) {
@@ -33,7 +38,6 @@ function init(options) {
     return;
   }
   
-  optionsData.alreadyInitialized = true;
   merge(optionsData, options);
 
   // first because they affect might affect visibility of some elements
@@ -51,10 +55,6 @@ function init(options) {
   initAddingItemEventListener();
   initEventListenerHelpers();
 
-  if (optionsData.sortable) {
-    initSortableElements();
-  }
-
   onAddItem(function () {
     runWatchFunctions();
     processShowIfAttributes();
@@ -63,6 +63,9 @@ function init(options) {
   onRemoveItem(function () {
     runWatchFunctions();
   });
+
+  // must be at the end in case one of these init scripts checks for it
+  optionsData.alreadyInitialized = true;
 }
 
 export {
