@@ -1,7 +1,6 @@
 import RemakeStore from "../lib/remake-store";
 import { getUniqueId } from "../lib/get-unique-id";
 import routeUtils from "../utils/route-utils";
-import { getCacheBustString } from "../utils/remake-app-data";
 const path = require("upath");
 
 export function initHandlebarsHelpers({ Handlebars }) {
