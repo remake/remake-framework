@@ -1,7 +1,7 @@
-const _ = require("lodash");
+import lodash from 'lodash';
+import deepdash from 'deepdash';
 const Handlebars = require("handlebars");
 const JSDOM = require("jsdom").JSDOM;
-import forEachDeep from "deepdash-es/forEachDeep";
 import { getUniqueId } from "./get-unique-id";
 import { getUserData } from "./user-data";
 import { getParams } from "../utils/get-params";
@@ -14,6 +14,8 @@ import { getQueryParams } from "../utils/get-query-params";
 import { getHtmlWithUniqueIds } from "../utils/get-html-with-unique-ids";
 import { getSaveData } from "../client-side/get-save-data";
 import RemakeStore from "./remake-store";
+
+const _ = deepdash(lodash);
 
 export function initApiNew({ app }) {
   // route for "/new" and "/app_*/new"
@@ -88,7 +90,7 @@ export function initApiNew({ app }) {
     );
     let newItemData = _.merge(saveDataNested, partialBootstrapData);
     // add a unique key to every plain object in the bootstrap data
-    forEachDeep(newItemData, function (value, key, parentValue, context) {
+    _.forEachDeep(newItemData, function (value, key, parentValue, context) {
       if (_.isPlainObject(value)) {
         value.id = getUniqueId();
       }

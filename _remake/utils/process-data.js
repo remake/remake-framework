@@ -1,8 +1,10 @@
-const _ = require("lodash");
+import lodash from 'lodash';
+import deepdash from 'deepdash';
 import { capture } from "./async-utils";
-import forEachDeep from "deepdash-es/forEachDeep";
 import { getUniqueId } from "../lib/get-unique-id";
 import { setUserData } from "../lib/user-data";
+
+const _ = deepdash(lodash);
 
 export async function processData({ appName, res, pageAuthor, data, itemId, requestType }) {
   let itemData = { currentItem: undefined, parentItem: undefined };
@@ -41,7 +43,7 @@ async function addIdsAndGetItemData({ appName, data, user, itemId }) {
   let parentItem;
   let someUniqueIdsAdded = false;
 
-  forEachDeep(data, function (value, key, parentValue, context) {
+  _.forEachDeep(data, function (value, key, parentValue, context) {
     if (_.isPlainObject(value)) {
       // if an :id is specified in the route, get the data for it (currentItem and its parentItem)
       if (itemId && itemId === value.id) {
