@@ -94,20 +94,26 @@ app.use(async function (req, res, next) {
         req.appName = appName;
       }
 
+      // cache bust string
+      req.cacheBustString = await getCacheBustString({
+        appName: req.appName,
+        shouldRegenerate: RemakeStore.isInitialRun(),
+      });
       if (RemakeStore.isInitialRun()) {
-        let cacheBustString = await getCacheBustString({
-          appName: req.appName,
-          shouldRegenerate: true,
-        });
-        console.log("cacheBustString", cacheBustString);
         RemakeStore.setNotInitialRun();
       }
 
       next();
     }
   } else {
-    let cacheBustString = await getCacheBustString({ shouldRegenerate: true });
-    console.log("cacheBustString", cacheBustString);
+    // cache bust string
+    req.cacheBustString = await getCacheBustString({
+      shouldRegenerate: RemakeStore.isInitialRun(),
+    });
+    if (RemakeStore.isInitialRun()) {
+      RemakeStore.setNotInitialRun();
+    }
+
     next();
   }
 });
