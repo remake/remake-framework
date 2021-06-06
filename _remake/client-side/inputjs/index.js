@@ -22,6 +22,10 @@ import processShowIfAttributes from "../common/show-if";
 const merge = require("lodash/merge");
 
 function init(options) {
+  
+  // deep merge user options into default remake options
+  merge(optionsData, options);
+
   if (optionsData.sortable) {
     // can be called more than once without initializing the same elements twice
     initSortableElements();
@@ -37,8 +41,6 @@ function init(options) {
     // if already initialized, don't initialize anything else (e.g. event handlers)
     return;
   }
-  
-  merge(optionsData, options);
 
   // first because they affect might affect visibility of some elements
   processShowIfAttributes();
