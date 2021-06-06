@@ -24,9 +24,15 @@ export function getDirForBootstrapDataFile({ fileName, appName }) {
   return path.join(__dirname, pathString);
 }
 
-export function getDirForGlobalData({ fileName, appName }) {
+export function getDirForGlobalData({ appName }) {
   let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
   let pathString = `../../app/${innerAppPath}data/global.json`;
+  return path.join(__dirname, pathString);
+}
+
+export function getDirForRemakeAppData({ appName }) {
+  let innerAppPath = RemakeStore.isMultiTenant() ? appName + "/" : "";
+  let pathString = `../../app/${innerAppPath}data/_remake-app-data.json`;
   return path.join(__dirname, pathString);
 }
 

@@ -20,6 +20,7 @@ import { getParams } from "./utils/get-params";
 import { showConsoleSuccess } from "./utils/console-utils";
 import { capture } from "./utils/async-utils";
 import { setEnvironmentVariables } from "./utils/setup-env";
+import { getCacheBustString } from "./utils/remake-app-data";
 import RemakeStore from "./lib/remake-store";
 
 // set up environment variables
@@ -61,8 +62,8 @@ app.use(morgan("common"));
 
 // extract appName from host and attach it to request object
 // important: show error if multi-tenant is enabled and there's no app name
-if (RemakeStore.isMultiTenant()) {
-  app.use(function (req, res, next) {
+app.use(async function (req, res, next) {
+  if (RemakeStore.isMultiTenant()) {
     // handle service routes
     // service routes don't belong to any app, hence no subdomain check
     if (/^\/service\/[a-z\/]*/.test(req.url)) {
@@ -93,10 +94,23 @@ if (RemakeStore.isMultiTenant()) {
         req.appName = appName;
       }
 
+      if (RemakeStore.isInitialRun()) {
+        let cacheBustString = await getCacheBustString({
+          appName: req.appName,
+          shouldRegenerate: true,
+        });
+        console.log("cacheBustString", cacheBustString);
+        RemakeStore.setNotInitialRun();
+      }
+
       next();
     }
-  });
-}
+  } else {
+    let cacheBustString = await getCacheBustString({ shouldRegenerate: true });
+    console.log("cacheBustString", cacheBustString);
+    next();
+  }
+});
 
 // detect ajax request
 app.use(function (req, res, next) {

@@ -1,6 +1,7 @@
 var store = {
   state: {
     newItemTemplates: {},
+    initialRun: true,
   },
   isMultiTenant() {
     return process.env.REMAKE_MULTI_TENANT === "true";
@@ -33,6 +34,12 @@ var store = {
     if (newItemTemplates[appName] && newItemTemplates[appName][name]) {
       return newItemTemplates[appName][name];
     }
+  },
+  isInitialRun() {
+    return this.state.initialRun;
+  },
+  setNotInitialRun() {
+    this.state.initialRun = false;
   },
 };
 
