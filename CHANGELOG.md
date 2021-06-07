@@ -1,3 +1,11 @@
+# 2.4.4
+
+- Provide a `{{cacheBustString}}` variable so CSS and JS can be freed from the browser cache
+  - To read more about cache busting: https://css-tricks.com/strategies-for-cache-busting-css/
+- Allow `Remake.init()` to be called more than once on a page
+  - Useful for the Remake client-side demo: https://codepen.io/panphora/pen/rNMVYZz
+- Fixed bug: Not able to import `lodash-es` or `deepdash-es`
+
 # 2.4.1
 
 - The Remake CLI will now install missing npm packages after the user updates the framework using `remake update-framework`
