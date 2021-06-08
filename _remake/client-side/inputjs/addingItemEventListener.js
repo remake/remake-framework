@@ -40,23 +40,7 @@ function _defaultAddItemCallback({ templateName, listElem, whereToInsert, should
       whereToInsert === "afterbegin" ? listElem.firstElementChild : listElem.lastElementChild;
 
     if (shouldTriggerEdit) {
-      let firstElemWithAnEditAttribute = findNestedElem(itemElem, el => {
-        let attributeNames = el.getAttributeNames();
-        let hasEditAttribute = attributeNames.find(name => name.startsWith("edit:"));
-        return hasEditAttribute;
-      });
-
-      if (firstElemWithAnEditAttribute) {
-        let attributeNames = firstElemWithAnEditAttribute.getAttributeNames();
-        let editAttributes = attributeNames.filter(name => name.startsWith("edit:"));
-        let matches = editAttributes.map(attrName => ({
-          matchingElement: itemElem,
-          matchingAttribute: attrName,
-          eventType: "click",
-          matchingPartialAttributeString: "edit:",
-        }));
-        openEditCallback(matches);
-      }
+      triggerEditOnElem(itemElem);
     }
 
     callOnAddItemCallbacks({ success: true, listElem, itemElem, templateName, ajaxResponse });
@@ -89,8 +73,29 @@ export default function () {
           listElem,
           whereToInsert,
           shouldTriggerEdit,
+          triggerEditOnElem,
         });
       }
     },
   });
+}
+
+function triggerEditOnElem(itemElem) {
+  let firstElemWithAnEditAttribute = findNestedElem(itemElem, el => {
+    let attributeNames = el.getAttributeNames();
+    let hasEditAttribute = attributeNames.find(name => name.startsWith("edit:"));
+    return hasEditAttribute;
+  });
+
+  if (firstElemWithAnEditAttribute) {
+    let attributeNames = firstElemWithAnEditAttribute.getAttributeNames();
+    let editAttributes = attributeNames.filter(name => name.startsWith("edit:"));
+    let matches = editAttributes.map(attrName => ({
+      matchingElement: itemElem,
+      matchingAttribute: attrName,
+      eventType: "click",
+      matchingPartialAttributeString: "edit:",
+    }));
+    openEditCallback(matches);
+  }
 }
