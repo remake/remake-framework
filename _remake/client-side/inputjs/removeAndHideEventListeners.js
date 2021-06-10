@@ -1,4 +1,4 @@
-import { on, off, fire } from "delegated-events";
+import { on, off, fire } from "../vendor/delegated-events";
 import { $ } from "../queryjs";
 import { callSaveFunctionNextTick } from "./onSave";
 import { syncDataNextTick } from "./syncData";
