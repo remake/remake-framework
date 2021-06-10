@@ -21,6 +21,7 @@ import { showConsoleSuccess } from "./utils/console-utils";
 import { capture } from "./utils/async-utils";
 import { setEnvironmentVariables } from "./utils/setup-env";
 import { getCacheBustString } from "./utils/remake-app-data";
+import getAvailablePort from "./utils/get-available-port";
 import RemakeStore from "./lib/remake-store";
 
 // set up environment variables
@@ -258,14 +259,16 @@ initApiSave({ app });
 initApiUpload({ app });
 initRenderedRoutes({ app });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("\n");
-  showConsoleSuccess(`Visit your Remake app: http://localhost:${PORT}`);
-  showConsoleSuccess(`Check this log to see the requests made by the app, as you use it.`);
-  console.log("\n");
+const portSearchStartsAt = process.env.PORT || 3030;
+getAvailablePort(portSearchStartsAt).then(availablePort => {
+  app.listen(availablePort, async () => {
+    console.log("\n");
+    showConsoleSuccess(`Visit your Remake app: http://localhost:${availablePort}`);
+    showConsoleSuccess(`Check this log to see the requests made by the app, as you use it.`);
+    console.log("\n");
 
-  if (process.send) {
-    process.send("online");
-  }
+    if (process.send) {
+      process.send("online");
+    }
+  });
 });
