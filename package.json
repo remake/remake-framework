@@ -3,9 +3,15 @@
   "version": "2.4.4",
   "description": "",
   "main": "index.js",
+  "ava": {
+    "require": [
+      "esm"
+    ]
+  },
   "scripts": {
     "dev": "nodemon _remake/server.js --watch ./",
-    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap=external --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map && echo '//# sourceMappingURL=remake.min.js.map' >> _remake/dist/remake/js/remake.min.js"
+    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap=external --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map && echo '//# sourceMappingURL=remake.min.js.map' >> _remake/dist/remake/js/remake.min.js",
+    "test": "ava"
   },
   "nodemonConfig": {
     "ignore": [
@@ -40,7 +46,6 @@
     "crostini": "^1.0.3",
     "deep-extend": "^0.6.0",
     "deepdash": "^5.3.7",
-    "delegated-events": "^1.1.0",
     "directory-tree": "^2.2.3",
     "esm": "^3.2.25",
     "express": "^4.17.0",
@@ -72,6 +77,8 @@
     "upath": "^1.2.0"
   },
   "devDependencies": {
+    "@ava/babel": "^1.0.1",
+    "ava": "^3.15.0",
     "esbuild": "^0.8.2",
     "husky": "^6.0.0",
     "nodemon": "^1.19.1",
