@@ -51,6 +51,9 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId }) 
   let pathname = parseUrl(req).pathname;
   let currentUser = req.user;
   let cacheBustString = req.cacheBustString;
+  let autoReloadScript = RemakeStore.isDevelopmentMode()
+    ? "<script src='/reload/reload.js'></script>"
+    : "";
   let data = (pageAuthor && pageAuthor.appData) || {};
   let [globalData] = await capture(getGlobalData({ appName }));
   let isPageAuthor =
@@ -79,6 +82,7 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId }) 
     params,
     query,
     cacheBustString,
+    autoReloadScript,
     pathname,
     currentItem,
     parentItem,

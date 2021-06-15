@@ -21,7 +21,7 @@ import { showConsoleSuccess } from "./utils/console-utils";
 import { capture } from "./utils/async-utils";
 import { setEnvironmentVariables } from "./utils/setup-env";
 import { getCacheBustString } from "./utils/remake-app-data";
-import getAvailablePort from "./utils/get-available-port";
+import initAutoReloadAndGetPort from "./utils/auto-reload-and-get-port";
 import RemakeStore from "./lib/remake-store";
 
 // set up environment variables
@@ -252,15 +252,14 @@ if (RemakeStore.isMultiTenant()) {
   shell.mkdir("-p", global.config.location.tmp);
 }
 
-// REMAKE CORE FRAMEWORK
-initUserAccounts({ app });
-initApiNew({ app });
-initApiSave({ app });
-initApiUpload({ app });
-initRenderedRoutes({ app });
+initAutoReloadAndGetPort(app).then(availablePort => {
+  // REMAKE CORE FRAMEWORK
+  initUserAccounts({ app });
+  initApiNew({ app });
+  initApiSave({ app });
+  initApiUpload({ app });
+  initRenderedRoutes({ app });
 
-const portSearchStartsAt = process.env.PORT || 3030;
-getAvailablePort(portSearchStartsAt).then(availablePort => {
   app.listen(availablePort, async () => {
     console.log("\n");
     showConsoleSuccess(`Visit your Remake app: http://localhost:${availablePort}`);

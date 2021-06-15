@@ -9,7 +9,7 @@
     ]
   },
   "scripts": {
-    "dev": "nodemon _remake/server.js --watch ./",
+    "dev": "cross-env NODE_ENV=development nodemon _remake/server.js --watch ./",
     "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap=external --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map && echo '//# sourceMappingURL=remake.min.js.map' >> _remake/dist/remake/js/remake.min.js",
     "test": "ava"
   },
@@ -19,11 +19,10 @@
       "_remake/.sessions",
       "_remake/client-side",
       "_remake/dist",
-      "app/data/uploads",
-      "node_modules/",
-      "app"
+      "app/data/",
+      "node_modules/"
     ],
-    "ext": "html,hbs,css,js,png,gif,jpg,json"
+    "ext": "hbs,htm,html,css,sass,js,json,svg,png,gif,jpg,jpeg,ico,mp3,mp4,mpg,mpeg,ogg,otf,ttf,woff,woff2,txt,webp,webp"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +42,7 @@
     "change-case": "^3.1.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.4",
+    "cross-env": "^7.0.3",
     "crostini": "^1.0.3",
     "deep-extend": "^0.6.0",
     "deepdash": "^5.3.7",
@@ -84,6 +84,7 @@
     "nodemon": "^1.19.1",
     "prettier": "2.2.1",
     "pretty-quick": "^3.1.0",
+    "reload": "^3.2.0",
     "shelljs": "^0.8.3"
   }
 }
