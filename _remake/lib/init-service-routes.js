@@ -51,8 +51,15 @@ function checkIfAuthenticated(req, res, next) {
   }
 }
 
+function cleanEmail(email) {
+  let split = email.toLowerCase().trim().split("@");
+  let firstPart = split[0].replace(/\./, "");
+  let cleanedEmail = firstPart + "@" + split[1];
+  return cleanedEmail;
+}
+
 // validate email
-function validEmail(req, res, next) {
+async function validEmail(req, res, next) {
   // regex source: https://stackoverflow.com/a/46181
   const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/;
   const email = req.body.email || req.query.email;
@@ -61,7 +68,27 @@ function validEmail(req, res, next) {
   } else if (!emailRegex.test(email)) {
     return res.status(400).json({ message: "Bad request: email not valid." }).end();
   } else {
-    next();
+    try {
+      let jsonResponse = await axios.get(process.env.PAYING_USERS_JSON);
+      let payingUsers = jsonResponse.data;
+      let cleanedEmail = cleanEmail(email);
+      if (payingUsers.find(user => user.cleanedEmail === cleanedEmail)) {
+        next();
+      } else {
+        return res
+          .status(401)
+          .json({
+            message:
+              "Please purchase a Remake account to deploy an app this way. You can also host apps on your own server: https://docs.remaketheweb.com/hosting/",
+          })
+          .end();
+      }
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: "Error: couldn't validate you as a paying user." })
+        .end();
+    }
   }
 }
 
