@@ -80,7 +80,7 @@ async function validEmail(req, res, next) {
           .status(401)
           .json({
             message:
-              "Please purchase a Remake account to deploy an app this way. You can also host apps on your own server: https://docs.remaketheweb.com/hosting/",
+              "Please purchase a Remake account to deploy an app this way. Or you can host Remake apps on your own server: https://docs.remaketheweb.com/hosting/",
           })
           .end();
       }
