@@ -2,7 +2,7 @@ const reload = require("reload");
 const net = require("net");
 import { showConsoleError } from "./console-utils";
 import RemakeStore from "../lib/remake-store";
-const portSearchStartsAt = process.env.PORT || 3030;
+const portSearchStartsAt = process.env.PORT || 3000;
 
 export default function autoReloadAndGetPort(app) {
   if (RemakeStore.isDevelopmentMode()) {
@@ -19,9 +19,7 @@ export default function autoReloadAndGetPort(app) {
     });
   } else {
     return new Promise((resolve, reject) => {
-      getAvailablePort(portSearchStartsAt).then(availablePort => {
-        resolve(availablePort);
-      });
+      resolve(portSearchStartsAt);
     });
   }
 }
