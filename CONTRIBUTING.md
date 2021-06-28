@@ -11,4 +11,5 @@
 
 - **[Aiden Bai](https://github.com/aidenybai)**
 
-  - Added a feature: ability to automatically trigger an edit popover after creating a new item
+  - Added feature: ability to automatically trigger an edit popover after creating a new item
+  - Added feature: warned if devs use `@src` command instead of `@attr:src`, which has better behavior in Remake

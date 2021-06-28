@@ -7,6 +7,7 @@ import {
   getValueForKeyName,
 } from "./getAndSetKeyValues";
 import { forEachAttr } from "../hummingbird/lib/dom";
+import { showWarning } from "../common/show-error";
 import optionsData from "../inputjs/optionsData";
 const camelCase = require("lodash/camelCase");
 const difference = require("lodash/difference");
@@ -133,6 +134,12 @@ function executeCommand({ elem, commandName, value, method }) {
   } else {
     // NATIVE DOM PROPERTIES
     let prop = commandName.substring("@".length);
+    if (prop.toLowerCase() === "src" && elem.tagName.toLowerCase() === "img") {
+      showWarning(
+        "Please use @attr:src instead of @src for a better experience.\n  @attr:src will get an empty string if there's no value for img.src (ideal), while @src will get the current page's url (not ideal).",
+        elem
+      );
+    }
     if (method === "set") {
       elem[prop] = value;
     } else {
