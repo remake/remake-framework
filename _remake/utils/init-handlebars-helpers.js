@@ -8,6 +8,18 @@ export function initHandlebarsHelpers({ Handlebars }) {
 
   Handlebars.registerHelper(handlebarsHelpers);
 
+  Handlebars.registerHelper("contains", function () {
+    let haystack = Array.from(arguments);
+    let options = haystack.pop();
+    let needle = haystack.shift();
+
+    if (haystack.includes(needle)) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
   // this should be deprecated in a later version
   Handlebars.registerHelper("generateIdIfNone", function (id, uniqueMarker, options) {
     if (!options) {
