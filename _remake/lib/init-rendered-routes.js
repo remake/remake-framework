@@ -49,7 +49,7 @@ async function renderPage({ req, res, pageName, username, itemId }) {
 
   // GET DATA
   let [data, dataError] = await capture(
-    getDataForPage({ req, res, appName: req.appName, pageAuthor, itemId })
+    getDataForPage({ req, res, appName: req.appName, pageAuthor, itemId, pageName })
   );
 
   if (dataError) {

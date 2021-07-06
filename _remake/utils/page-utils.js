@@ -45,7 +45,7 @@ export async function getPageTemplate({ pageName, appName }) {
   }
 }
 
-export async function getDataForPage({ req, res, appName, pageAuthor, itemId }) {
+export async function getDataForPage({ req, res, appName, pageAuthor, itemId, pageName }) {
   let params = req.params;
   let query = req.query;
   let pathname = parseUrl(req).pathname;
@@ -83,6 +83,7 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId }) 
     query,
     cacheBustString,
     autoReloadScript,
+    pageName,
     pathname,
     currentItem,
     parentItem,
