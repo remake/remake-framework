@@ -52,7 +52,7 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId, pa
   let currentUser = req.user;
   let cacheBustString = req.cacheBustString;
   let autoReloadScript = RemakeStore.isDevelopmentMode()
-    ? "<script src='/reload/reload.js'></script>"
+    ? "<script src='/reload/reload.js' defer></script>"
     : "";
   let data = (pageAuthor && pageAuthor.appData) || {};
   let [globalData] = await capture(getGlobalData({ appName }));
