@@ -262,6 +262,7 @@ function initUserAccounts({ app }) {
 
     req.login(currentUser, function (err) {
       if (!err) {
+        req.flash("success", "Your password was successfully reset!");
         res.redirect("/" + currentUser.details.username);
       } else {
         req.flash("success", "Success! Please log in with your new password");
