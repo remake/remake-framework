@@ -10,7 +10,7 @@ import {
   onRemoveItem,
   onSync,
 } from "./callbacks";
-import { initSaveFunctions, callSaveFunction } from "./onSave";
+import { initSaveFunctions, callSaveFunction, saveData } from "./onSave";
 import initEditableAttribute from "./editableAttribute";
 import initAddingItemEventListener from "./addingItemEventListener";
 import initSortableElements from "./sortableElements";
@@ -78,4 +78,5 @@ export {
   onRemoveItem,
   runWatchFunctions,
   onSync,
+  saveData,
 };

@@ -10,6 +10,7 @@ export {
   onFileUploadProgress,
   onAddItem,
   onSync,
+  saveData,
 } from "./inputjs";
 
 export {

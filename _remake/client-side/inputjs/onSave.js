@@ -6,12 +6,16 @@ import { getAttributeValueAsArray } from "../parse-data-attributes";
 import optionsData from "./optionsData";
 import { callOnSaveCallbacks } from "./callbacks";
 
+export function saveData({ data, path, saveToId }) {
+  ajaxPost("/save", { data, path, saveToId }, function (res) {
+    callOnSaveCallbacks(res);
+  });
+}
+
 let saveFunctionsLookup = {
   // default save function posts data to /save endpoint
   _defaultSave: function ({ data, path, saveToId, elem }) {
-    ajaxPost("/save", { data, path, saveToId }, function (res) {
-      callOnSaveCallbacks(res);
-    });
+    saveData({ data, path, saveToId });
   },
 };
 
