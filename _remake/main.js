@@ -62,7 +62,7 @@ app.use(express.json());
 app.use(morgan("common", {
   skip: function (req, res) {
     // ignore polling from live.js (live reloading script)
-    return req.method && req.method.toUpperCase() === "HEAD";
+    return req.get("From-Livejs") === "true";
   }
 }));
 

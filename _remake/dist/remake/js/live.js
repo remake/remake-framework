@@ -1,4 +1,17 @@
 /*
+
+  MODIFIED SCRIPT
+  - Look for comment text "MODIFIED"
+
+
+
+
+
+
+
+
+
+
   Live.js - One script closer to Designing in the Browser
   Written for Handcraft.com by Martin Kool (@mrtnkl).
 
@@ -203,6 +216,7 @@
         ? new XMLHttpRequest()
         : new ActiveXObject("Microsoft.XmlHttp");
       xhr.open("HEAD", url, true);
+      xhr.setRequestHeader("From-Livejs", "true"); // MODIFIED - adding special header so it can be filtered out by logging on backend
       xhr.onreadystatechange = function () {
         delete pendingRequests[url];
         if (xhr.readyState == 4 && xhr.status != 304) {
