@@ -63,9 +63,8 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId, pa
 
   let currentItem = {};
   let parentItem = {};
-  let generateUniqueIdsOption = process.env.GENERATE_UNIQUE_IDS;
 
-  if (RemakeStore.isMultiTenant() || ["true", true].includes(generateUniqueIdsOption)) {
+  if (RemakeStore.isMultiTenant() || RemakeStore.isGeneratingUniqueIdsEnabled()) {
     let [itemData, itemDataError] = await capture(
       processData({ res, appName, pageAuthor, data, itemId })
     );

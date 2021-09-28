@@ -22,7 +22,7 @@
       "app/data/",
       "node_modules/"
     ],
-    "ext": "hbs,htm,html,css,sass,js,json,svg,png,gif,jpg,jpeg,ico,mp3,mp4,mpg,mpeg,ogg,otf,ttf,woff,woff2,txt,webp,webp"
+    "ext": "hbs,htm,html,css,sass,js,json,svg,png,gif,jpg,jpeg,ico,mp3,mp4,mpg,mpeg,ogg,otf,ttf,woff,woff2,txt,webp"
   },
   "keywords": [],
   "author": "",
