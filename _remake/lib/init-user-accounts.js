@@ -41,6 +41,7 @@ function initUserAccounts({ app }) {
           return;
         } catch (err) {
           showConsoleError("Error: Passport db error", err);
+          cb(err);
         }
       }
     )
@@ -54,7 +55,7 @@ function initUserAccounts({ app }) {
   });
 
   passport.deserializeUser(async function (currentUserData, cb) {
-    let [currentUser] = await capture(
+    let [currentUser, err] = await capture(
       getUserData({
         username: currentUserData.username,
         appName: currentUserData.appName,
@@ -63,6 +64,9 @@ function initUserAccounts({ app }) {
 
     if (currentUser) {
       cb(null, currentUser);
+    } else {
+      showConsoleError("Error: Passport db error", err);
+      cb(err);
     }
   });
 
