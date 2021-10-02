@@ -19,10 +19,10 @@
       "_remake/.sessions",
       "_remake/client-side",
       "_remake/dist",
-      "app/data/",
+      "app/",
       "node_modules/"
     ],
-    "ext": "hbs,htm,html,css,sass,js,json,svg,png,gif,jpg,jpeg,ico,mp3,mp4,mpg,mpeg,ogg,otf,ttf,woff,woff2,txt,webp,webp"
+    "ext": "js,json,svg,png,gif,jpg,jpeg,ico,mp3,mp4,mpg,mpeg,ogg,otf,ttf,woff,woff2,txt,webp"
   },
   "keywords": [],
   "author": "",
@@ -85,7 +85,6 @@
     "nodemon": "^1.19.1",
     "prettier": "2.2.1",
     "pretty-quick": "^3.1.0",
-    "reload": "^3.2.0",
     "shelljs": "^0.8.3"
   }
 }

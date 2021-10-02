@@ -21,7 +21,7 @@ import { showConsoleSuccess } from "./utils/console-utils";
 import { capture } from "./utils/async-utils";
 import { setEnvironmentVariables } from "./utils/setup-env";
 import { getCacheBustString } from "./utils/remake-app-data";
-import initAutoReloadAndGetPort from "./utils/auto-reload-and-get-port";
+import getAvailablePort from "./utils/get-available-port";
 import RemakeStore from "./lib/remake-store";
 
 // set up environment variables
@@ -59,7 +59,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // add better logging
-app.use(morgan("common"));
+app.use(morgan("common", {
+  skip: function (req, res) {
+    // ignore polling from live.js (live reloading script)
+    return req.get("From-Livejs") === "true";
+  }
+}));
 
 // extract appName from host and attach it to request object
 // important: show error if multi-tenant is enabled and there's no app name
@@ -252,7 +257,7 @@ if (RemakeStore.isMultiTenant()) {
   shell.mkdir("-p", global.config.location.tmp);
 }
 
-initAutoReloadAndGetPort(app).then(availablePort => {
+getAvailablePort().then(availablePort => {
   // REMAKE CORE FRAMEWORK
   initUserAccounts({ app });
   initApiNew({ app });

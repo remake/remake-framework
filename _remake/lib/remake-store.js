@@ -4,10 +4,16 @@ var store = {
     initialRun: true,
   },
   isMultiTenant() {
-    return process.env.REMAKE_MULTI_TENANT === "true";
+    return isTruthy(process.env.REMAKE_MULTI_TENANT);
   },
   isDevelopmentMode() {
     return process.env.NODE_ENV === "development";
+  },
+  isAutoReloadEnabled() {
+    return !isTruthy(process.env.DISABLE_LIVE_RELOAD) && this.isDevelopmentMode();
+  },
+  isGeneratingUniqueIdsEnabled() {
+    return isTruthy(process.env.GENERATE_UNIQUE_IDS);
   },
   addNewItemRenderFunction({ name, func, appName } = {}) {
     if (!name || !func) {
@@ -42,5 +48,10 @@ var store = {
     this.state.initialRun = false;
   },
 };
+
+function isTruthy (optionToTest) {
+  let truthyValues = ["true", true];
+  return truthyValues.includes(optionToTest);
+}
 
 export default store;

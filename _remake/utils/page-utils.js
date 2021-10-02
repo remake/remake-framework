@@ -51,9 +51,6 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId, pa
   let pathname = parseUrl(req).pathname;
   let currentUser = req.user;
   let cacheBustString = req.cacheBustString;
-  let autoReloadScript = RemakeStore.isDevelopmentMode()
-    ? "<script src='/reload/reload.js' defer></script>"
-    : "";
   let data = (pageAuthor && pageAuthor.appData) || {};
   let [globalData] = await capture(getGlobalData({ appName }));
   let isPageAuthor =
@@ -63,9 +60,8 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId, pa
 
   let currentItem = {};
   let parentItem = {};
-  let generateUniqueIdsOption = process.env.GENERATE_UNIQUE_IDS;
 
-  if (RemakeStore.isMultiTenant() || ["true", true].includes(generateUniqueIdsOption)) {
+  if (RemakeStore.isMultiTenant() || RemakeStore.isGeneratingUniqueIdsEnabled()) {
     let [itemData, itemDataError] = await capture(
       processData({ res, appName, pageAuthor, data, itemId })
     );
@@ -82,7 +78,6 @@ export async function getDataForPage({ req, res, appName, pageAuthor, itemId, pa
     params,
     query,
     cacheBustString,
-    autoReloadScript,
     pageName,
     pathname,
     currentItem,
@@ -110,8 +105,15 @@ export function getPageHtml({ pageTemplate, data, appName, username, itemId, isP
     itemId,
     isPreviewing,
   });
+
+  // this unique ID replacement function should be deprecated soon
   let htmlWithUniqueIds = getHtmlWithUniqueIds({ htmlString: htmlWithAppStatus });
-  return htmlWithUniqueIds;
+
+  // insert live reload
+  let liveReloadScript = RemakeStore.isAutoReloadEnabled() ? "<script type='text/javascript' src='/remake/js/live.js'></script>" : "";
+  let htmlWithLiveReload = htmlWithUniqueIds.replace("</body>", liveReloadScript + "</body>");
+  
+  return htmlWithLiveReload;
 }
 
 export async function doesPageExist({ appName, pageName }) {
