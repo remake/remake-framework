@@ -113,25 +113,23 @@ Remake is **perfect for building page builders,** where each of your users can e
 
 ## 💾 Tech Stack
 
-✨ Built on `Express.js`<br> ✨ Uses `Passport.js` and `Bcrypt` to secure user accounts<br> ✨ `Handlebars` renders templates server-side<br> ✨ One-click file uploads with `express-fileupload`<br> ✨ One line instant deploy command<br> ✨ Sync client state and server state automatically<br> ✨ Built-in inline edit popovers<br>
+✨ Built on `Express.js`<br> ✨ Uses `Passport.js` and `Bcrypt` to secure user accounts<br> ✨ `Handlebars` renders templates server-side<br> ✨ One-click file uploads with `express-fileupload`<br> ✨ One line instant deploy with `remake deploy`<br> ✨ Syncs client state and server state automatically<br> ✨ Built-in inline edit popovers<br>
 
 ## 🚀 Remake’s Mission
 
-Remake's goal is to equalize power on the internet. ⚖️ 
+⚖️ Remake's goal is to equalize power on the internet.
 
-A few companies own the platforms the rest of us publish on — but owning our own platform is usually out of reach. Remake lets you build your own platform with very little effort, using just HTML & CSS.
+A few companies own the platforms the rest of us publish on — but owning our own platform is usually out of the question. Remake lets you build your own platform with very little effort — using just HTML & CSS.
 
 <b><a href="https://discord.gg/FB3gNxw">👉 Join our Discord community 💬</a></b>
 
 ## 👩‍💻 Contributing
 
-Remake is open-source and contributing is always welcome! 
+Remake is open-source and contributions are desired 😍 
 
-If you identify with Remake's mission, we'd be delighted to have you on board!
-
-You can:
-- Test Remake & Report bugs
-- Suggest features & fix issues
+If you identify with Remake's mission, we'd be delighted to have you:
+- Test & report bugs
+- Suggest features / fix issues
 - Improve the documentation
 - Or [just email me!](mailto:david@remaketheweb.com)
 
