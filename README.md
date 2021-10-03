@@ -23,14 +23,14 @@
   </a>
 </p>
 
-Remake is an open-source framework that lets you create an editable web app for all your users with just a few custom HTML attributes.
+Remake is an open-source framework for creating editable web apps with just a few custom HTML attributes.
 
 - Simple syntax
 - User accounts & database
 - Inline editing & uploads
 - **No backend coding!**
 
-<b><a href="https://docs.remaketheweb.com/">👉 Main Documentation (Get Started!) 📖</a></b>
+<b><a href="https://docs.remaketheweb.com/">👉 Full Documentation (Get Started!) 📖</a></b>
 
 ## 🤔 Why Remake?
 
