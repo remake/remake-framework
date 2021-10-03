@@ -46,7 +46,7 @@ Remake does what most frameworks do in 100 lines of code in 1 line of HTML.
 
 This 👆 is a full app that users can login to. Each user can edit & share their own copy of this site! 📰 📰 📰
 
-## 👩‍🎨 Ever design something and want people to use it *right away*?
+## 👩‍🎨 Want people to use something you designed *right away*?
 
 ### Remake lets you do that.
 
