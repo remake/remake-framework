@@ -5,6 +5,10 @@
   - Tested early versions of Remake
   - Developed a testing framework for Remake, with the first test being for `getDataFromRootNode()`
 
+- **[Grady O'Connell](https://github.com/flipcoder)**
+
+  - [Added missing callback for Passport.js](https://github.com/remake/remake-framework/commit/2c0d31a53b6ed07dfe00f00290dfb795d8ac62f7)
+
 - **[Alyssa X](https://alyssax.com/)**
 
   - Designed and built the HTML and CSS for the Remake starter application (KanBan Board)
