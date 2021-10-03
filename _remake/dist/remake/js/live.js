@@ -33,6 +33,9 @@
   as a page reload due to a change in html or css would not re-include the bookmarklet.
   To monitor CSS and be notified that it has loaded, include it as: live.js#css,notify
 */
+
+window.liveJsResourcesLoaded = false; // MODIFIED
+
 (function () {
   var headers = { Etag: 1, "Last-Modified": 1, "Content-Length": 1, "Content-Type": 1 },
     resources = {},
@@ -40,7 +43,6 @@
     currentLinkElements = {},
     oldLinkElements = {},
     interval = 1000,
-    loaded = false,
     active = { html: 1, css: 1, js: 1 };
 
   var Live = {
@@ -48,7 +50,7 @@
     heartbeat: function () {
       if (document.body) {
         // make sure all resources are loaded on first activation
-        if (!loaded) Live.loadresources();
+        if (!window.liveJsResourcesLoaded) Live.loadresources(); // MODIFIED
         Live.checkForChanges();
       }
       setTimeout(Live.heartbeat, interval);
@@ -114,7 +116,7 @@
         : style.appendChild(document.createTextNode(css));
 
       // yep
-      loaded = true;
+      window.liveJsResourcesLoaded = true; // MODIFIED
     },
 
     // check all tracking resources for changes

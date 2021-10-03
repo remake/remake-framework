@@ -7,7 +7,11 @@ import optionsData from "./optionsData";
 import { callOnSaveCallbacks } from "./callbacks";
 
 export function saveData({ data, path, saveToId }) {
+  // make live.js reload all resources in its cache when page is saved so it doesn't reload the page when user data changes -- and only reloads when dev edits a template
+  window.liveJsResourcesLoaded = false;
   ajaxPost("/save", { data, path, saveToId }, function (res) {
+    // make live.js reload all resources in its cache when page is saved so it doesn't reload the page when user data changes -- and only reloads when dev edits a template
+    window.liveJsResourcesLoaded = false;
     callOnSaveCallbacks(res);
   });
 }
