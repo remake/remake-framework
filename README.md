@@ -51,25 +51,25 @@ This 👆 is a full app that users can login to. Each user can edit & share thei
 ### Remake lets you do that.
 
 <details>
-  <summary><b>Build full-stack web apps with front-end code.</b></summary>
+  <summary><b>Build full-stack 🏭 apps with front-end code 👩‍🎨</b></summary>
   
   Remake takes care of the rest: user accounts, persistent data, instant deployments, and routing. Each user gets their own account and data.
 </details>
 
 <details>
-  <summary><b>Produce real apps, not just prototypes.</b></summary>
+  <summary><b>Produce real apps 🛩 — not just prototypes 🪁</b></summary>
   
   Remake feels like prototyping because it was designed to. The goal was to make web development feel like using a single template and a single JSON file.
 </details>
 
 <details>
-  <summary><b>You have 100% control of the design.</b></summary>
+  <summary><b>You have 100% control of the design 🎨</b></summary>
   
   Remake is open source. You own the code. There's no platform lock-in and you have 100% control over your app's design.
 </details>
 
 <details>
-  <summary><b>Secure, scalable, and fast.</b></summary>
+  <summary><b>Secure 🔒 + Scalable 🌍 + Fast 🐇💨</b></summary>
   
   Highly secure authentication. And server-rendered, so your pages load quickly even on low-power devices and slow connections.
 </details>
