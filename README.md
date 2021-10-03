@@ -44,7 +44,7 @@ Remake does what most frameworks do in 100 lines of code in 1 line of HTML.
 <h1 object key:text="@innerText" edit:text>{{text}}</h1>
 ```
 
-This 👆 is a full app that users can login to. Each user can edit & share their own copy of this headline! 📰 📰 📰
+This 👆 is a full app that users can login to. Each user can edit & share their own copy of this site! 📰 📰 📰
 
 ## 👩‍🎨 Ever design something and want people to use it *right away*?
 
