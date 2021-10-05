@@ -1,4 +1,7 @@
-const Mailgun = require("mailgun-js");
+const formData = require('form-data');
+const Mailgun = require('mailgun.js');
+const mailgun = new Mailgun(formData);
+
 
 export function sendEmail({ email, subject, body }, callback) {
   const apiKey = process.env.MAILGUN_API_KEY;
@@ -22,15 +25,20 @@ export function sendEmail({ email, subject, body }, callback) {
     return;
   }
 
-  const mailgun = new Mailgun({ apiKey, domain });
+  // const mailgun = new Mailgun({ apiKey, domain });
 
-  mailgun.messages().send(
-    {
+  const mailgunClient = mailgun.client({
+    username: 'api', 
+    key: apiKey
+  });
+
+  mailgunClient.messages.create(domain, {
       from: fromEmail,
       to: email,
       subject: subject,
-      html: body,
-    },
-    callback
-  );
+      html: body
+    })
+    .then(msg => callback(null, msg))
+    .catch(err => callback(err));
+
 }
