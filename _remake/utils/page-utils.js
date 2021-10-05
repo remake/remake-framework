@@ -109,11 +109,13 @@ export function getPageHtml({ pageTemplate, data, appName, username, itemId, isP
   // this unique ID replacement function should be deprecated soon
   let htmlWithUniqueIds = getHtmlWithUniqueIds({ htmlString: htmlWithAppStatus });
 
-  // insert live reload
-  let liveReloadScript = RemakeStore.isAutoReloadEnabled() ? "<script type='text/javascript' src='/remake/js/live.js'></script>" : "";
-  let htmlWithLiveReload = htmlWithUniqueIds.replace("</body>", liveReloadScript + "</body>");
+  // insert live reload script
+  if (RemakeStore.isAutoReloadEnabled()) {
+    let liveReloadScript = "<script type='text/javascript' src='/remake/js/live.js'></script>";
+    htmlWithUniqueIds = htmlWithUniqueIds.replace("</body>", liveReloadScript + "</body>");
+  }
   
-  return htmlWithLiveReload;
+  return htmlWithUniqueIds;
 }
 
 export async function doesPageExist({ appName, pageName }) {

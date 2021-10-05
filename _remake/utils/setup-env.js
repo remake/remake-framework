@@ -11,10 +11,6 @@ function setEnvironmentVariables() {
     const skuKey = changeCase.snakeCase(key).toUpperCase();
     process.env[skuKey] = dotRemakeObj[key];
   });
-
-  if (!process.env.NODE_ENV) {
-    process.env.NODE_ENV = "development";
-  }
 }
 
 module.exports = { setEnvironmentVariables };
