@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const pathMatch = require("path-match")({});
 const normalizeUrl = require("normalize-url");
+const packageJson = require("../package.json");
 
 import { initApiNew } from "./lib/init-api-new";
 import { initApiSave } from "./lib/init-api-save";
@@ -197,6 +198,7 @@ app.use(
       path: path.join(__dirname, "./.sessions"),
       ttl: thirtyDaysInSec,
     }),
+    name: RemakeStore.isDevelopmentMode() ? (packageJson.name || "connect.sid") : "connect.sid",
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
