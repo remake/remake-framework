@@ -197,11 +197,12 @@ app.use(
     store: new FileStore({
       path: path.join(__dirname, "./.sessions"),
       ttl: thirtyDaysInSec,
+      retries: 5
     }),
     name: RemakeStore.isDevelopmentMode() ? (packageJson.name || "connect.sid") : "connect.sid",
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
       maxAge: thirtyDaysInMs,
     },

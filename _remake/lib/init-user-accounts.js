@@ -125,7 +125,9 @@ function initUserAccounts({ app }) {
 
     req.login(newUser, function (err) {
       if (!err) {
-        res.redirect("/" + newUser.details.username);
+        req.session.save(err => {
+          res.redirect("/" + newUser.details.username);
+        });
       } else {
         req.flash("error", "Error creating user account");
         res.redirect("/user/login");
@@ -140,13 +142,17 @@ function initUserAccounts({ app }) {
       failureFlash: "Invalid username or password",
     }),
     function (req, res) {
-      res.redirect("/" + req.user.details.username);
+      req.session.save(err => {
+        res.redirect("/" + req.user.details.username);
+      });
     }
   );
 
   app.get(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/logout/, function (req, res) {
-    req.logout();
-    res.redirect("/user/login");
+    req.session.destroy(err => {
+      req.logout();
+      res.redirect("/user/login");
+    });
   });
 
   app.post(/(\/app_[a-z]+[a-z0-9-]*)?\/user\/forgot/, async function (req, res) {
