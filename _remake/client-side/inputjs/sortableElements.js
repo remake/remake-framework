@@ -1,6 +1,7 @@
 import optionsData from "./optionsData";
 import { onAddItem } from "./callbacks";
 import { callSaveFunction } from "./onSave";
+const merge = require("lodash/merge");
 
 export default function initSortableElements() {
   // make all elements with the "sortable" attribute drag-and-drop sortable on page load
@@ -18,7 +19,7 @@ export default function initSortableElements() {
 }
 
 function makeSortable({ elemToSearch }) {
-  const { sortablejs } = optionsData.sortable;
+  const { sortablejs, sortableOptions } = optionsData.sortable;
   let sortableElems = Array.from(elemToSearch.querySelectorAll("[sortable]"));
 
   sortableElems.forEach(sortableListElem => {
@@ -33,22 +34,24 @@ function makeSortable({ elemToSearch }) {
     }
 
 
-    let sortableOptions = {
+    let options = {
       onEnd: function (event) {
         callSaveFunction(sortableListElem);
       },
     };
 
+    merge(options, sortableOptions);
+
     let sortableGroupName = sortableListElem.getAttribute("sortable");
     if (sortableGroupName) {
-      sortableOptions.group = sortableGroupName;
+      options.group = sortableGroupName;
     }
 
     if (sortableListElem.querySelector("[sortable-handle]")) {
-      sortableOptions.handle = "[sortable-handle]";
+      options.handle = "[sortable-handle]";
     }
 
-    sortablejs.create(sortableListElem, sortableOptions);
+    sortablejs.create(sortableListElem, options);
   });
 }
 
