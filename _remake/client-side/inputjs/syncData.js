@@ -3,7 +3,6 @@ import {
   getValueForClosestKey,
   setValueForKeyName,
 } from "../data-utilities";
-import { callSaveFunction } from "./onSave";
 import { callOnSyncCallbacks } from "./callbacks";
 const dashCase = require("lodash/kebabCase");
 
@@ -23,7 +22,6 @@ export function syncData({
   });
 
   callOnSyncCallbacks({ keyNames, sourceElement, targetElement, shouldSyncIntoUpdateElems });
-  callSaveFunction(targetElement);
 }
 
 // used when clicking an element/button that might want to set data ahead of the sync
