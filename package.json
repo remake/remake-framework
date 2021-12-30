@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon _remake/server.js --watch ./",
-    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap=external --outdir=_remake/dist/remake/js --target=edge16 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map && echo '//# sourceMappingURL=remake.min.js.map' >> _remake/dist/remake/js/remake.min.js",
+    "remake-build": "npx esbuild _remake/client-side/index.js --bundle --minify --sourcemap=external --outdir=_remake/dist/remake/js --target=edge18 --format=iife --global-name=Remake && mv _remake/dist/remake/js/index.js _remake/dist/remake/js/remake.min.js && mv _remake/dist/remake/js/index.js.map _remake/dist/remake/js/remake.min.js.map && echo '//# sourceMappingURL=remake.min.js.map' >> _remake/dist/remake/js/remake.min.js",
     "test": "ava"
   },
   "nodemonConfig": {
@@ -80,7 +80,7 @@
   "devDependencies": {
     "@ava/babel": "^1.0.1",
     "ava": "^3.15.0",
-    "esbuild": "^0.8.2",
+    "esbuild": "^0.14.9",
     "husky": "^6.0.0",
     "nodemon": "^2.0.13",
     "prettier": "2.2.1",
