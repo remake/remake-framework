@@ -59,7 +59,7 @@
     "is-valid-domain": "0.0.17",
     "jsdom": "^16.5.3",
     "jsonfile": "^5.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.20",
     "mailgun.js": "^3.5.9",
     "mkdirp": "^0.5.1",
