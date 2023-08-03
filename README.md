@@ -48,7 +48,7 @@ This 👆 is a full app that users can login to. Each user can edit & share thei
 
 ## 👩‍🎨 Let people use something you designed — *right away.*
 
-### Remake is:
+### Remake is
 
 <details>
   <summary><b>🏭 Full-stack apps with just front-end code</b></summary>
@@ -74,20 +74,19 @@ This 👆 is a full app that users can login to. Each user can edit & share thei
   Highly secure authentication. And server-rendered, so your pages load quickly even on low-power devices and slow connections.
 </details>
 
-
 ## 👩‍🏫 Get started
 
-**1. Install [Node.js (12.16+)](https://nodejs.org/)**
+### 1. Install [Node.js (12.16+)](https://nodejs.org/)
 
-**2. Create a project using the Remake CLI**
+### 2. Create a project using the Remake CLI
 
-```
+```sh
 npx remake create my-app
 ```
 
-**3. Run the project**
+### 3. Run the project
 
-```
+```sh
 cd my-app
 npm run dev
 ```
@@ -125,9 +124,10 @@ A few companies own the platforms the rest of us publish on — but owning our o
 
 ## 👩‍💻 Contributing
 
-Remake is open-source and contributions are desired 😍 
+Remake is open-source and contributions are desired 😍
 
 If you identify with Remake's mission, we'd be delighted to have you:
+
 - Test & report bugs
 - Suggest features / fix issues
 - Improve the documentation
