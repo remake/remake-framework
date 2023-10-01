@@ -143,7 +143,3 @@ If you identify with Remake's mission, we'd be delighted to have you:
 - [Painatalman](https://github.com/Painatalman)
 - [Joe Masilotti](https://masilotti.com/)
 - [Catalin Tudorache](https://charlietango.co/)
-
-## 🧪 Testing
-
-This project is tested with [BrowserStack](https://www.browserstack.com/).
