@@ -15,12 +15,6 @@
   <a href="https://discord.gg/FB3gNxw">
     <img src="https://img.shields.io/badge/discord-join-7289DA.svg?logo=discord&longCache=true&style=flat" alt="Discord Channel" />
   </a>
-  <a href="https://github.com/sponsors/remake">
-    <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=<url>" alt="Sponsor" />
-  </a>
-  <a href="https://twitter.com/intent/follow?screen_name=remaketheweb">
-    <img src="https://badgen.net/twitter/follow/remaketheweb?icon=twitter&label=%40remake" alt="Remake Twitter" />
-  </a>
 </p>
 
 Remake is an open-source framework for creating editable web apps with just a few custom HTML attributes.
